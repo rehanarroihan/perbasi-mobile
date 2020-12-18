@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:perbasitlg/ui/pages/home/home_page.dart';
+import 'package:perbasitlg/ui/pages/home/navigator_page.dart';
 
 class SplashPage extends StatefulWidget {
   @override
@@ -11,11 +11,11 @@ class _SplashPageState extends State<SplashPage> {
 
   @override
   void initState() {
-    // Future.delayed(Duration(seconds: 3)).then((_) async {
-    //   Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
-    //     builder: (context) => HomePage()
-    //   ), (Route<dynamic> route) => false);
-    // });
+    Future.delayed(Duration(seconds: 3)).then((_) async {
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
+        builder: (context) => NavigatorPage()
+      ), (Route<dynamic> route) => false);
+    });
 
     super.initState();
   }
