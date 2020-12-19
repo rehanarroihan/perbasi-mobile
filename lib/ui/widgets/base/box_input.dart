@@ -10,6 +10,7 @@ class BoxInput extends StatefulWidget {
   final TextInputType keyboardType;
   final Widget suffixWidget;
   final ValueChanged<String> validator;
+  final TextCapitalization textCapitalization;
 
   BoxInput({
     @required this.controller,
@@ -18,7 +19,8 @@ class BoxInput extends StatefulWidget {
     this.passwordField = false,
     this.keyboardType = TextInputType.text,
     this.suffixWidget,
-    this.validator
+    this.validator,
+    this.textCapitalization
   });
 
   @override
@@ -37,6 +39,7 @@ class _BoxInputState extends State<BoxInput> {
         obscureText: _obscurePasswordText,
         enabled: widget.enabled,
         validator: widget.validator ?? (String args) => null,
+        textCapitalization: widget.textCapitalization ?? TextCapitalization.none,
         decoration: InputDecoration(
           labelText: widget.label,
           suffixIcon: IconButton(
@@ -58,6 +61,7 @@ class _BoxInputState extends State<BoxInput> {
       return TextFormField(
         controller: widget.controller,
         keyboardType: widget.keyboardType,
+        textCapitalization: widget.textCapitalization ?? TextCapitalization.none,
         enabled: widget.enabled,
         validator: widget.validator ?? (String args) => null,
         decoration: InputDecoration(

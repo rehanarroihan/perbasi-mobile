@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:perbasitlg/cubit/auth/auth_cubit.dart';
+import 'package:perbasitlg/models/request/register_request.dart';
 import 'package:perbasitlg/ui/widgets/base/box_input.dart';
 import 'package:perbasitlg/ui/widgets/base/button.dart';
 import 'package:perbasitlg/ui/widgets/base/space.dart';
+import 'package:perbasitlg/ui/widgets/modules/loading_dialog.dart';
 import 'package:perbasitlg/utils/app_color.dart';
 import 'package:perbasitlg/utils/global_method_helper.dart';
+import 'package:intl/intl.dart';
 
 class RegisterPage extends StatefulWidget {
   RegisterPage({Key key}) : super(key: key);
@@ -14,179 +19,242 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  AuthCubit _authCubit;
+
   int _selectedRoleIndex = 0;
   List<Map<String, dynamic>> _roleList = [
     {
-      'id': 1,
+      'id': 3,
       'role': 'Pemain'
     },
     {
-      'id': 2,
+      'id': 4,
       'role': 'Pelatih'
     },
     {
-      'id': 3,
+      'id': 2,
       'role': 'Wasit'
     },
   ];
+  String _birthDateForServer = '';
 
   GlobalKey<FormState> _formKey;
 
   TextEditingController _nikInput = TextEditingController();
   TextEditingController _nameInput = TextEditingController();
-  TextEditingController _birthPlaceDateInput = TextEditingController();
+  TextEditingController _birthPlaceInput = TextEditingController();
   TextEditingController _birthDateInput = TextEditingController();
   TextEditingController _passwordInput = TextEditingController();
   TextEditingController _confirmPasswordInput = TextEditingController();
+  TextEditingController _emailInput = TextEditingController();
 
   @override
   void initState() {
+    _authCubit = BlocProvider.of<AuthCubit>(context);
+
     _formKey = GlobalKey<FormState>();
+
     super.initState();
+  }
+
+  void _doRegister() {
+    RegisterRequest registerData = RegisterRequest(
+      roleId: _roleList[_selectedRoleIndex]['id'].toString(),
+      nik: _nikInput.text.trim(),
+      email: _emailInput.text.trim(),
+      birthPlace: _birthPlaceInput.text.trim(),
+      name: _nameInput.text.trim(),
+      password: _confirmPasswordInput.text.trim(),
+      birthDate: _birthDateForServer
+    );
+    _authCubit.registerUser(registerData);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColor.pageBackgroundColor,
-      bottomNavigationBar: Container(
-        padding: EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Color(0x1A000000),
-              offset: const Offset(0, -3),
-              blurRadius: 24,
+    return BlocListener(
+      cubit: _authCubit,
+      listener: (context, state) {
+        if (state is RegisterInitialState) {
+          LoadingDialog(
+            title: 'Silahkan Tunggu',
+            description: 'Mendaftarkan pengguna'
+          ).show(context);
+        } else if (state is RegisterSuccessfulState) {
+          Navigator.pop(context);
+        }
+      },
+      child: Scaffold(
+        backgroundColor: AppColor.pageBackgroundColor,
+        bottomNavigationBar: Container(
+          padding: EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Color(0x1A000000),
+                offset: const Offset(0, -3),
+                blurRadius: 24,
+              ),
+            ]
+          ),
+          child: Container(
+            width: double.infinity,
+            child: Button(
+              style: AppButtonStyle.secondary,
+              text: 'daftar',
+              onPressed: () {
+                if (_formKey.currentState.validate()) {
+                  _doRegister();
+                }
+              },
             ),
-          ]
-        ),
-        child: Container(
-          width: double.infinity,
-          child: Button(
-            style: AppButtonStyle.secondary,
-            text: 'daftar',
-            onPressed: () {
-              if (_formKey.currentState.validate()) {
-
-              }
-            },
           ),
         ),
-      ),
-      body: SingleChildScrollView(
-        child: SafeArea(
-          child: Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: ScreenUtil().setWidth(24)
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Space(height: 24),
-                Icon(Icons.arrow_back_outlined),
-                Space(height: 24),
-                Text(
-                  'Daftar',
-                  style: TextStyle(
-                    fontSize: ScreenUtil().setSp(16),
-                    fontWeight: FontWeight.w700
+        body: SingleChildScrollView(
+          child: SafeArea(
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: ScreenUtil().setWidth(24)
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Space(height: 24),
+                  Icon(Icons.arrow_back_outlined),
+                  Space(height: 24),
+                  Text(
+                    'Daftar',
+                    style: TextStyle(
+                      fontSize: ScreenUtil().setSp(16),
+                      fontWeight: FontWeight.w700
+                    ),
                   ),
-                ),
-                Space(height: 10),
-                _roleForm(),
-                Space(height: 40),
-                Form(
-                  key: _formKey,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      BoxInput(
-                        controller: _nikInput,
-                        label: 'NIK',
-                        keyboardType: TextInputType.number,
-                        validator: (String val) {
-                          if (val.length < 16) {
-                            return 'NIK harus berisikan 16 karakter';
-                          }
-                        },
-                      ),
-                      Space(height: 40),
-                      BoxInput(
-                        controller: _nameInput,
-                        label: 'Nama',
-                        validator: (String val) {
-                          if (val.length < 3) {
-                            return 'nama harus valid';
-                          }
-                        },
-                      ),
-                      Space(height: 40),
-                      BoxInput(
-                        controller: _birthPlaceDateInput,
-                        label: 'Tempat Lahir',
-                        validator: (String val) {
-                          if (val.length < 3) {
-                            return 'tempat lahir harus valid';
-                          }
-                        },
-                      ),
-                      Space(height: 40),
-                      GestureDetector(
-                        onTap: () async {
-                          final DateTime pickedDate = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime.now(),
-                            lastDate: DateTime(2025),
-                          );
-                          if (pickedDate != null) {
-                            setState(() {
-                              _birthDateInput.text = pickedDate.toString();
-                            });
-                          } else {
-                            return;
-                          }
-                        },
-                        child: BoxInput(
-                          controller: _birthDateInput,
-                          enabled: false,
-                          label: 'Tanggal Lahir',
+                  Space(height: 10),
+                  _roleForm(),
+                  Space(height: 40),
+                  Form(
+                    key: _formKey,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        BoxInput(
+                          controller: _nikInput,
+                          label: 'NIK',
+                          keyboardType: TextInputType.number,
                           validator: (String val) {
-                            if (GlobalMethodHelper.isEmpty(val.length)) {
-                              return 'tanggal lahir harus valid';
+                            if (val.length < 16) {
+                              return 'nik harus valid';
                             }
                           },
                         ),
-                      ),
-                      Space(height: 40),
-                      BoxInput(
-                        controller: _passwordInput,
-                        label: 'Kata sandi',
-                        passwordField: true,
-                        validator: (String val) {
-                          if (GlobalMethodHelper.isEmpty(val.length)) {
-                            return 'Password minimal 6 karakter';
-                          }
-                        },
-                      ),
-                      Space(height: 40),
-                      BoxInput(
-                        controller: _confirmPasswordInput,
-                        label: 'Ulangi kata sandi',
-                        passwordField: true,
-                        validator: (String val) {
-                          if (_passwordInput.text != val) {
-                            return 'konfirmasi password tidak valid';
-                          }
-                        },
-                      ),
-                    ],
+                        Space(height: 40),
+                        BoxInput(
+                          controller: _nameInput,
+                          label: 'Nama',
+                          validator: (String val) {
+                            if (val.length < 3) {
+                              return 'nama harus valid';
+                            }
+                          },
+                        ),
+                        Space(height: 40),
+                        BoxInput(
+                          controller: _birthPlaceInput,
+                          label: 'Tempat Lahir',
+                          textCapitalization: TextCapitalization.sentences,
+                          validator: (String val) {
+                            if (val.length < 3) {
+                              return 'tempat lahir harus valid';
+                            }
+                          },
+                        ),
+                        Space(height: 40),
+                        GestureDetector(
+                          onTap: () async {
+                            final DateTime pickedDate = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(1900),
+                              lastDate: DateTime(DateTime.now().year, 12, 31),
+                            );
+                            if (pickedDate != null) {
+                              final DateTime fullResult = DateTime(
+                                pickedDate.year,
+                                pickedDate.month,
+                                pickedDate.day,
+                                pickedDate.hour,
+                                pickedDate.minute,
+                              );
+
+                              // formatting datetime for request data needs
+                              _birthDateForServer = DateFormat('yyyy-MM-dd').format(fullResult);
+
+                              // formatting datetime to show to the screen
+                              _birthDateInput.text = DateFormat('dd M yyyy').format(fullResult);
+
+                              setState(() {});
+                            } else {
+                              return;
+                            }
+                          },
+                          child: BoxInput(
+                            controller: _birthDateInput,
+                            enabled: false,
+                            label: 'Tanggal Lahir',
+                            validator: (String val) {
+                              if (GlobalMethodHelper.isEmpty(val.length)) {
+                                return 'tanggal lahir harus valid';
+                              }
+                            },
+                          ),
+                        ),
+                        Space(height: 40),
+                        BoxInput(
+                          controller: _emailInput,
+                          label: 'Alamat Email',
+                          keyboardType: TextInputType.emailAddress,
+                          validator: (String val) {
+                            if (GlobalMethodHelper.isEmpty(val.length)) {
+                              return 'email harus diisi';
+                            }
+
+                            bool emailValid = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                .hasMatch(_emailInput.text);
+                            if (!emailValid) {
+                              return 'email harus valid';
+                            }
+                          },
+                        ),
+                        Space(height: 40),
+                        BoxInput(
+                          controller: _passwordInput,
+                          label: 'Kata sandi',
+                          passwordField: true,
+                          validator: (String val) {
+                            if (val.length < 6) {
+                              return 'Password minimal 6 karakter';
+                            }
+                          },
+                        ),
+                        Space(height: 40),
+                        BoxInput(
+                          controller: _confirmPasswordInput,
+                          label: 'Ulangi kata sandi',
+                          passwordField: true,
+                          validator: (String val) {
+                            if (_passwordInput.text != val) {
+                              return 'konfirmasi password tidak valid';
+                            }
+                          },
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                Space(height: 32),
-              ],
+                  Space(height: 32),
+                ],
+              ),
             ),
           ),
         ),
