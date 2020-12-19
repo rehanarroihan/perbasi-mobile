@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:perbasitlg/ui/pages/auth/register_page.dart';
 import 'package:perbasitlg/ui/widgets/base/box_input.dart';
 import 'package:perbasitlg/ui/widgets/base/button.dart';
 import 'package:perbasitlg/ui/widgets/base/space.dart';
+import 'package:perbasitlg/utils/app_color.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
@@ -12,12 +14,10 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  bool _obscurePasswordText = true;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColor.pageBackgroundColor,
       body: Container(
         width: double.infinity,
         padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(24)),
@@ -47,6 +47,7 @@ class _LoginPageState extends State<LoginPage> {
                 fontWeight: FontWeight.w300,
               ),*/
             ),
+
             Space(height: 24),
             BoxInput(
               controller: TextEditingController(),
@@ -69,10 +70,17 @@ class _LoginPageState extends State<LoginPage> {
                 Text(
                   'Belum memiliki akun?'
                 ),
-                Text(
-                  ' Daftar',
-                  style: TextStyle(
-                    color: Colors.deepOrange
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => RegisterPage()
+                    ));
+                  },
+                  child: Text(
+                    ' Daftar',
+                    style: TextStyle(
+                      color: Colors.deepOrange
+                    ),
                   ),
                 ),
               ],
