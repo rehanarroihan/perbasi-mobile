@@ -18,6 +18,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.pageBackgroundColor,
+      resizeToAvoidBottomInset: false,
       body: Container(
         width: double.infinity,
         padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(24)),

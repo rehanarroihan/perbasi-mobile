@@ -11,20 +11,20 @@ class AuthService {
     try {
       Response response = await _dio.post(
         UrlConstantHelper.POST_AUTH_REGISTER,
-        data: data
+        data: FormData.fromMap(data.toMap())
       );
       if (response.statusCode == 200) {
         return ApiReturn(
-          status: response.data['status'],
+          success: response.data['success'],
           message: response.data['message'],
         );
       }
 
-      return ApiReturn(status: false, message: response.data['message']);
+      return ApiReturn(success: false, message: response.data['message']);
     } catch (e, stackTrace) {
       return ApiReturn(
-        status: false,
-        message: e.response.data['message'] ?? 'Something went wrong'
+        success: false,
+        message: e?.response?.data['message'] ?? 'Something went wrong'
       );
     }
   }

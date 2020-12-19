@@ -1,6 +1,6 @@
 class UrlConstantHelper {
-  static const String POST_AUTH_REGISTER = "login";
-  static const String POST_AUTH_LOGIN = "register";
+  static const String POST_AUTH_REGISTER = "register";
+  static const String POST_AUTH_LOGIN = "login";
   static const String GET_PROFILE = "me";
 
   static const String GET_NEWS = "news";

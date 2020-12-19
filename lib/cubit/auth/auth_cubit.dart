@@ -15,7 +15,7 @@ class AuthCubit extends Cubit<AuthState> {
     emit(RegisterInitialState());
 
     ApiReturn apiResult = await _authService.userRegistration(data);
-    if (apiResult.status) {
+    if (apiResult.success) {
       emit(RegisterSuccessfulState());
     } else {
       emit(RegisterFailedState(apiResult.message));

@@ -1,19 +1,19 @@
 class ApiReturn<T> {
   final T data;
   final String message;
-  final bool status;
+  final bool success;
 
   ApiReturn({
     this.data,
     this.message,
-    this.status
+    this.success
   });
 
   factory ApiReturn.fromMap(Map<String, dynamic> map) {
     return new ApiReturn(
       data: map['data'] as T,
       message: map['message'] as String,
-      status: map['status'] as bool,
+      success: map['success'] as bool,
     );
   }
 
@@ -22,7 +22,7 @@ class ApiReturn<T> {
     return {
       'data': this.data,
       'message': this.message,
-      'status': this.status,
+      'success': this.success,
     } as Map<String, dynamic>;
   }
 }

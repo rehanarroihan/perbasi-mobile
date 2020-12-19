@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:perbasitlg/cubit/auth/auth_cubit.dart';
 import 'package:perbasitlg/models/request/register_request.dart';
+import 'package:perbasitlg/ui/pages/auth/login_page.dart';
+import 'package:perbasitlg/ui/widgets/base/app_alert_dialog.dart';
 import 'package:perbasitlg/ui/widgets/base/box_input.dart';
 import 'package:perbasitlg/ui/widgets/base/button.dart';
 import 'package:perbasitlg/ui/widgets/base/space.dart';
@@ -10,6 +12,9 @@ import 'package:perbasitlg/ui/widgets/modules/loading_dialog.dart';
 import 'package:perbasitlg/utils/app_color.dart';
 import 'package:perbasitlg/utils/global_method_helper.dart';
 import 'package:intl/intl.dart';
+
+import '../../../cubit/auth/auth_cubit.dart';
+import '../../../utils/show_flutter_toast.dart';
 
 class RegisterPage extends StatefulWidget {
   RegisterPage({Key key}) : super(key: key);
@@ -82,6 +87,19 @@ class _RegisterPageState extends State<RegisterPage> {
           ).show(context);
         } else if (state is RegisterSuccessfulState) {
           Navigator.pop(context);
+          Navigator.pushReplacement(context, MaterialPageRoute(
+            builder: (context) => LoginPage()
+          ));
+          AppAlertDialog(
+            title: 'Registrasi Berhasil',
+            description: 'Silahkan login menggunakan email dan password yang telah anda buat',
+          ).show(context);
+        } else if (state is RegisterFailedState) {
+          Navigator.pop(context);
+          AppAlertDialog(
+            title: 'Registrasi Gagal',
+            description: state.message,
+          ).show(context);
         }
       },
       child: Scaffold(
@@ -192,7 +210,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               _birthDateForServer = DateFormat('yyyy-MM-dd').format(fullResult);
 
                               // formatting datetime to show to the screen
-                              _birthDateInput.text = DateFormat('dd M yyyy').format(fullResult);
+                              _birthDateInput.text = DateFormat('dd MMMM yyyy').format(fullResult);
 
                               setState(() {});
                             } else {
