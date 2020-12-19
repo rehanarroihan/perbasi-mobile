@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:perbasitlg/ui/pages/auth/login_page.dart';
 import 'package:perbasitlg/ui/pages/home/navigator_page.dart';
 
 class SplashPage extends StatefulWidget {
@@ -13,7 +14,7 @@ class _SplashPageState extends State<SplashPage> {
   void initState() {
     Future.delayed(Duration(seconds: 3)).then((_) async {
       Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
-        builder: (context) => NavigatorPage()
+        builder: (context) => LoginPage()
       ), (Route<dynamic> route) => false);
     });
 
