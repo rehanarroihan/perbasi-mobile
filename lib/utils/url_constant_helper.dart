@@ -12,7 +12,7 @@ class UrlConstantHelper {
   static const String GET_TEAMS = "teams";
   static const String GET_TEAM_DETAIL = "teams/";
 
-  static const String POST_CHANGE_PLAYERS_PROFILERE = "profile/player";
+  static const String POST_CHANGE_PLAYERS_PROFILE = "profile/player";
   static const String POST_REGISTER_TEAM = "teams/register/player/";
 
   static const String POST_CHANGE_COACH_PROFILE = "profile/coach";

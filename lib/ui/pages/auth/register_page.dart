@@ -219,7 +219,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           },
                           child: BoxInput(
                             controller: _birthDateInput,
-                            enabled: false,
+                            readOnly: true,
                             label: 'Tanggal Lahir',
                             validator: (String val) {
                               if (GlobalMethodHelper.isEmpty(val.length)) {

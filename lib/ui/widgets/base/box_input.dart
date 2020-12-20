@@ -6,7 +6,7 @@ class BoxInput extends StatefulWidget {
   final TextEditingController controller;
   final String label;
   final bool passwordField;
-  final bool enabled;
+  final bool readOnly;
   final TextInputType keyboardType;
   final Widget suffixWidget;
   final ValueChanged<String> validator;
@@ -15,7 +15,7 @@ class BoxInput extends StatefulWidget {
   BoxInput({
     @required this.controller,
     @required this.label,
-    this.enabled = true,
+    this.readOnly = false,
     this.passwordField = false,
     this.keyboardType = TextInputType.text,
     this.suffixWidget,
@@ -37,7 +37,7 @@ class _BoxInputState extends State<BoxInput> {
         controller: widget.controller,
         keyboardType: widget.keyboardType,
         obscureText: _obscurePasswordText,
-        enabled: widget.enabled,
+        readOnly: widget.readOnly,
         validator: widget.validator ?? (String args) => null,
         textCapitalization: widget.textCapitalization ?? TextCapitalization.none,
         decoration: InputDecoration(
@@ -62,7 +62,7 @@ class _BoxInputState extends State<BoxInput> {
         controller: widget.controller,
         keyboardType: widget.keyboardType,
         textCapitalization: widget.textCapitalization ?? TextCapitalization.none,
-        enabled: widget.enabled,
+        readOnly: widget.readOnly,
         validator: widget.validator ?? (String args) => null,
         decoration: InputDecoration(
           labelText: widget.label,
