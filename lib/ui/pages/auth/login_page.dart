@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:perbasitlg/cubit/auth/auth_cubit.dart';
+import 'package:perbasitlg/models/request/login_request.dart';
 import 'package:perbasitlg/ui/pages/auth/register_page.dart';
+import 'package:perbasitlg/ui/pages/splash_page.dart';
 import 'package:perbasitlg/ui/widgets/modules/app_alert_dialog.dart';
 import 'package:perbasitlg/ui/widgets/base/box_input.dart';
 import 'package:perbasitlg/ui/widgets/base/button.dart';
@@ -44,12 +46,8 @@ class _LoginPageState extends State<LoginPage> {
         } else if (state is LoginSuccessfulState) {
           Navigator.pop(context);
           Navigator.pushReplacement(context, MaterialPageRoute(
-            builder: (context) => LoginPage()
+            builder: (context) => SplashPage()
           ));
-          AppAlertDialog(
-            title: 'Registrasi Berhasil',
-            description: 'Silahkan login menggunakan email dan password yang telah anda buat',
-          ).show(context);
         } else if (state is LoginFailedState) {
           Navigator.pop(context);
           AppAlertDialog(
@@ -104,10 +102,10 @@ class _LoginPageState extends State<LoginPage> {
                   onPressed: () {
                     if (!GlobalMethodHelper.isEmpty(_emailInput.text)
                         && !GlobalMethodHelper.isEmpty(_passwordInput.text)) {
-                      _authCubit.loginUser(
-                        _emailInput.text.trim(),
-                        _passwordInput.text
-                      );
+                      _authCubit.loginUser(LoginRequest(
+                        email: _emailInput.text,
+                        password: _passwordInput.text
+                      ));
                     }
                   },
                   text: 'masuk',
