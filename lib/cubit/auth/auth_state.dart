@@ -18,3 +18,9 @@ class RegisterFailedState extends AuthState {
 
   RegisterFailedState(this.message);
 }
+
+class LoginInitialState extends AuthState {}
+
+class LoginSuccessfulState extends AuthState {}
+
+class LoginFailedState extends AuthState {}

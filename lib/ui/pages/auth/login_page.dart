@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:perbasitlg/cubit/auth/auth_cubit.dart';
 import 'package:perbasitlg/ui/pages/auth/register_page.dart';
+import 'package:perbasitlg/ui/widgets/modules/app_alert_dialog.dart';
 import 'package:perbasitlg/ui/widgets/base/box_input.dart';
 import 'package:perbasitlg/ui/widgets/base/button.dart';
 import 'package:perbasitlg/ui/widgets/base/space.dart';
+import 'package:perbasitlg/ui/widgets/modules/loading_dialog.dart';
 import 'package:perbasitlg/utils/app_color.dart';
+import 'package:perbasitlg/utils/global_method_helper.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
@@ -14,79 +19,125 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  AuthCubit _authCubit;
+
+  TextEditingController _emailInput = TextEditingController();
+  TextEditingController _passwordInput = TextEditingController();
+
+  @override
+  void initState() {
+    _authCubit = BlocProvider.of<AuthCubit>(context);
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColor.pageBackgroundColor,
-      resizeToAvoidBottomInset: false,
-      body: Container(
-        width: double.infinity,
-        padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(24)),
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _greetings(),
-            Space(height: 34),
-            Text(
-              'Masuk',
-              style: TextStyle(
-                fontSize: ScreenUtil().setSp(16),
-                fontWeight: FontWeight.w700
-              ),
-            ),
-            BoxInput(
-              controller: TextEditingController(),
-              label: 'E-mail',
-              /*suffixWidget: Button(
-                onPressed: () {},
-                padding: 4,
-                fontSize: 12,
-                text: 'asu',
-                style: AppButtonStyle.primary,
-                fontWeight: FontWeight.w300,
-              ),*/
-            ),
-
-            Space(height: 24),
-            BoxInput(
-              controller: TextEditingController(),
-              label: 'password',
-              passwordField: true,
-            ),
-            Space(height: 34),
-            Container(
-              width: double.infinity,
-              child: Button(
-                onPressed: () {},
-                text: 'masuk',
-                style: AppButtonStyle.secondary,
-              ),
-            ),
-            Space(height: 29),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Belum memiliki akun?'
+    return BlocListener(
+      cubit: _authCubit,
+      listener: (context, state) {
+        if (state is LoginInitialState) {
+          LoadingDialog(
+            title: 'Loading',
+            description: 'Silahkan tunggu...'
+          ).show(context);
+        } else if (state is LoginSuccessfulState) {
+          Navigator.pop(context);
+          Navigator.pushReplacement(context, MaterialPageRoute(
+            builder: (context) => LoginPage()
+          ));
+          AppAlertDialog(
+            title: 'Registrasi Berhasil',
+            description: 'Silahkan login menggunakan email dan password yang telah anda buat',
+          ).show(context);
+        } else if (state is LoginFailedState) {
+          Navigator.pop(context);
+          AppAlertDialog(
+            title: 'Login Gagal',
+            description: 'Email atau password yang anda masukkan salah',
+          ).show(context);
+        }
+      },
+      child: Scaffold(
+        backgroundColor: AppColor.pageBackgroundColor,
+        resizeToAvoidBottomInset: false,
+        body: Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(24)),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _greetings(),
+              Space(height: 34),
+              Text(
+                'Masuk',
+                style: TextStyle(
+                  fontSize: ScreenUtil().setSp(16),
+                  fontWeight: FontWeight.w700
                 ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(context, MaterialPageRoute(
-                      builder: (context) => RegisterPage()
-                    ));
+              ),
+              BoxInput(
+                controller: _emailInput,
+                label: 'E-mail',
+                /*suffixWidget: Button(
+                  onPressed: () {},
+                  padding: 4,
+                  fontSize: 12,
+                  text: 'asu',
+                  style: AppButtonStyle.primary,
+                  fontWeight: FontWeight.w300,
+                ),*/
+              ),
+
+              Space(height: 24),
+              BoxInput(
+                controller: _passwordInput,
+                label: 'Password',
+                passwordField: true,
+              ),
+              Space(height: 34),
+              Container(
+                width: double.infinity,
+                child: Button(
+                  onPressed: () {
+                    if (!GlobalMethodHelper.isEmpty(_emailInput.text)
+                        && !GlobalMethodHelper.isEmpty(_passwordInput.text)) {
+                      _authCubit.loginUser(
+                        _emailInput.text.trim(),
+                        _passwordInput.text
+                      );
+                    }
                   },
-                  child: Text(
-                    ' Daftar',
-                    style: TextStyle(
-                      color: Colors.deepOrange
+                  text: 'masuk',
+                  style: AppButtonStyle.secondary,
+                ),
+              ),
+              Space(height: 29),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Belum memiliki akun?'
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) => RegisterPage()
+                      ));
+                    },
+                    child: Text(
+                      ' Daftar',
+                      style: TextStyle(
+                        color: Colors.deepOrange
+                      ),
                     ),
                   ),
-                ),
-              ],
-            )
-          ],
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );

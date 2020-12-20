@@ -47,17 +47,15 @@ class LoadingDialog {
                       valueColor: AlwaysStoppedAnimation<Color>(AppColor.primaryColor),
                     ),
                     SizedBox(width: 20),
-                    Expanded(
-                      child: Text(
-                        description,
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 16,
-                          fontWeight: FontWeight.normal,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.center,
+                    Text(
+                      description,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.normal,
                       ),
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
                     ),
                   ],
                 ),

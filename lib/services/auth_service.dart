@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:perbasitlg/app.dart';
 import 'package:perbasitlg/models/api_return.dart';
+import 'package:perbasitlg/models/login_model.dart';
 import 'package:perbasitlg/models/request/register_request.dart';
 import 'package:perbasitlg/utils/url_constant_helper.dart';
 
@@ -25,6 +26,26 @@ class AuthService {
       return ApiReturn(
         success: false,
         message: e?.response?.data['message'] ?? 'Something went wrong'
+      );
+    }
+  }
+
+  Future<LoginModel> userLogin(String email, String password) async {
+    try {
+      Response response = await _dio.post(
+        UrlConstantHelper.POST_AUTH_LOGIN,
+        data: {
+          'email': email, 'password': password
+        }
+      );
+      if (response.statusCode == 200) {
+        return LoginModel.fromJson(response.data);
+      }
+
+      return LoginModel.fromJson(response.data);
+    } catch (e, stackTrace) {
+      return LoginModel(
+        success: false,
       );
     }
   }
