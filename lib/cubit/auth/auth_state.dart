@@ -24,3 +24,9 @@ class LoginInitialState extends AuthState {}
 class LoginSuccessfulState extends AuthState {}
 
 class LoginFailedState extends AuthState {}
+
+class GetUserDataInitialState extends AuthState {}
+
+class GetUserDataSuccessfulState extends AuthState {}
+
+class GetUserDataFailedState extends AuthState {}

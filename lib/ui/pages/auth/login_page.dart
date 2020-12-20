@@ -12,6 +12,7 @@ import 'package:perbasitlg/ui/widgets/base/space.dart';
 import 'package:perbasitlg/ui/widgets/modules/loading_dialog.dart';
 import 'package:perbasitlg/utils/app_color.dart';
 import 'package:perbasitlg/utils/global_method_helper.dart';
+import 'package:perbasitlg/utils/show_flutter_toast.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
@@ -48,6 +49,7 @@ class _LoginPageState extends State<LoginPage> {
           Navigator.pushReplacement(context, MaterialPageRoute(
             builder: (context) => SplashPage()
           ));
+          showFlutterToast('Login Berhasil');
         } else if (state is LoginFailedState) {
           Navigator.pop(context);
           AppAlertDialog(
@@ -79,6 +81,7 @@ class _LoginPageState extends State<LoginPage> {
               BoxInput(
                 controller: _emailInput,
                 label: 'E-mail',
+                keyboardType: TextInputType.emailAddress,
                 /*suffixWidget: Button(
                   onPressed: () {},
                   padding: 4,

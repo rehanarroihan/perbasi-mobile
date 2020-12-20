@@ -5,6 +5,7 @@ import 'package:perbasitlg/models/api_return.dart';
 import 'package:perbasitlg/models/login_model.dart';
 import 'package:perbasitlg/models/request/login_request.dart';
 import 'package:perbasitlg/models/request/register_request.dart';
+import 'package:perbasitlg/models/user_model.dart';
 import 'package:perbasitlg/services/auth_service.dart';
 import 'package:perbasitlg/utils/constant_helper.dart';
 
@@ -14,6 +15,7 @@ class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super(AuthInitial());
 
   AuthService _authService = AuthService();
+  UserModel loggedInUserData = UserModel();
 
   void registerUser(RegisterRequest data) async {
     emit(RegisterInitialState());
@@ -33,10 +35,26 @@ class AuthCubit extends Cubit<AuthState> {
     if (apiResult.success) {
       // NOTE : fill up prefs as session
       App().prefs.setBool(ConstantHelper.PREFS_IS_USER_LOGGED_IN, true);
+      App().prefs.setString(ConstantHelper.PREFS_TOKEN_KEY, apiResult.accessToken);
+      App().dio.options.headers = {
+        'Authorization': 'Bearer ${apiResult.accessToken}'
+      };
 
       emit(LoginSuccessfulState());
     } else {
       emit(LoginFailedState());
+    }
+  }
+
+  void getUserDetail() async {
+    emit(GetUserDataInitialState());
+
+    ApiReturn<UserModel> apiResult = await _authService.getUserDetail();
+    if (apiResult.success) {
+      this.loggedInUserData = apiResult.data;
+      emit(GetUserDataSuccessfulState());
+    } else {
+      emit(GetUserDataFailedState());
     }
   }
 }

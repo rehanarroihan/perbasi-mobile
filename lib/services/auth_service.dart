@@ -52,8 +52,8 @@ class AuthService {
 
   Future<ApiReturn<UserModel>> getUserDetail() async {
     try {
-      Response response = await _dio.post(
-        UrlConstantHelper.POST_AUTH_LOGIN,
+      Response response = await _dio.get(
+        UrlConstantHelper.GET_PROFILE,
       );
       if (response.statusCode == 200) {
         return ApiReturn(
