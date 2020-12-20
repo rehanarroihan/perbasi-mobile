@@ -93,12 +93,16 @@ class _RegisterPageState extends State<RegisterPage> {
           AppAlertDialog(
             title: 'Registrasi Berhasil',
             description: 'Silahkan login menggunakan email dan password yang telah anda buat',
+            positiveButtonText: 'Ok',
+            positiveButtonOnTap: () => Navigator.pop(context)
           ).show(context);
         } else if (state is RegisterFailedState) {
           Navigator.pop(context);
           AppAlertDialog(
             title: 'Registrasi Gagal',
             description: state.message,
+            positiveButtonText: 'Ok',
+            positiveButtonOnTap: () => Navigator.pop(context)
           ).show(context);
         }
       },

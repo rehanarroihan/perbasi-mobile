@@ -1,12 +1,17 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:perbasitlg/app.dart';
 import 'package:perbasitlg/cubit/auth/auth_cubit.dart';
+import 'package:perbasitlg/ui/pages/splash_page.dart';
 import 'package:perbasitlg/ui/widgets/base/box_input.dart';
 import 'package:perbasitlg/ui/widgets/base/button.dart';
 import 'package:perbasitlg/ui/widgets/base/space.dart';
+import 'package:perbasitlg/ui/widgets/modules/app_alert_dialog.dart';
 import 'package:perbasitlg/utils/app_color.dart';
 import 'package:perbasitlg/utils/constant_helper.dart';
 import 'package:perbasitlg/utils/global_method_helper.dart';
@@ -21,14 +26,26 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   AuthCubit _authCubit = AuthCubit();
+  
+  String _loggedInRole;
 
   TextEditingController _nikInput = TextEditingController();
   TextEditingController _nameInput = TextEditingController();
   TextEditingController _birthPlaceInput = TextEditingController();
   TextEditingController _birthDateInput = TextEditingController();
   TextEditingController _emailInput = TextEditingController();
-
   String _birthDateForServer = '';
+
+  // Player additional form
+  TextEditingController _positionInput = TextEditingController();
+  TextEditingController _teamInput = TextEditingController();
+  TextEditingController _kkInput = TextEditingController();
+  File _kk;
+
+  // Kuch additional form
+  TextEditingController _licenseNameInput = TextEditingController();
+  TextEditingController _licenseNumberInput = TextEditingController();
+  TextEditingController _licensePublisherInput = TextEditingController();
 
   GlobalKey<FormState> _formKey;
 
@@ -36,6 +53,8 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     _authCubit = BlocProvider.of<AuthCubit>(context);
 
+    _loggedInRole = _authCubit.loggedInUserData.role.name;
+    
     super.initState();
   }
 
@@ -82,7 +101,17 @@ class _ProfilePageState extends State<ProfilePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _profileHeader(),
-                  _profileForm()
+                  Form(
+                    key: _formKey,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    child: Column(
+                      children: [
+                        _profileForm(),
+                        _additionalFormBasedOnRole(),
+                      ],
+                    ),
+                  ),
+                  _callToActionButtons()
                 ],
               ),
             ),
@@ -91,10 +120,76 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
     );
   }
+
+  Widget _callToActionButtons() {
+    return Container(
+      padding: EdgeInsets.only(
+        top: ScreenUtil().setHeight(34),
+        bottom: ScreenUtil().setHeight(30),
+        left: ScreenUtil().setWidth(30),
+        right: ScreenUtil().setWidth(30),
+      ),
+      child: Column(
+        children: [
+          Container(
+            width: double.infinity,
+            child: Button(
+              onPressed: () {},
+              text: 'Simpan',
+              style: AppButtonStyle.secondary,
+              padding: 13,
+              fontSize: 16,
+            ),
+          ),
+          Space(height: 8),
+          Container(
+            width: double.infinity,
+            child: FlatButton(
+              padding: EdgeInsets.symmetric(
+                vertical: ScreenUtil().setHeight(13)
+              ),
+              onPressed: () {
+                AppAlertDialog(
+                  title: 'Logout',
+                  description: 'Apakah anda yakin ingin keluar dari aplikasi ?',
+                  negativeButtonText: 'Tidak',
+                  negativeButtonOnTap: () => Navigator.pop(context),
+                  positiveButtonText: 'Ya',
+                  positiveButtonOnTap: () {
+                    App().prefs.setBool(ConstantHelper.PREFS_IS_USER_LOGGED_IN, false);
+                    Navigator.pushReplacement(context, MaterialPageRoute(
+                      builder: (context) => SplashPage()
+                    ));
+                  },
+                ).show(context);
+              },
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(6)
+              ),
+              color: AppColor.lightOrange,
+              child: Text(
+                'Log Out',
+                style: TextStyle(
+                  color: AppColor.primaryColor,
+                  fontSize: ScreenUtil().setSp(16),
+                  fontWeight: FontWeight.w500
+                ),
+              ),
+            )
+          )
+        ],
+      ),
+    );
+  }
   
   Widget _profileForm() {
     return Container(
-      padding: EdgeInsets.all(30),
+      padding: EdgeInsets.fromLTRB(
+        ScreenUtil().setWidth(30),
+        ScreenUtil().setHeight(28),
+        ScreenUtil().setWidth(30),
+        0
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -186,39 +281,69 @@ class _ProfilePageState extends State<ProfilePage> {
               }
             },
           ),
-          Space(height: 34),
-          Container(
-            width: double.infinity,
-            child: Button(
-              onPressed: () {},
-              text: 'Simpan',
-              style: AppButtonStyle.secondary,
-              padding: 13,
-              fontSize: 16,
-            ),
-          ),
-          Space(height: 8),
-          Container(
-            width: double.infinity,
-            child: FlatButton(
-              padding: EdgeInsets.symmetric(vertical: ScreenUtil().setHeight(13)),
-              onPressed: () {},
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(6)
-              ),
-              color: AppColor.lightOrange,
-              child: Text(
-                'Log Out',
-                style: TextStyle(
-                  color: AppColor.primaryColor,
-                  fontSize: ScreenUtil().setSp(16),
-                  fontWeight: FontWeight.w500
-                ),
-              ),
-            )
-          )
         ],
       ),
+    );
+  }
+
+  Widget _additionalFormBasedOnRole() {
+    return Container(
+      padding: EdgeInsets.fromLTRB(
+        ScreenUtil().setWidth(30),
+        ScreenUtil().setHeight(40),
+        ScreenUtil().setWidth(30),
+        0
+      ),
+      child: _loggedInRole == ConstantHelper.ROLE_PEMAIN ?
+      Column(
+        children: [
+          BoxInput(
+            controller: _positionInput,
+            label: 'Posisi',
+          ),
+          Space(height: 40),
+          BoxInput(
+            controller: _teamInput,
+            label: 'Team',
+            readOnly: true,
+            suffixWidget: Container(
+              width: ScreenUtil().setWidth(72),
+              child: Button(
+                onPressed: () {},
+                fontSize: 10,
+                text: 'Lihat Team',
+                style: AppButtonStyle.primary,
+                fontWeight: FontWeight.w300,
+              ),
+            ),
+          ),
+          Space(height: 40),
+          _kkUploadForm()
+        ],
+      ) :
+      _loggedInRole == ConstantHelper.ROLE_PELATIH
+      || _loggedInRole == ConstantHelper.ROLE_WASIT ?
+      Column(
+        children: [
+          BoxInput(
+            controller: _licenseNameInput,
+            label: 'Nama Lisensi',
+          ),
+          Space(height: 40),
+          BoxInput(
+            controller: _licenseNumberInput,
+            label: 'Nomer Lisensi',
+          ),
+          Space(height: 40),
+          BoxInput(
+            controller: _licensePublisherInput,
+            label: 'Penerbit Lisensi',
+          ),
+          Space(height: 40),
+          _kkUploadForm()
+        ],
+      ) :
+      Container(),
     );
   }
 
@@ -268,24 +393,60 @@ class _ProfilePageState extends State<ProfilePage> {
                   : _authCubit.loggedInUserData.role.name,
                   style: TextStyle(
                     fontWeight: FontWeight.w300,
-                    fontSize: ScreenUtil().setSp(13)
+                    fontSize: ScreenUtil().setSp(13),
+                    color: _authCubit.loggedInUserData.role.name == ConstantHelper.ROLE_PEMAIN
+                        ? _authCubit.loggedInUserData.verified ? Colors.green : Colors.red
+                        : Colors.red,
                   ),
                 ),
               ],
             ),
           ),
           Expanded(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SvgPicture.asset('assets/icons/qrcode.svg'),
-                Space(height: 4),
-                Text('QR Code')
-              ],
+            child: GestureDetector(
+              onTap: () {},
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SvgPicture.asset('assets/icons/qrcode.svg'),
+                  Space(height: 4),
+                  Text('QR Code')
+                ],
+              ),
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _kkUploadForm() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        BoxInput(
+          controller: _kkInput,
+          label: 'Upload KK',
+          readOnly: true,
+          suffixWidget: Container(
+            width: ScreenUtil().setWidth(72),
+            child: Button(
+              onPressed: () {},
+              fontSize: 10,
+              text: 'Pilih File',
+              style: AppButtonStyle.primary,
+              fontWeight: FontWeight.w300,
+            ),
+          ),
+        ),
+        Space(height: 4),
+        Text(
+          '*Upload file (PNG, JPG, JPEG) max. 5 MB',
+          style: TextStyle(
+            fontSize: 12
+          ),
+        )
+      ],
     );
   }
 }

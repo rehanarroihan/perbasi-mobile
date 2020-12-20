@@ -15,6 +15,7 @@ class UserModel {
   String licenceFrom;
   String licenceActiveDate;
   String foto;
+  String kk;
 
   UserModel(
       {this.id,
@@ -32,7 +33,8 @@ class UserModel {
         this.licenceNumber,
         this.licenceFrom,
         this.licenceActiveDate,
-        this.foto});
+        this.foto,
+        this.kk});
 
   UserModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -51,6 +53,7 @@ class UserModel {
     licenceFrom = json['licence_from'];
     licenceActiveDate = json['licence_active_date'];
     foto = json['foto'];
+    kk = json['kk'];
   }
 
   Map<String, dynamic> toJson() {
@@ -73,6 +76,7 @@ class UserModel {
     data['licence_from'] = this.licenceFrom;
     data['licence_active_date'] = this.licenceActiveDate;
     data['foto'] = this.foto;
+    data['kk'] = this.kk;
     return data;
   }
 }

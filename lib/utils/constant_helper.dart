@@ -2,7 +2,7 @@ class ConstantHelper {
   static const String MAIN_FONT_NAME = 'Poppins';
 
   static const String ROLE_PELATIH = 'Pelatih';
-  static const String ROLE_PEMAIN = 'Pemail';
+  static const String ROLE_PEMAIN = 'Pemain';
   static const String ROLE_WASIT = 'Wasit';
 
   static const String PREFS_TOKEN_KEY = 'PREFS_TOKEN_KEY';

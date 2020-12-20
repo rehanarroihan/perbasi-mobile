@@ -1,13 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:perbasitlg/ui/widgets/base/button.dart';
 
 class AppAlertDialog {
   final String title;
   final String description;
 
+  final String positiveButtonText;
+  final Function positiveButtonOnTap;
+
+  final String negativeButtonText;
+  final Function negativeButtonOnTap;
+
   AppAlertDialog({
     @required this.title,
     @required this.description,
+    this.positiveButtonText,
+    this.positiveButtonOnTap,
+    this.negativeButtonText,
+    this.negativeButtonOnTap
   });
 
   void show(BuildContext context) {
@@ -17,17 +26,20 @@ class AppAlertDialog {
         return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10)
-          ), //this right here
+          ),
           title: Text(title),
           content: Text(description),
           actions: <Widget>[
-            // usually buttons at the bottom of the dialog
-            new FlatButton(
-              child: Text("Oke"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
+            negativeButtonText != null && negativeButtonOnTap != null ?
+            FlatButton(
+              child: Text(negativeButtonText),
+              onPressed: () => negativeButtonOnTap(),
+            ) : Container(),
+            positiveButtonText != null && positiveButtonOnTap != null ?
+            FlatButton(
+              child: Text(positiveButtonText),
+              onPressed: () => positiveButtonOnTap(),
+            ) : Container(),
           ],
         );
       }

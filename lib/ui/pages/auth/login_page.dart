@@ -55,6 +55,8 @@ class _LoginPageState extends State<LoginPage> {
           AppAlertDialog(
             title: 'Login Gagal',
             description: 'Email atau password yang anda masukkan salah',
+            positiveButtonText: 'Ok',
+            positiveButtonOnTap: () => Navigator.pop(context)
           ).show(context);
         }
       },
@@ -82,14 +84,6 @@ class _LoginPageState extends State<LoginPage> {
                 controller: _emailInput,
                 label: 'E-mail',
                 keyboardType: TextInputType.emailAddress,
-                /*suffixWidget: Button(
-                  onPressed: () {},
-                  padding: 4,
-                  fontSize: 12,
-                  text: 'asu',
-                  style: AppButtonStyle.primary,
-                  fontWeight: FontWeight.w300,
-                ),*/
               ),
 
               Space(height: 24),
