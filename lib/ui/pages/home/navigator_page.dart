@@ -10,9 +10,9 @@ class NavigatorPage extends StatefulWidget {
 class _NavigatorPageState extends State<NavigatorPage> {
   List<Widget> _pages = [
     HomePage(),
-    ProfilePage(),
-    ProfilePage(),
-    ProfilePage(),
+    Container(),
+    Container(),
+    Container(),
     ProfilePage(),
   ];
 
