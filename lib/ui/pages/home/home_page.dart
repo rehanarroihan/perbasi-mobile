@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:perbasitlg/cubit/home/home_cubit.dart';
 import 'package:perbasitlg/ui/widgets/base/reactive_refresh_indicator.dart';
 import 'package:perbasitlg/ui/widgets/base/space.dart';
 import 'package:perbasitlg/utils/app_color.dart';
@@ -11,68 +13,90 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  HomeCubit _homeCubit;
+
+  @override
+  void initState() {
+    _homeCubit = BlocProvider.of<HomeCubit>(context);
+
+    if (_homeCubit.newsList.isEmpty || _homeCubit.competitions.isEmpty) {
+      _homeCubit.getHomePageData();
+    }
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        iconTheme: IconThemeData(
-          color: Colors.black
-        ),
-        title: Text(
-          'Perbasi',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: ScreenUtil().setSp(14)
-          ),
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.notifications),
-            onPressed: () {}
-          )
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: ReactiveRefreshIndicator(
-          isRefreshing: false,
-          onRefresh: () {},
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _mainThumbnail(),
-              Space(height: 24),
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: ScreenUtil().setWidth(16)
-                ),
-                child: _horizontalTitleActionText(
-                  title: 'Kompetisi',
-                  actionText: 'Lihat Semua',
-                  actionOnClick: () {}
+    return BlocListener(
+      cubit: _homeCubit,
+      listener: (context, state) {},
+      child: BlocBuilder(
+        cubit: _homeCubit,
+        builder: (context, state) {
+          return Scaffold(
+            appBar: AppBar(
+              backgroundColor: Colors.white,
+              iconTheme: IconThemeData(
+                color: Colors.black
+              ),
+              title: Text(
+                'Perbasi',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: ScreenUtil().setSp(14)
                 ),
               ),
-              Space(height: 16),
-              _competitionList(),
+              actions: [
+                IconButton(
+                  icon: Icon(Icons.notifications),
+                  onPressed: () {}
+                )
+              ],
+            ),
+            body: ReactiveRefreshIndicator(
+              isRefreshing: _homeCubit.homePageLoading,
+              onRefresh: () => _homeCubit.getHomePageData(),
+              child: _homeCubit.homePageLoading ? Container() : SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _mainThumbnail(),
+                    Space(height: 24),
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: ScreenUtil().setWidth(16)
+                      ),
+                      child: _horizontalTitleActionText(
+                        title: 'Kompetisi',
+                        actionText: 'Lihat Semua',
+                        actionOnClick: () {}
+                      ),
+                    ),
+                    Space(height: 16),
+                    _competitionList(),
 
-              Space(height: 24),
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: ScreenUtil().setWidth(14)
-                ),
-                child: _horizontalTitleActionText(
-                  title: 'Berita',
-                  actionText: 'Lihat Semua',
-                  actionOnClick: () {}
+                    Space(height: 24),
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: ScreenUtil().setWidth(14)
+                      ),
+                      child: _horizontalTitleActionText(
+                        title: 'Berita',
+                        actionText: 'Lihat Semua',
+                        actionOnClick: () {}
+                      ),
+                    ),
+                    Space(height: 16),
+                    _competitionList(),
+
+                    Space(height: 24),
+                  ],
                 ),
               ),
-              Space(height: 16),
-              _competitionList(),
-
-              Space(height: 24),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -113,7 +137,7 @@ class _HomePageState extends State<HomePage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        'Women Basket Competition',
+                        _homeCubit.highlightCompetition.foto,
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w600,
