@@ -1,12 +1,15 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:perbasitlg/cubit/home/home_cubit.dart';
 import 'package:perbasitlg/models/competition_model.dart';
+import 'package:perbasitlg/models/news_model.dart';
 import 'package:perbasitlg/ui/widgets/base/reactive_refresh_indicator.dart';
 import 'package:perbasitlg/ui/widgets/base/space.dart';
 import 'package:perbasitlg/utils/app_color.dart';
+import 'package:perbasitlg/utils/global_method_helper.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -15,6 +18,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   HomeCubit _homeCubit;
+
+  Html _html = Html(data: '<div>dfdf</div>');
 
   @override
   void initState() {
@@ -89,7 +94,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     Space(height: 16),
-                    _competitionList(),
+                    _newsList(),
 
                     Space(height: 24),
                   ],
@@ -115,7 +120,7 @@ class _HomePageState extends State<HomePage> {
               Container(
                 width: double.infinity,
                 child: CachedNetworkImage(
-                  imageUrl: 'https://scontent-cgk1-1.cdninstagram.com/v/t51.2885-15/sh0.08/e35/c0.51.853.853a/s640x640/116793383_155683982795561_3501380845844702714_n.jpg?_nc_ht=scontent-cgk1-1.cdninstagram.com&_nc_cat=105&_nc_ohc=7SgjB_YhcrEAX9PWljX&tp=1&oh=77a60b198456376c48802cbef0023005&oe=6007A236',
+                  imageUrl: _homeCubit.highlightCompetition.foto.replaceAll('https:///', 'https://'),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -145,16 +150,9 @@ class _HomePageState extends State<HomePage> {
                           fontSize: 18
                         ),
                         overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
+                        textAlign: TextAlign.center,
                       ),
-                      Text(
-                        _homeCubit.highlightCompetition.description,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w400,
-                          fontSize: 16
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      )
                     ],
                   ),
                 ),
@@ -168,7 +166,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget _competitionList() {
     return Container(
-      height: ScreenUtil().setHeight(190),
+      height: ScreenUtil().setHeight(204),
       child: ListView.builder(
         shrinkWrap: true,
         itemCount: _homeCubit.competitions.length,
@@ -176,39 +174,35 @@ class _HomePageState extends State<HomePage> {
         scrollDirection: Axis.horizontal,
         itemBuilder: (context, index) {
           CompetitionModel item = _homeCubit.competitions[index];
+          return _dataThumbnail(
+            imageUrl: item.foto.replaceAll('https:///', 'https://'),
+            title: item.name,
+            desc: GlobalMethodHelper.parseHtmlString(item.description)
+          );
+        },
+      ),
+    );
+  }
 
-          return Container(
-            width: ScreenUtil().setWidth(230),
-            margin: EdgeInsets.only(right: ScreenUtil().setWidth(22)),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Container(
-                    width: double.infinity,
-                    height: ScreenUtil().setHeight(126),
-                    child: CachedNetworkImage(
-                      imageUrl: item.foto,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                Space(height: 8),
-                Expanded(
-                  child: Text(
-                    item.name,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                Flexible(
-                  child: Text(
-                    item.description,
-                    overflow: TextOverflow.fade,
-                  ),
-                )
-              ],
-            ),
+  Widget _newsList() {
+    return Container(
+      height: ScreenUtil().setHeight(204),
+      child: ListView.builder(
+        shrinkWrap: true,
+        itemCount: _homeCubit.newsList.length,
+        padding: EdgeInsets.only(left: ScreenUtil().setWidth(16)),
+        scrollDirection: Axis.horizontal,
+        itemBuilder: (context, index) {
+          NewsModel item = _homeCubit.newsList[index];
+          String imageUrl = '';
+          if (item.foto.length > 0) {
+            imageUrl = 'https://perbasitulungagung.com/adm/' + item.foto[0];
+          }
+
+          return _dataThumbnail(
+            imageUrl: imageUrl,
+            title: item.title,
+            desc: GlobalMethodHelper.parseHtmlString(item.description)
           );
         },
       ),
@@ -240,6 +234,47 @@ class _HomePageState extends State<HomePage> {
           ),
         )
       ],
+    );
+  }
+
+  Widget _dataThumbnail({String imageUrl, String title, String desc}) {
+    return Container(
+      width: ScreenUtil().setWidth(230),
+      margin: EdgeInsets.only(right: ScreenUtil().setWidth(22)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Container(
+              width: double.infinity,
+              height: ScreenUtil().setHeight(126),
+              child: CachedNetworkImage(
+                imageUrl: imageUrl,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          Space(height: 8),
+          Flexible(
+            child: Text(
+              title,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 15
+              ),
+            ),
+          ),
+          Flexible(
+            child: Text(
+              desc,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+            ),
+          )
+        ],
+      ),
     );
   }
 }

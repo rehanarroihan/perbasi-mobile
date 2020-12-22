@@ -1,3 +1,5 @@
+import 'package:html/parser.dart';
+
 class GlobalMethodHelper {
   static bool isEmpty(text){
     if(text == "" || text == null || text == "null"){
@@ -22,5 +24,12 @@ class GlobalMethodHelper {
       return defaultValue;
     }
     return int.parse(double.parse(text).toStringAsFixed(0)).toString();
+  }
+
+  static String parseHtmlString(String htmlString) {
+    final document = parse(htmlString);
+    final String parsedString = parse(document.body.text).documentElement.text;
+
+    return parsedString;
   }
 }

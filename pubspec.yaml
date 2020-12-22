@@ -25,6 +25,7 @@ dependencies:
       url: git://github.com/jasonlewicki/flutter_stetho.git
       ref: master
   flutter_screenutil: ^3.1.0
+  flutter_html: ^1.1.1
 
 dev_dependencies:
   flutter_test:
