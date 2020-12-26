@@ -193,8 +193,10 @@ class _RegisterPageState extends State<RegisterPage> {
                           },
                         ),
                         Space(height: 40),
-                        GestureDetector(
-                          onTap: () async {
+                        BoxInput(
+                          controller: _birthDateInput,
+                          label: 'Tanggal Lahir',
+                          onClick: () async {
                             final DateTime pickedDate = await showDatePicker(
                               context: context,
                               initialDate: DateTime.now(),
@@ -221,16 +223,11 @@ class _RegisterPageState extends State<RegisterPage> {
                               return;
                             }
                           },
-                          child: BoxInput(
-                            controller: _birthDateInput,
-                            readOnly: true,
-                            label: 'Tanggal Lahir',
-                            validator: (String val) {
-                              if (GlobalMethodHelper.isEmpty(val.length)) {
-                                return 'tanggal lahir harus valid';
-                              }
-                            },
-                          ),
+                          validator: (String val) {
+                            if (GlobalMethodHelper.isEmpty(val)) {
+                              return 'tanggal lahir harus valid';
+                            }
+                          },
                         ),
                         Space(height: 40),
                         BoxInput(

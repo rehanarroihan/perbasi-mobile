@@ -62,76 +62,78 @@ class _LoginPageState extends State<LoginPage> {
       },
       child: Scaffold(
         backgroundColor: AppColor.pageBackgroundColor,
-        resizeToAvoidBottomInset: false,
-        body: Container(
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(24)),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _greetings(),
-              Space(height: 34),
-              Text(
-                'Masuk',
-                style: TextStyle(
-                  fontSize: ScreenUtil().setSp(16),
-                  fontWeight: FontWeight.w700
-                ),
-              ),
-              BoxInput(
-                controller: _emailInput,
-                label: 'E-mail',
-                keyboardType: TextInputType.emailAddress,
-              ),
-
-              Space(height: 24),
-              BoxInput(
-                controller: _passwordInput,
-                label: 'Password',
-                passwordField: true,
-              ),
-              Space(height: 34),
-              Container(
-                width: double.infinity,
-                child: Button(
-                  onPressed: () {
-                    if (!GlobalMethodHelper.isEmpty(_emailInput.text)
-                        && !GlobalMethodHelper.isEmpty(_passwordInput.text)) {
-                      _authCubit.loginUser(LoginRequest(
-                        email: _emailInput.text,
-                        password: _passwordInput.text
-                      ));
-                    }
-                  },
-                  text: 'masuk',
-                  style: AppButtonStyle.secondary,
-                ),
-              ),
-              Space(height: 29),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Belum memiliki akun?'
+        body: SingleChildScrollView(
+          child: Container(
+            alignment: Alignment.center,
+            height: MediaQuery.of(context).size.height,
+            padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(24)),
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _greetings(),
+                Space(height: 34),
+                Text(
+                  'Masuk',
+                  style: TextStyle(
+                    fontSize: ScreenUtil().setSp(16),
+                    fontWeight: FontWeight.w700
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(context, MaterialPageRoute(
-                        builder: (context) => RegisterPage()
-                      ));
+                ),
+                BoxInput(
+                  controller: _emailInput,
+                  label: 'E-mail',
+                  keyboardType: TextInputType.emailAddress,
+                ),
+
+                Space(height: 24),
+                BoxInput(
+                  controller: _passwordInput,
+                  label: 'Password',
+                  passwordField: true,
+                ),
+                Space(height: 34),
+                Container(
+                  width: double.infinity,
+                  child: Button(
+                    onPressed: () {
+                      if (!GlobalMethodHelper.isEmpty(_emailInput.text)
+                          && !GlobalMethodHelper.isEmpty(_passwordInput.text)) {
+                        _authCubit.loginUser(LoginRequest(
+                          email: _emailInput.text,
+                          password: _passwordInput.text
+                        ));
+                      }
                     },
-                    child: Text(
-                      ' Daftar',
-                      style: TextStyle(
-                        color: Colors.deepOrange
+                    text: 'masuk',
+                    style: AppButtonStyle.secondary,
+                  ),
+                ),
+                Space(height: 29),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Belum memiliki akun?'
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(
+                          builder: (context) => RegisterPage()
+                        ));
+                      },
+                      child: Text(
+                        ' Daftar',
+                        style: TextStyle(
+                          color: Colors.deepOrange
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              )
-            ],
+                  ],
+                )
+              ],
+            ),
           ),
         ),
       ),

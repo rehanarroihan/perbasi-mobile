@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:perbasitlg/ui/widgets/base/space.dart';
 import 'package:perbasitlg/utils/global_method_helper.dart';
 
@@ -6,17 +7,17 @@ class BoxInput extends StatefulWidget {
   final TextEditingController controller;
   final String label;
   final bool passwordField;
-  final bool readOnly;
   final TextInputType keyboardType;
   final Widget suffixWidget;
+  final Function onClick;
   final ValueChanged<String> validator;
   final TextCapitalization textCapitalization;
 
   BoxInput({
     @required this.controller,
     @required this.label,
-    this.readOnly = false,
     this.passwordField = false,
+    this.onClick,
     this.keyboardType = TextInputType.text,
     this.suffixWidget,
     this.validator,
@@ -32,12 +33,31 @@ class _BoxInputState extends State<BoxInput> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.onClick != null) {
+      return Stack(
+        children: [
+          _buildTextFormField(context),
+          Container(
+            height: ScreenUtil().setHeight(55),
+            width: double.infinity,
+            child: GestureDetector(
+              onTap: widget.onClick,
+            ),
+          )
+        ],
+      );
+    } else {
+      return _buildTextFormField(context);
+    }
+  }
+
+  Widget _buildTextFormField(BuildContext context) {
     if (widget.passwordField) {
       return TextFormField(
         controller: widget.controller,
         keyboardType: widget.keyboardType,
         obscureText: _obscurePasswordText,
-        readOnly: widget.readOnly,
+        readOnly: widget.onClick != null,
         validator: widget.validator ?? (String args) => null,
         textCapitalization: widget.textCapitalization ?? TextCapitalization.none,
         decoration: InputDecoration(
@@ -55,14 +75,12 @@ class _BoxInputState extends State<BoxInput> {
           )
         ),
       );
-    }
-
-    if (!widget.passwordField) {
+    } else {
       return TextFormField(
         controller: widget.controller,
         keyboardType: widget.keyboardType,
         textCapitalization: widget.textCapitalization ?? TextCapitalization.none,
-        readOnly: widget.readOnly,
+        readOnly: widget.onClick != null,
         validator: widget.validator ?? (String args) => null,
         decoration: InputDecoration(
           labelText: widget.label,
@@ -72,7 +90,5 @@ class _BoxInputState extends State<BoxInput> {
         ),
       );
     }
-
-    return Container();
   }
 }

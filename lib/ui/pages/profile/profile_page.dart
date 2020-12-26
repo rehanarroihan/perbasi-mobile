@@ -225,8 +225,15 @@ class _ProfilePageState extends State<ProfilePage> {
             },
           ),
           Space(height: 40),
-          GestureDetector(
-            onTap: () async {
+          BoxInput(
+            controller: _birthDateInput,
+            label: 'Tanggal Lahir',
+            validator: (String val) {
+              if (GlobalMethodHelper.isEmpty(val)) {
+                return 'tanggal lahir harus valid';
+              }
+            },
+            onClick: () async {
               final DateTime pickedDate = await showDatePicker(
                 context: context,
                 initialDate: DateTime.now(),
@@ -253,16 +260,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 return;
               }
             },
-            child: BoxInput(
-              controller: _birthDateInput,
-              readOnly: true,
-              label: 'Tanggal Lahir',
-              validator: (String val) {
-                if (GlobalMethodHelper.isEmpty(val.length)) {
-                  return 'tanggal lahir harus valid';
-                }
-              },
-            ),
           ),
           Space(height: 40),
           BoxInput(
@@ -305,7 +302,7 @@ class _ProfilePageState extends State<ProfilePage> {
           BoxInput(
             controller: _teamInput,
             label: 'Team',
-            readOnly: true,
+            onClick: () {},
             suffixWidget: Container(
               width: ScreenUtil().setWidth(72),
               child: Button(
@@ -427,7 +424,7 @@ class _ProfilePageState extends State<ProfilePage> {
         BoxInput(
           controller: _kkInput,
           label: 'Upload KK',
-          readOnly: true,
+          onClick: () {},
           suffixWidget: Container(
             width: ScreenUtil().setWidth(72),
             child: Button(
