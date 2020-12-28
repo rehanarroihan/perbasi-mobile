@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:perbasitlg/cubit/home/home_cubit.dart';
 import 'package:perbasitlg/models/competition_model.dart';
 import 'package:perbasitlg/models/news_model.dart';
+import 'package:perbasitlg/ui/pages/competition/competition_list_page.dart';
 import 'package:perbasitlg/ui/widgets/base/reactive_refresh_indicator.dart';
 import 'package:perbasitlg/ui/widgets/base/space.dart';
 import 'package:perbasitlg/utils/app_color.dart';
@@ -74,7 +75,11 @@ class _HomePageState extends State<HomePage> {
                       child: _horizontalTitleActionText(
                         title: 'Kompetisi',
                         actionText: 'Lihat Semua',
-                        actionOnClick: () {}
+                        actionOnClick: () {
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) => CompetitionListPage()
+                          ));
+                        }
                       ),
                     ),
                     Space(height: 16),
