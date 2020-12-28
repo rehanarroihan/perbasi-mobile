@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:perbasitlg/cubit/home/home_cubit.dart';
 import 'package:perbasitlg/models/competition_model.dart';
+import 'package:perbasitlg/ui/pages/competition/competition_detail_page.dart';
 import 'package:perbasitlg/ui/widgets/base/reactive_refresh_indicator.dart';
 import 'package:perbasitlg/ui/widgets/modules/feed_item.dart';
 import 'package:perbasitlg/utils/global_method_helper.dart';
@@ -64,10 +65,19 @@ class _CompetitionListPageState extends State<CompetitionListPage> {
                   itemBuilder: (context, index) {
                     CompetitionModel item = _homeCubit.competitions[index];
 
-                    return FeedItem(
-                      imageUrl: item.foto.replaceAll('https:///', 'https://'),
-                      title: item.name,
-                      desc: GlobalMethodHelper.parseHtmlString(item.description)
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(
+                          builder: (context) => CompetitionDetailPage(
+                            competitionDetail: item,
+                          )
+                        ));
+                      },
+                      child: FeedItem(
+                        imageUrl: item.foto.replaceAll('https:///', 'https://'),
+                        title: item.name,
+                        desc: GlobalMethodHelper.parseHtmlString(item.description)
+                      ),
                     );
                   }
                 ),

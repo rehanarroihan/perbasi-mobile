@@ -6,7 +6,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:perbasitlg/cubit/home/home_cubit.dart';
 import 'package:perbasitlg/models/competition_model.dart';
 import 'package:perbasitlg/models/news_model.dart';
+import 'package:perbasitlg/ui/pages/competition/competition_detail_page.dart';
 import 'package:perbasitlg/ui/pages/competition/competition_list_page.dart';
+import 'package:perbasitlg/ui/pages/news/news_detail_page.dart';
 import 'package:perbasitlg/ui/pages/news/news_list_page.dart';
 import 'package:perbasitlg/ui/widgets/base/reactive_refresh_indicator.dart';
 import 'package:perbasitlg/ui/widgets/base/space.dart';
@@ -182,10 +184,19 @@ class _HomePageState extends State<HomePage> {
         scrollDirection: Axis.horizontal,
         itemBuilder: (context, index) {
           CompetitionModel item = _homeCubit.competitions[index];
-          return _dataThumbnail(
-            imageUrl: item.foto.replaceAll('https:///', 'https://'),
-            title: item.name,
-            desc: GlobalMethodHelper.parseHtmlString(item.description)
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(
+                builder: (context) => CompetitionDetailPage(
+                  competitionDetail: item,
+                )
+              ));
+            },
+            child: _dataThumbnail(
+              imageUrl: item.foto.replaceAll('https:///', 'https://'),
+              title: item.name,
+              desc: GlobalMethodHelper.parseHtmlString(item.description)
+            ),
           );
         },
       ),
@@ -207,10 +218,19 @@ class _HomePageState extends State<HomePage> {
             imageUrl = 'https://perbasitulungagung.com/adm/' + item.foto[0];
           }
 
-          return _dataThumbnail(
-            imageUrl: imageUrl,
-            title: item.title,
-            desc: GlobalMethodHelper.parseHtmlString(item.description)
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(
+                builder: (context) => NewsDetailPage(
+                  newsDetail: item,
+                )
+              ));
+            },
+            child: _dataThumbnail(
+              imageUrl: imageUrl,
+              title: item.title,
+              desc: GlobalMethodHelper.parseHtmlString(item.description)
+            ),
           );
         },
       ),
