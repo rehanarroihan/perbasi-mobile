@@ -15,6 +15,7 @@ class UserModel {
   String licenceNumber;
   String licenceFrom;
   String licenceActiveDate;
+  String licenseFile;
   String foto;
   String kk;
 
@@ -35,6 +36,7 @@ class UserModel {
         this.licenceNumber,
         this.licenceFrom,
         this.licenceActiveDate,
+        this.licenseFile,
         this.foto,
         this.kk});
 
@@ -55,6 +57,7 @@ class UserModel {
     licenceNumber = json['licence_number'];
     licenceFrom = json['licence_from'];
     licenceActiveDate = json['licence_active_date'];
+    licenseFile = json['licence_file'];
     foto = json['foto'];
     kk = json['kk'];
   }
@@ -81,6 +84,7 @@ class UserModel {
     data['licence_number'] = this.licenceNumber;
     data['licence_from'] = this.licenceFrom;
     data['licence_active_date'] = this.licenceActiveDate;
+    data['licence_file'] = this.licenseFile;
     data['foto'] = this.foto;
     data['kk'] = this.kk;
     return data;

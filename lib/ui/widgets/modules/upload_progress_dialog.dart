@@ -20,7 +20,7 @@ class _UploadProgressDialogState extends State<UploadProgressDialog> {
       cubit: widget.profileCubit,
       builder: (context, state) {
         return WillPopScope(
-          onWillPop: () async => false,
+          onWillPop: () async => true,
           child: Dialog(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10)

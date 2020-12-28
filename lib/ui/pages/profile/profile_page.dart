@@ -10,6 +10,7 @@ import 'package:network_to_file_image/network_to_file_image.dart';
 import 'package:perbasitlg/app.dart';
 import 'package:perbasitlg/cubit/auth/auth_cubit.dart';
 import 'package:perbasitlg/cubit/profile/profile_cubit.dart';
+import 'package:perbasitlg/models/request/profile_coach_request.dart';
 import 'package:perbasitlg/models/request/profile_player_request.dart';
 import 'package:perbasitlg/ui/pages/splash_page.dart';
 import 'package:perbasitlg/ui/widgets/base/box_input.dart';
@@ -48,6 +49,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   bool _isProfilePictPreview = false;
   bool _isKKPictPreview = false;
+  bool _isLicensePictPreview = false;
 
   // Player additional form
   TextEditingController _positionInput = TextEditingController();
@@ -59,6 +61,10 @@ class _ProfilePageState extends State<ProfilePage> {
   TextEditingController _licenseNameInput = TextEditingController();
   TextEditingController _licenseNumberInput = TextEditingController();
   TextEditingController _licensePublisherInput = TextEditingController();
+  TextEditingController _licenseDateInput = TextEditingController();
+  TextEditingController _licensePhotoInput = TextEditingController();
+  File _licensePhoto;
+  String _licenseDateForServer = '';
 
   GlobalKey<FormState> _formKey;
 
@@ -97,14 +103,34 @@ class _ProfilePageState extends State<ProfilePage> {
         birthPlace: _birthPlaceInput.text.trim(),
         birthDate: _birthDateForServer,
         email: _emailInput.text.trim(),
-        positionId: _authCubit.loggedInUserData.positionId.id.toString(),
-        kk: _kk,
         address: _addressInput.text.trim(),
         phone: _phoneInput.text.trim(),
-        foto: _profilePict
+        foto: _profilePict,
+        positionId: _authCubit.loggedInUserData.positionId.id.toString(),
+        kk: _kk,
       );
 
       _profileCubit.updateProfilePlayer(requestData);
+    }
+
+    if (_loggedInRole == ConstantHelper.ROLE_PELATIH) {
+      ProfileCoachRequest requestData = ProfileCoachRequest(
+        nik: _nikInput.text.trim(),
+        name: _nameInput.text.trim(),
+        birthPlace: _birthPlaceInput.text.trim(),
+        birthDate: _birthDateForServer,
+        email: _emailInput.text.trim(),
+        address: _addressInput.text.trim(),
+        phone: _phoneInput.text.trim(),
+        foto: _profilePict,
+        licence: _licenseNameInput.text.trim(),
+        licenceNumber: _licenseNumberInput.text.trim(),
+        licenceFrom: _licenseNumberInput.text.trim(),
+        licenceFile: _licensePhoto,
+        licenceActiveDate: _licenseDateForServer
+      );
+
+      _profileCubit.updateProfileCoach(requestData);
     }
   }
 
@@ -153,9 +179,13 @@ class _ProfilePageState extends State<ProfilePage> {
           _emailInput.text = _authCubit.loggedInUserData.email;
           _addressInput.text = _authCubit.loggedInUserData.address;
           _phoneInput.text = _authCubit.loggedInUserData.phone;
-          _positionInput.text = _authCubit.loggedInUserData.positionId.name;
-          if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.nik)) {
+          _positionInput.text = _authCubit.loggedInUserData.positionId?.name ?? '';
+          if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.kk)) {
             _kkInput.text = 'KK sudah di upload';
+          }
+
+          if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.licenseFile)) {
+            _kkInput.text = 'Foto lisensi sudah di upload';
           }
 
           return Scaffold(
@@ -449,19 +479,125 @@ class _ProfilePageState extends State<ProfilePage> {
           BoxInput(
             controller: _licenseNameInput,
             label: 'Nama Lisensi',
+            validator: (String val) {
+              if (GlobalMethodHelper.isEmpty(val)) {
+                return 'nama lisensi harus di isi';
+              }
+            },
           ),
           Space(height: 40),
           BoxInput(
             controller: _licenseNumberInput,
             label: 'Nomer Lisensi',
+            validator: (String val) {
+              if (GlobalMethodHelper.isEmpty(val)) {
+                return 'nomor lisensi harus di isi';
+              }
+            },
           ),
           Space(height: 40),
           BoxInput(
             controller: _licensePublisherInput,
             label: 'Penerbit Lisensi',
+            validator: (String val) {
+              if (GlobalMethodHelper.isEmpty(val)) {
+                return 'penerbit lisensi harus di isi';
+              }
+            },
           ),
           Space(height: 40),
-          _kkUploadForm()
+          BoxInput(
+            controller: _licenseDateInput,
+            label: 'Tanggal Lisensi',
+            validator: (String val) {
+              if (GlobalMethodHelper.isEmpty(val)) {
+                return 'tanggal lisensi harus valid';
+              }
+            },
+            onClick: () async {
+              final DateTime pickedDate = await showDatePicker(
+                context: context,
+                initialDate: DateTime.now(),
+                firstDate: DateTime(1900),
+                lastDate: DateTime(DateTime.now().year, 12, 31),
+              );
+              if (pickedDate != null) {
+                final DateTime fullResult = DateTime(
+                  pickedDate.year,
+                  pickedDate.month,
+                  pickedDate.day,
+                  pickedDate.hour,
+                  pickedDate.minute,
+                );
+
+                // formatting datetime for request data needs
+                _licenseDateForServer = DateFormat('yyyy-MM-dd').format(fullResult);
+
+                // formatting datetime to show to the screen
+                _licenseDateInput.text = DateFormat('dd MMMM yyyy').format(fullResult);
+
+                setState(() {});
+              } else {
+                return;
+              }
+            },
+          ),
+          Space(height: 40),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              BoxInput(
+                controller: _licensePhotoInput,
+                label: 'Foto Lisensi',
+                onClick: () async {
+                  String filePath = await getImagePathFromGallery();
+                  if (!GlobalMethodHelper.isEmpty(filePath)) {
+                    _licensePhoto = File(filePath);
+
+                    if (_licensePhoto.lengthSync() > 5120000) {
+                      showFlutterToast('Maximum photo size is 5 MB');
+                      return;
+                    }
+
+                    _licensePhotoInput.text = 'File sudah dipilih';
+
+                    showFlutterToast('Tekan tombol simpan untuk menyimpan foto lisensi yang telah dipilih');
+                  }
+                },
+                validator: (String args) {
+                  if (_licensePhoto == null) {
+                    return 'foto lisensi harus di pilih';
+                  }
+                },
+                suffixWidget: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildLicensePhoto(),
+                    Space(width: 8),
+                    Container(
+                      width: ScreenUtil().setWidth(72),
+                      height: ScreenUtil().setHeight(32),
+                      child: Button(
+                        onPressed: () {},
+                        fontSize: 10,
+                        text: 'Pilih File',
+                        style: AppButtonStyle.primary,
+                        padding: 0,
+                        fontWeight: FontWeight.w300,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Space(height: 4),
+              Text(
+                '*Upload file (PNG, JPG, JPEG) max. 5 MB',
+                style: TextStyle(
+                    fontSize: 12
+                ),
+              )
+            ],
+          )
         ],
       ) :
       Container(),
@@ -695,6 +831,44 @@ class _ProfilePageState extends State<ProfilePage> {
             image: NetworkToFileImage(
               url: _authCubit.loggedInUserData.kk.replaceAll('https:///', 'https://'),
               file: generateKKFromUrl(_authCubit.loggedInUserData.foto.split('/').last)
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Container(
+      width: ScreenUtil().setWidth(32),
+      height: ScreenUtil().setHeight(32),
+    );
+  }
+
+  Widget _buildLicensePhoto() {
+    if (_isLicensePictPreview) {
+      return Container(
+        width: ScreenUtil().setWidth(32),
+        height: ScreenUtil().setHeight(32),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(4)),
+          image: DecorationImage(
+            fit: BoxFit.cover,
+            image: AssetImage(_licensePhoto.path),
+          ),
+        ),
+      );
+    }
+
+    if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.licenseFile)) {
+      return Container(
+        width: ScreenUtil().setWidth(32),
+        height: ScreenUtil().setHeight(32),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(4)),
+          image: DecorationImage(
+            fit: BoxFit.cover,
+            image: NetworkToFileImage(
+              url: _authCubit.loggedInUserData.licenseFile.replaceAll('https:///', 'https://'),
+              file: generateKKFromUrl(_authCubit.loggedInUserData.licenseFile.split('/').last)
             ),
           ),
         ),

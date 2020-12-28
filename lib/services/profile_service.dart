@@ -4,6 +4,7 @@ import 'package:perbasitlg/app.dart';
 import 'package:perbasitlg/models/api_return.dart';
 import 'package:perbasitlg/models/login_model.dart';
 import 'package:perbasitlg/models/request/login_request.dart';
+import 'package:perbasitlg/models/request/profile_coach_request.dart';
 import 'package:perbasitlg/models/request/profile_player_request.dart';
 import 'package:perbasitlg/models/request/register_request.dart';
 import 'package:perbasitlg/models/user_model.dart';
@@ -19,7 +20,6 @@ class ProfileService {
         data: FormData.fromMap(await data.toMap()),
         onSendProgress: (int sent, int total) {
           double progress = (sent / total) * 100;
-          print(progress.toString() + ' persen cok');
           onSendProgress(progress);
         }
       );
@@ -40,39 +40,26 @@ class ProfileService {
     }
   }
 
-  Future<LoginModel> userLogin(LoginRequest data) async {
+  Future<ApiReturn> updateCoachProfile({ProfileCoachRequest data, ValueChanged<double> onSendProgress}) async {
     try {
       Response response = await _dio.post(
-        UrlConstantHelper.POST_AUTH_LOGIN,
-        data: FormData.fromMap(data.toMap())
-      );
-      if (response.statusCode == 200) {
-        return LoginModel.fromJson(response.data);
-      }
-
-      return LoginModel.fromJson(response.data);
-    } catch (e, stackTrace) {
-      return LoginModel(
-        success: false,
-      );
-    }
-  }
-
-  Future<ApiReturn<UserModel>> getUserDetail() async {
-    try {
-      Response response = await _dio.get(
-        UrlConstantHelper.GET_PROFILE,
+        UrlConstantHelper.POST_CHANGE_COACH_PROFILE,
+        data: FormData.fromMap(await data.toMap()),
+        onSendProgress: (int sent, int total) {
+          double progress = (sent / total) * 100;
+          onSendProgress(progress);
+        }
       );
       if (response.statusCode == 200) {
         return ApiReturn(
           success: response.data['success'],
           message: response.data['message'],
-          data: UserModel.fromJson(response.data['data'])
         );
       }
 
       return ApiReturn(success: false, message: response.data['message']);
     } catch (e, stackTrace) {
+      print(e);
       return ApiReturn(
         success: false,
         message: e?.response?.data['message'] ?? 'Something went wrong'
