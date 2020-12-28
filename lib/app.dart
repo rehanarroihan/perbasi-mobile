@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_stetho/flutter_stetho.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:perbasitlg/utils/constant_helper.dart';
 import 'package:perbasitlg/utils/global_method_helper.dart';
 import 'package:perbasitlg/utils/show_flutter_toast.dart';
@@ -12,6 +15,7 @@ class App {
 
   SharedPreferences prefs;
   Dio dio;
+  Directory appDocsDir;
 
   App.configure({
     this.apiBaseURL,
@@ -31,6 +35,8 @@ class App {
   Future<Null> init() async {
     Stetho.initialize();
     prefs = await SharedPreferences.getInstance();
+
+    appDocsDir = await getApplicationDocumentsDirectory();
 
     dio = Dio(BaseOptions(
       baseUrl: apiBaseURL,

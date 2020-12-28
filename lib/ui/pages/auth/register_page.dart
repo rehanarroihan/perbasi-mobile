@@ -13,9 +13,6 @@ import 'package:perbasitlg/utils/app_color.dart';
 import 'package:perbasitlg/utils/global_method_helper.dart';
 import 'package:intl/intl.dart';
 
-import '../../../cubit/auth/auth_cubit.dart';
-import '../../../utils/show_flutter_toast.dart';
-
 class RegisterPage extends StatefulWidget {
   RegisterPage({Key key}) : super(key: key);
 
@@ -24,6 +21,8 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   AuthCubit _authCubit;
 
   int _selectedRoleIndex = 0;
@@ -107,6 +106,7 @@ class _RegisterPageState extends State<RegisterPage> {
         }
       },
       child: Scaffold(
+        key: _scaffoldKey,
         backgroundColor: AppColor.pageBackgroundColor,
         bottomNavigationBar: Container(
           padding: EdgeInsets.all(24),

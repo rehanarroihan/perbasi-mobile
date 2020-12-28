@@ -11,6 +11,7 @@ class BoxInput extends StatefulWidget {
   final Widget suffixWidget;
   final Function onClick;
   final ValueChanged<String> validator;
+  final int maxLines;
   final TextCapitalization textCapitalization;
 
   BoxInput({
@@ -21,6 +22,7 @@ class BoxInput extends StatefulWidget {
     this.keyboardType = TextInputType.text,
     this.suffixWidget,
     this.validator,
+    this.maxLines,
     this.textCapitalization
   });
 
@@ -55,8 +57,8 @@ class _BoxInputState extends State<BoxInput> {
     if (widget.passwordField) {
       return TextFormField(
         controller: widget.controller,
-        keyboardType: widget.keyboardType,
         obscureText: _obscurePasswordText,
+        keyboardType: widget.keyboardType,
         readOnly: widget.onClick != null,
         validator: widget.validator ?? (String args) => null,
         textCapitalization: widget.textCapitalization ?? TextCapitalization.none,
@@ -78,7 +80,8 @@ class _BoxInputState extends State<BoxInput> {
     } else {
       return TextFormField(
         controller: widget.controller,
-        keyboardType: widget.keyboardType,
+        keyboardType: widget.maxLines != null ? TextInputType.multiline : widget.keyboardType,
+        maxLines: widget.maxLines,
         textCapitalization: widget.textCapitalization ?? TextCapitalization.none,
         readOnly: widget.onClick != null,
         validator: widget.validator ?? (String args) => null,

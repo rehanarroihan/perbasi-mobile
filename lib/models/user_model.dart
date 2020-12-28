@@ -3,6 +3,7 @@ class UserModel {
   String nik;
   String email;
   Role role;
+  Position positionId;
   bool verified;
   String coachId;
   String name;
@@ -22,6 +23,7 @@ class UserModel {
         this.nik,
         this.email,
         this.role,
+        this.positionId,
         this.verified,
         this.coachId,
         this.name,
@@ -41,6 +43,7 @@ class UserModel {
     nik = json['nik'];
     email = json['email'];
     role = json['role'] != null ? new Role.fromJson(json['role']) : null;
+    positionId = json['position_id'] != null ? new Position.fromJson(json['position_id']) : null;
     verified = json['verified'];
     coachId = json['coach_id'];
     name = json['name'];
@@ -63,6 +66,9 @@ class UserModel {
     data['email'] = this.email;
     if (this.role != null) {
       data['role'] = this.role.toJson();
+    }
+    if (this.positionId != null) {
+      data['position_id'] = this.positionId.toJson();
     }
     data['verified'] = this.verified;
     data['coach_id'] = this.coachId;
@@ -88,6 +94,25 @@ class Role {
   Role({this.id, this.name});
 
   Role.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['name'] = this.name;
+    return data;
+  }
+}
+
+class Position {
+  int id;
+  String name;
+
+  Position({this.id, this.name});
+
+  Position.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
   }

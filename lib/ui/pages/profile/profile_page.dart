@@ -1,21 +1,27 @@
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:path/path.dart' as p;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:network_to_file_image/network_to_file_image.dart';
 import 'package:perbasitlg/app.dart';
 import 'package:perbasitlg/cubit/auth/auth_cubit.dart';
+import 'package:perbasitlg/cubit/profile/profile_cubit.dart';
+import 'package:perbasitlg/models/request/profile_player_request.dart';
 import 'package:perbasitlg/ui/pages/splash_page.dart';
 import 'package:perbasitlg/ui/widgets/base/box_input.dart';
 import 'package:perbasitlg/ui/widgets/base/button.dart';
 import 'package:perbasitlg/ui/widgets/base/space.dart';
 import 'package:perbasitlg/ui/widgets/modules/app_alert_dialog.dart';
+import 'package:perbasitlg/ui/widgets/modules/upload_progress_dialog.dart';
 import 'package:perbasitlg/utils/app_color.dart';
 import 'package:perbasitlg/utils/constant_helper.dart';
 import 'package:perbasitlg/utils/global_method_helper.dart';
 import 'package:intl/intl.dart';
+import 'package:perbasitlg/utils/show_flutter_toast.dart';
 
 class ProfilePage extends StatefulWidget {
   ProfilePage({Key key}) : super(key: key);
@@ -26,6 +32,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   AuthCubit _authCubit = AuthCubit();
+  ProfileCubit _profileCubit = ProfileCubit();
   
   String _loggedInRole;
 
@@ -34,7 +41,13 @@ class _ProfilePageState extends State<ProfilePage> {
   TextEditingController _birthPlaceInput = TextEditingController();
   TextEditingController _birthDateInput = TextEditingController();
   TextEditingController _emailInput = TextEditingController();
+  TextEditingController _addressInput = TextEditingController();
+  TextEditingController _phoneInput = TextEditingController();
   String _birthDateForServer = '';
+  File _profilePict;
+
+  bool _isProfilePictPreview = false;
+  bool _isKKPictPreview = false;
 
   // Player additional form
   TextEditingController _positionInput = TextEditingController();
@@ -52,18 +65,81 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     _authCubit = BlocProvider.of<AuthCubit>(context);
+    _profileCubit = BlocProvider.of<ProfileCubit>(context);
 
     _loggedInRole = _authCubit.loggedInUserData.role.name;
+
+    _formKey = GlobalKey<FormState>();
     
     super.initState();
+  }
+
+  Future<String> getImagePathFromGallery() async {
+    final pickedFile = await ImagePicker().getImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      return pickedFile.path;
+    } else {
+      return '';
+    }
+  }
+
+  void _updateProfile() {
+    // Checking _birhDateForServer value
+    if (GlobalMethodHelper.isEmpty(_birthDateForServer)) {
+      _birthDateForServer = _authCubit.loggedInUserData.birthDate;
+    }
+
+    if (_loggedInRole == ConstantHelper.ROLE_PEMAIN) {
+      ProfilePlayerRequest requestData = ProfilePlayerRequest(
+        nik: _nikInput.text.trim(),
+        name: _nameInput.text.trim(),
+        birthPlace: _birthPlaceInput.text.trim(),
+        birthDate: _birthDateForServer,
+        email: _emailInput.text.trim(),
+        positionId: _authCubit.loggedInUserData.positionId.id.toString(),
+        kk: _kk,
+        address: _addressInput.text.trim(),
+        phone: _phoneInput.text.trim(),
+        foto: _profilePict
+      );
+
+      _profileCubit.updateProfilePlayer(requestData);
+    }
+  }
+
+  File generateProfilePictFileFromUrl(String filename) {
+    String pathName = p.join(App().appDocsDir.path, filename);
+    _profilePict = File(pathName);
+    return File(pathName);
+  }
+
+  File generateKKFromUrl(String filename) {
+    String pathName = p.join(App().appDocsDir.path, filename);
+    _kk = File(pathName);
+    return File(pathName);
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocListener(
-      cubit: _authCubit,
+      cubit: _profileCubit,
       listener: (context, state) {
-
+        if (state is UpdateProfileInit) {
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => UploadProgressDialog(_profileCubit)
+          );
+        } else if (state is UpdateProfileSuccessful) {
+          Navigator.pop(context);
+          showFlutterToast('Berhasil menyimpan perubahan');
+          _authCubit.getUserDetail();
+        } else if (state is UpdateProfileFailed) {
+          Navigator.pop(context);
+          showFlutterToast('Berhasil menyimpan perubahan');
+          _authCubit.getUserDetail();
+        }
       },
       child: BlocBuilder(
         cubit: _authCubit,
@@ -75,6 +151,12 @@ class _ProfilePageState extends State<ProfilePage> {
             DateTime.parse(_authCubit.loggedInUserData.birthDate)
           );
           _emailInput.text = _authCubit.loggedInUserData.email;
+          _addressInput.text = _authCubit.loggedInUserData.address;
+          _phoneInput.text = _authCubit.loggedInUserData.phone;
+          _positionInput.text = _authCubit.loggedInUserData.positionId.name;
+          if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.nik)) {
+            _kkInput.text = 'KK sudah di upload';
+          }
 
           return Scaffold(
             backgroundColor: AppColor.pageBackgroundColor,
@@ -134,7 +216,18 @@ class _ProfilePageState extends State<ProfilePage> {
           Container(
             width: double.infinity,
             child: Button(
-              onPressed: () {},
+              onPressed: () {
+                if (_profilePict == null) {
+                  showFlutterToast('Anda belum memilih foto profile');
+                  return;
+                }
+
+                if (!_formKey.currentState.validate()) {
+                  return;
+                }
+
+                _updateProfile();
+              },
               text: 'Simpan',
               style: AppButtonStyle.secondary,
               padding: 13,
@@ -278,6 +371,29 @@ class _ProfilePageState extends State<ProfilePage> {
               }
             },
           ),
+          Space(height: 40),
+          BoxInput(
+            controller: _addressInput,
+            label: 'Alamat',
+            maxLines: 2,
+            keyboardType: TextInputType.emailAddress,
+            validator: (String val) {
+              if (GlobalMethodHelper.isEmpty(val)) {
+                return 'alamat harus di isi';
+              }
+            },
+          ),
+          Space(height: 40),
+          BoxInput(
+            controller: _phoneInput,
+            label: 'No. Telefon',
+            keyboardType: TextInputType.phone,
+            validator: (String val) {
+              if (val.length < 10) {
+                return 'nomor telefon harus valid';
+              }
+            },
+          ),
         ],
       ),
     );
@@ -297,21 +413,29 @@ class _ProfilePageState extends State<ProfilePage> {
           BoxInput(
             controller: _positionInput,
             label: 'Posisi',
+            onClick: () {},
           ),
           Space(height: 40),
           BoxInput(
             controller: _teamInput,
             label: 'Team',
             onClick: () {},
-            suffixWidget: Container(
-              width: ScreenUtil().setWidth(72),
-              child: Button(
-                onPressed: () {},
-                fontSize: 10,
-                text: 'Lihat Team',
-                style: AppButtonStyle.primary,
-                fontWeight: FontWeight.w300,
-              ),
+            suffixWidget: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: ScreenUtil().setWidth(72),
+                  height: ScreenUtil().setHeight(32),
+                  child: Button(
+                    onPressed: () {},
+                    fontSize: 10,
+                    text: 'Lihat Team',
+                    padding: 0,
+                    style: AppButtonStyle.primary,
+                    fontWeight: FontWeight.w300,
+                  ),
+                ),
+              ],
             ),
           ),
           Space(height: 40),
@@ -360,14 +484,33 @@ class _ProfilePageState extends State<ProfilePage> {
       child: Row(
         children: [
           Expanded(
-            child: Container(
-              width: 80.0,
-              height: 80.0,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                image: DecorationImage(
-                  image: CachedNetworkImageProvider('https://scontent-cgk1-1.cdninstagram.com/v/t51.2885-15/sh0.08/e35/c0.51.853.853a/s640x640/116793383_155683982795561_3501380845844702714_n.jpg?_nc_ht=scontent-cgk1-1.cdninstagram.com&_nc_cat=105&_nc_ohc=7SgjB_YhcrEAX9PWljX&tp=1&oh=77a60b198456376c48802cbef0023005&oe=6007A236'),
-                ),
+            child: GestureDetector(
+              onTap: () async {
+                String filePath = await getImagePathFromGallery();
+                if (!GlobalMethodHelper.isEmpty(filePath)) {
+                  _profilePict = File(filePath);
+
+                  if (_profilePict.lengthSync() > 5120000) {
+                    showFlutterToast('Maximum photo size is 5 MB');
+                    return;
+                  }
+
+                  _isProfilePictPreview = true;
+                  setState(() {});
+                  showFlutterToast('Tekan tombol simpan untuk menyimpan foto profile yang telah dipilih');
+                }
+              },
+              child: Column(
+                children: [
+                  _buildRoundedProfilePict(),
+                  Text(
+                    'Ubah',
+                    style: TextStyle(
+                      color: AppColor.primaryColor,
+                      fontSize: ScreenUtil().setSp(10)
+                    ),
+                  )
+                ],
               ),
             ),
           ),
@@ -417,6 +560,55 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  Widget _buildRoundedProfilePict() {
+    if (_isProfilePictPreview) {
+      return Container(
+        width: 80.0,
+        height: 80.0,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          image: DecorationImage(
+            fit: BoxFit.cover,
+            image: AssetImage(_profilePict.path),
+          ),
+        ),
+      );
+    }
+
+    if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.foto)) {
+      return Container(
+        width: 80.0,
+        height: 80.0,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          image: DecorationImage(
+            fit: BoxFit.cover,
+            image: NetworkToFileImage(
+              url: _authCubit.loggedInUserData.foto.replaceAll('https:///', 'https://'),
+              file: generateProfilePictFileFromUrl(_authCubit.loggedInUserData.foto.split('/').last)
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Container(
+      width: 80.0,
+      height: 80.0,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: AppColor.primaryColor
+      ),
+      child: Center(
+        child: Icon(
+          Icons.person,
+          color: Colors.white,
+          size: 32,
+        ),
+      ),
+    );
+  }
+
   Widget _kkUploadForm() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -424,16 +616,46 @@ class _ProfilePageState extends State<ProfilePage> {
         BoxInput(
           controller: _kkInput,
           label: 'Upload KK',
-          onClick: () {},
-          suffixWidget: Container(
-            width: ScreenUtil().setWidth(72),
-            child: Button(
-              onPressed: () {},
-              fontSize: 10,
-              text: 'Pilih File',
-              style: AppButtonStyle.primary,
-              fontWeight: FontWeight.w300,
-            ),
+          onClick: () async {
+            String filePath = await getImagePathFromGallery();
+            if (!GlobalMethodHelper.isEmpty(filePath)) {
+              _kk = File(filePath);
+
+              if (_kk.lengthSync() > 5120000) {
+                showFlutterToast('Maximum photo size is 5 MB');
+                return;
+              }
+
+              _kkInput.text = 'File sudah dipilih';
+
+              _isKKPictPreview = true;
+              setState(() {});
+              showFlutterToast('Tekan tombol simpan untuk menyimpan foto KK yang telah dipilih');
+            }
+          },
+          validator: (String args) {
+            if (_kk == null) {
+              return 'file kk harus di pilih';
+            }
+          },
+          suffixWidget: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildKkThumbnail(),
+              Space(width: 8),
+              Container(
+                width: ScreenUtil().setWidth(72),
+                height: ScreenUtil().setHeight(32),
+                child: Button(
+                  onPressed: () {},
+                  fontSize: 10,
+                  text: 'Pilih File',
+                  style: AppButtonStyle.primary,
+                  padding: 0,
+                  fontWeight: FontWeight.w300,
+                ),
+              ),
+            ],
           ),
         ),
         Space(height: 4),
@@ -444,6 +666,44 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         )
       ],
+    );
+  }
+
+  Widget _buildKkThumbnail() {
+    if (_isKKPictPreview) {
+      return Container(
+        width: ScreenUtil().setWidth(32),
+        height: ScreenUtil().setHeight(32),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(4)),
+          image: DecorationImage(
+            fit: BoxFit.cover,
+            image: AssetImage(_kk.path),
+          ),
+        ),
+      );
+    }
+
+    if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.nik)) {
+      return Container(
+        width: ScreenUtil().setWidth(32),
+        height: ScreenUtil().setHeight(32),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(4)),
+          image: DecorationImage(
+            fit: BoxFit.cover,
+            image: NetworkToFileImage(
+              url: _authCubit.loggedInUserData.kk.replaceAll('https:///', 'https://'),
+              file: generateKKFromUrl(_authCubit.loggedInUserData.foto.split('/').last)
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Container(
+      width: ScreenUtil().setWidth(32),
+      height: ScreenUtil().setHeight(32),
     );
   }
 }

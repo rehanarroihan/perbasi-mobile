@@ -19,8 +19,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   HomeCubit _homeCubit;
 
-  Html _html = Html(data: '<div>dfdf</div>');
-
   @override
   void initState() {
     _homeCubit = BlocProvider.of<HomeCubit>(context);
