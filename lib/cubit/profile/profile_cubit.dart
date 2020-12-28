@@ -33,7 +33,7 @@ class ProfileCubit extends Cubit<ProfileState> {
     }
   }
 
-  void updateProfileCoach(ProfileCoachRequest data) async {
+  void updateProfileCoach(ProfileCoachRequest data, String role) async {
     this.updateProfileUploadProgress = 0;
     emit(UpdateProfileInit());
 
@@ -43,7 +43,8 @@ class ProfileCubit extends Cubit<ProfileState> {
         emit(UpdateProfileProgressChangeInit());
         this.updateProfileUploadProgress = progress;
         emit(UpdateProfileProgressChanged());
-      }
+      },
+      role: role
     );
 
     if (apiResult.success) {

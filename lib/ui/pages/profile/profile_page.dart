@@ -113,7 +113,7 @@ class _ProfilePageState extends State<ProfilePage> {
       _profileCubit.updateProfilePlayer(requestData);
     }
 
-    if (_loggedInRole == ConstantHelper.ROLE_PELATIH) {
+    if (_loggedInRole == ConstantHelper.ROLE_PELATIH || _loggedInRole == ConstantHelper.ROLE_WASIT) {
       ProfileCoachRequest requestData = ProfileCoachRequest(
         nik: _nikInput.text.trim(),
         name: _nameInput.text.trim(),
@@ -130,7 +130,7 @@ class _ProfilePageState extends State<ProfilePage> {
         licenceActiveDate: _licenseDateForServer
       );
 
-      _profileCubit.updateProfileCoach(requestData);
+      _profileCubit.updateProfileCoach(requestData, _loggedInRole);
     }
   }
 

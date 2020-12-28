@@ -8,6 +8,7 @@ import 'package:perbasitlg/models/request/profile_coach_request.dart';
 import 'package:perbasitlg/models/request/profile_player_request.dart';
 import 'package:perbasitlg/models/request/register_request.dart';
 import 'package:perbasitlg/models/user_model.dart';
+import 'package:perbasitlg/utils/constant_helper.dart';
 import 'package:perbasitlg/utils/url_constant_helper.dart';
 
 class ProfileService {
@@ -40,10 +41,16 @@ class ProfileService {
     }
   }
 
-  Future<ApiReturn> updateCoachProfile({ProfileCoachRequest data, ValueChanged<double> onSendProgress}) async {
+  Future<ApiReturn> updateCoachProfile({
+    ProfileCoachRequest data,
+    ValueChanged<double> onSendProgress,
+    String role
+  }) async {
     try {
       Response response = await _dio.post(
-        UrlConstantHelper.POST_CHANGE_COACH_PROFILE,
+        role == ConstantHelper.ROLE_PELATIH
+          ? UrlConstantHelper.POST_CHANGE_COACH_PROFILE
+          : UrlConstantHelper.POST_CHANGE_REFEREE_PROFILE,
         data: FormData.fromMap(await data.toMap()),
         onSendProgress: (int sent, int total) {
           double progress = (sent / total) * 100;
