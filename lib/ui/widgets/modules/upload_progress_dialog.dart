@@ -20,7 +20,7 @@ class _UploadProgressDialogState extends State<UploadProgressDialog> {
       cubit: widget.profileCubit,
       builder: (context, state) {
         return WillPopScope(
-          onWillPop: () async => true,
+          onWillPop: () async => false,
           child: Dialog(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10)
@@ -48,27 +48,27 @@ class _UploadProgressDialogState extends State<UploadProgressDialog> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Expanded(
-                        flex: 1,
-                        child: CircleProgressBar(
-                          foregroundColor: AppColor.primaryColor,
-                          backgroundColor: AppColor.primaryColor.withOpacity(0.2),
-                          value: widget.profileCubit.updateProfileUploadProgress / 100
-                        ),
+                      // Expanded(
+                      //   flex: 1,
+                      //   child: CircleProgressBar(
+                      //     foregroundColor: AppColor.primaryColor,
+                      //     backgroundColor: AppColor.primaryColor.withOpacity(0.2),
+                      //     value: widget.profileCubit.updateProfileUploadProgress / 100
+                      //   ),
+                      // ),
+                      CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(AppColor.primaryColor),
                       ),
                       SizedBox(width: 16),
-                      Expanded(
-                        flex: 5,
-                        child: Text(
-                          'Updating profile ${widget.profileCubit.updateProfileUploadProgress.round()}%...',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 16,
-                            fontWeight: FontWeight.normal,
-                          ),
-                          textAlign: TextAlign.start,
-                          overflow: TextOverflow.ellipsis,
+                      Text(
+                        'Updating profile ...',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16,
+                          fontWeight: FontWeight.normal,
                         ),
+                        textAlign: TextAlign.start,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
