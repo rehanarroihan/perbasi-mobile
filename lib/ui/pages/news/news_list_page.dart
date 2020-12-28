@@ -1,20 +1,23 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:perbasitlg/cubit/home/home_cubit.dart';
 import 'package:perbasitlg/models/competition_model.dart';
+import 'package:perbasitlg/models/news_model.dart';
 import 'package:perbasitlg/ui/widgets/base/reactive_refresh_indicator.dart';
+import 'package:perbasitlg/ui/widgets/base/space.dart';
 import 'package:perbasitlg/ui/widgets/modules/feed_item.dart';
 import 'package:perbasitlg/utils/global_method_helper.dart';
 
-class CompetitionListPage extends StatefulWidget {
-  CompetitionListPage({Key key}) : super(key: key);
+class NewsListPage extends StatefulWidget {
+  NewsListPage({Key key}) : super(key: key);
 
   @override
-  _CompetitionListPageState createState() => _CompetitionListPageState();
+  _NewsListPageState createState() => _NewsListPageState();
 }
 
-class _CompetitionListPageState extends State<CompetitionListPage> {
+class _NewsListPageState extends State<NewsListPage> {
   HomeCubit _homeCubit;
 
   @override
@@ -43,7 +46,7 @@ class _CompetitionListPageState extends State<CompetitionListPage> {
                 color: Colors.black
               ),
               title: Text(
-                'List Kompetisi',
+                'List Berita',
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: ScreenUtil().setSp(14)
@@ -60,13 +63,18 @@ class _CompetitionListPageState extends State<CompetitionListPage> {
               child: _homeCubit.homePageLoading ? Container() : Container(
                 child: ListView.builder(
                   shrinkWrap: true,
-                  itemCount: _homeCubit.competitions.length,
+                  itemCount: _homeCubit.newsList.length,
                   itemBuilder: (context, index) {
-                    CompetitionModel item = _homeCubit.competitions[index];
+                    NewsModel item = _homeCubit.newsList[index];
+
+                    String imageUrl = '';
+                    if (item.foto.length > 0) {
+                      imageUrl = 'https://perbasitulungagung.com/adm/' + item.foto[0];
+                    }
 
                     return FeedItem(
-                      imageUrl: item.foto.replaceAll('https:///', 'https://'),
-                      title: item.name,
+                      imageUrl: imageUrl,
+                      title: item.title,
                       desc: GlobalMethodHelper.parseHtmlString(item.description)
                     );
                   }
