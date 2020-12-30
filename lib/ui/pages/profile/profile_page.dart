@@ -196,10 +196,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 color: Colors.black
               ),
               elevation: 0,
-              leading: IconButton(
-                icon: Icon(Icons.arrow_back),
-                onPressed: () {},
-              ),
               title: Text(
                 'Biodata',
                 style: TextStyle(
@@ -720,7 +716,7 @@ class _ProfilePageState extends State<ProfilePage> {
           image: DecorationImage(
             fit: BoxFit.cover,
             image: NetworkToFileImage(
-              url: _authCubit.loggedInUserData.foto.replaceAll('https:///', 'https://'),
+              url: _authCubit.loggedInUserData.foto,
               file: generateProfilePictFileFromUrl(_authCubit.loggedInUserData.foto.split('/').last)
             ),
           ),
@@ -829,7 +825,7 @@ class _ProfilePageState extends State<ProfilePage> {
           image: DecorationImage(
             fit: BoxFit.cover,
             image: NetworkToFileImage(
-              url: _authCubit.loggedInUserData.kk.replaceAll('https:///', 'https://'),
+              url: _authCubit.loggedInUserData.kk,
               file: generateKKFromUrl(_authCubit.loggedInUserData.foto.split('/').last)
             ),
           ),
@@ -867,7 +863,7 @@ class _ProfilePageState extends State<ProfilePage> {
           image: DecorationImage(
             fit: BoxFit.cover,
             image: NetworkToFileImage(
-              url: _authCubit.loggedInUserData.licenseFile.replaceAll('https:///', 'https://'),
+              url: _authCubit.loggedInUserData.licenseFile,
               file: generateKKFromUrl(_authCubit.loggedInUserData.licenseFile.split('/').last)
             ),
           ),

@@ -74,7 +74,7 @@ class _CompetitionListPageState extends State<CompetitionListPage> {
                         ));
                       },
                       child: FeedItem(
-                        imageUrl: item.foto.replaceAll('https:///', 'https://'),
+                        imageUrl: item.foto,
                         title: item.name,
                         desc: GlobalMethodHelper.parseHtmlString(item.description)
                       ),

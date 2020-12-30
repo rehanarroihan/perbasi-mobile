@@ -15,7 +15,7 @@ class NewsDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     String imageUrl = '';
     if (newsDetail.foto.length > 0) {
-      imageUrl = 'https://perbasitulungagung.com/adm/' + newsDetail.foto[0];
+      imageUrl = newsDetail.foto[0];
     }
 
     return Scaffold(

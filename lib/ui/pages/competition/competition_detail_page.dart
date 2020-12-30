@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:perbasitlg/models/competition_model.dart';
+import 'package:perbasitlg/ui/pages/competition/schedule_list_page.dart';
 import 'package:perbasitlg/ui/widgets/base/button.dart';
 import 'package:perbasitlg/ui/widgets/base/space.dart';
 import 'package:perbasitlg/utils/app_color.dart';
@@ -41,7 +42,7 @@ class CompetitionDetailPage extends StatelessWidget {
               height: ScreenUtil().setHeight(168),
               color: AppColor.primaryColor,
               child: CachedNetworkImage(
-                imageUrl: competitionDetail.foto.replaceAll('https:///', 'https://'),
+                imageUrl: competitionDetail.foto,
                 fit: BoxFit.cover,
               ),
             ),
@@ -71,7 +72,7 @@ class CompetitionDetailPage extends StatelessWidget {
                 style: AppButtonStyle.secondary,
                 text: 'Syarat Pendaftaran',
                 onPressed: () async {
-                  String url = competitionDetail.fileRequirement.replaceAll('https:///', 'https://');
+                  String url = competitionDetail.fileRequirement;
                   if (await canLaunch(url)) {
                     await launch(url);
                   } else {
@@ -87,7 +88,13 @@ class CompetitionDetailPage extends StatelessWidget {
               child: Button(
                 style: AppButtonStyle.secondary,
                 text: 'Jadwal Kompetisi',
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (context) => ScheduleListPage(
+                      competitionId: competitionDetail.id.toString()
+                    )
+                  ));
+                },
               ),
             ),
             Space(height: 12),

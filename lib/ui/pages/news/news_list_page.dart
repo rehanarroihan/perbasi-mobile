@@ -70,7 +70,7 @@ class _NewsListPageState extends State<NewsListPage> {
 
                     String imageUrl = '';
                     if (item.foto.length > 0) {
-                      imageUrl = 'https://perbasitulungagung.com/adm/' + item.foto[0];
+                      imageUrl = item.foto[0];
                     }
 
                     return GestureDetector(

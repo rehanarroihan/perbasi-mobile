@@ -14,3 +14,9 @@ class GetHomePageDatasInit extends HomeState {}
 class GetHomePageDatasSuccess extends HomeState {}
 
 class GetHomePageDatasFailed extends HomeState {}
+
+class GetCompetitionScheduleInit extends HomeState {}
+
+class GetCompetitionScheduleSuccess extends HomeState {}
+
+class GetCompetitionScheduleFailed extends HomeState {}

@@ -122,7 +122,13 @@ class _HomePageState extends State<HomePage> {
       height: ScreenUtil().setHeight(172),
       width: double.infinity,
       child: GestureDetector(
-        onTap: () {},
+        onTap: () {
+          Navigator.push(context, MaterialPageRoute(
+            builder: (context) => CompetitionDetailPage(
+              competitionDetail: _homeCubit.highlightCompetition,
+            )
+          ));
+        },
         child: Container(
           width: MediaQuery.of(context).size.width * 0.62,
           child: Stack(
@@ -130,7 +136,7 @@ class _HomePageState extends State<HomePage> {
               Container(
                 width: double.infinity,
                 child: CachedNetworkImage(
-                  imageUrl: _homeCubit.highlightCompetition.foto.replaceAll('https:///', 'https://'),
+                  imageUrl: _homeCubit.highlightCompetition.foto,
                   fit: BoxFit.cover,
                 ),
               ),
@@ -193,7 +199,7 @@ class _HomePageState extends State<HomePage> {
               ));
             },
             child: _dataThumbnail(
-              imageUrl: item.foto.replaceAll('https:///', 'https://'),
+              imageUrl: item.foto,
               title: item.name,
               desc: GlobalMethodHelper.parseHtmlString(item.description)
             ),
@@ -215,7 +221,7 @@ class _HomePageState extends State<HomePage> {
           NewsModel item = _homeCubit.newsList[index];
           String imageUrl = '';
           if (item.foto.length > 0) {
-            imageUrl = 'https://perbasitulungagung.com/adm/' + item.foto[0];
+            imageUrl = item.foto[0];
           }
 
           return GestureDetector(
