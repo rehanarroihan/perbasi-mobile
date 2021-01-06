@@ -44,7 +44,11 @@ class _TeamPageState extends State<TeamPage> {
                 color: Colors.black
               ),
               title: Text(
-                'Team Saya',
+                _teamCubit.teamPageLoading
+                    ? 'Loading...'
+                    : _teamCubit.userHaveTeam
+                      ? 'Team Saya'
+                      : 'List Team',
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: ScreenUtil().setSp(14)

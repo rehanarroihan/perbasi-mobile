@@ -21,7 +21,7 @@ class TeamService {
 
       return ApiReturn(success: false, message: response.data['message']);
     } catch (e, stackTrace) {
-      print(e);
+      return ApiReturn(success: false);
     }
   }
 

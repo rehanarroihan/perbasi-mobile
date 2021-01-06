@@ -24,6 +24,8 @@ class TeamCubit extends Cubit<TeamState> {
 
   void getMyTeamPage() async {
     this.teamPageLoading = true;
+    this.userHaveTeam = false;
+    this.userCanVerif = false;
     emit(GetMyTeamPageInit());
 
     ApiReturn<ClubDetail> apiResult = await _teamService.getMyTeam();

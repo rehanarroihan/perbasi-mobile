@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:perbasitlg/cubit/team/team_cubit.dart';
 import 'package:perbasitlg/models/club_model.dart';
+import 'package:perbasitlg/ui/widgets/base/reactive_refresh_indicator.dart';
 import 'package:perbasitlg/ui/widgets/modules/team_detail_section.dart';
 import 'package:perbasitlg/utils/app_color.dart';
 
@@ -51,7 +52,15 @@ class _TeamDetailPageState extends State<TeamDetailPage> {
               ),
             ),
           ),
-          body: _teamCubit.teamDetailPageLoading ? Container() : TeamDetailSection(_teamCubit.clubDetail),
+          body: SingleChildScrollView(
+            child: ReactiveRefreshIndicator(
+              onRefresh: () => _teamCubit.getTeamDetail(widget.clubDetail.id.toString()),
+              isRefreshing: _teamCubit.teamDetailPageLoading,
+              child: _teamCubit.teamDetailPageLoading
+                  ? Column(mainAxisSize: MainAxisSize.max)
+                  : TeamDetailSection(_teamCubit.clubDetail),
+            ),
+          ),
         );
       },
     );
