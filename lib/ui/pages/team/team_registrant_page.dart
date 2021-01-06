@@ -54,7 +54,7 @@ class _TeamRegistrantPageState extends State<TeamRegistrantPage> {
             photoUrl: photoUrl,
             name: item.detail.name,
             post: 'Player',
-            yearsOld: item.detail.birthDate
+            birthDay: item.detail.birthDate
           );
         }).toList(),
       ) :

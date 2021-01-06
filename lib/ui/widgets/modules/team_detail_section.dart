@@ -6,6 +6,7 @@ import 'package:perbasitlg/models/club_detail.dart';
 import 'package:perbasitlg/models/club_model.dart';
 import 'package:perbasitlg/models/user_model.dart';
 import 'package:perbasitlg/ui/widgets/base/space.dart';
+import 'package:perbasitlg/ui/widgets/modules/player_thumbnail.dart';
 import 'package:perbasitlg/ui/widgets/modules/team_header.dart';
 import 'package:perbasitlg/utils/global_method_helper.dart';
 import 'package:perbasitlg/utils/url_constant_helper.dart';
@@ -135,11 +136,11 @@ class TeamDetailSection extends StatelessWidget {
                     photoUrl = UrlConstantHelper.IMAGE_BASE_URL + item.document[0].file;
                   }
 
-                  return _playerThumbnail(
+                  return PlayerThumbnail(
                     photoUrl: photoUrl,
                     name: item.detail.name,
                     post: 'Player',
-                    yearsOld: item.detail.birthDate
+                    birthDay: item.detail.birthDate
                   );
                 }).toList(),
               ) :
@@ -223,9 +224,5 @@ class TeamDetailSection extends StatelessWidget {
         ),
       )
     );
-  }
-
-  Widget _playerThumbnail({String photoUrl, String name, String post, String yearsOld}) {
-
   }
 }

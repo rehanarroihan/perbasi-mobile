@@ -2,11 +2,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:perbasitlg/ui/widgets/base/space.dart';
+import 'package:intl/intl.dart';
 
 class PlayerThumbnail extends StatelessWidget {
-  final String photoUrl, name, yearsOld, post;
+  final String photoUrl, name, birthDay, post;
 
-  PlayerThumbnail({this.photoUrl, this.name, this.yearsOld, this.post});
+  PlayerThumbnail({this.photoUrl, this.name, this.birthDay, this.post});
 
   @override
   Widget build(BuildContext context) {
@@ -37,9 +38,26 @@ class PlayerThumbnail extends StatelessWidget {
             ),
           ),
           Text('Posisi: ' + post),
-          Text('Umur: ' + yearsOld),
+          Text('Umur: ' + _calculateAge(DateTime.parse(birthDay)).toString()),
         ],
       ),
     );
+  }
+
+  int _calculateAge(DateTime birthDate) {
+    DateTime currentDate = DateTime.now();
+    int age = currentDate.year - birthDate.year;
+    int month1 = currentDate.month;
+    int month2 = birthDate.month;
+    if (month2 > month1) {
+      age--;
+    } else if (month1 == month2) {
+      int day1 = currentDate.day;
+      int day2 = birthDate.day;
+      if (day2 > day1) {
+        age--;
+      }
+    }
+    return age;
   }
 }
