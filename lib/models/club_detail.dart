@@ -1,6 +1,5 @@
 import 'package:perbasitlg/models/club_model.dart';
 import 'package:perbasitlg/models/document_model.dart';
-import 'package:perbasitlg/models/user_model.dart';
 
 class ClubDetail {
   ClubModel detailTeam;

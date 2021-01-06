@@ -52,14 +52,12 @@ class _TeamDetailPageState extends State<TeamDetailPage> {
               ),
             ),
           ),
-          body: SingleChildScrollView(
-            child: ReactiveRefreshIndicator(
-              onRefresh: () => _teamCubit.getTeamDetail(widget.clubDetail.id.toString()),
-              isRefreshing: _teamCubit.teamDetailPageLoading,
-              child: _teamCubit.teamDetailPageLoading
-                  ? Column(mainAxisSize: MainAxisSize.max)
-                  : TeamDetailSection(_teamCubit.clubDetail),
-            ),
+          body: ReactiveRefreshIndicator(
+            onRefresh: () => _teamCubit.getTeamDetail(widget.clubDetail.id.toString()),
+            isRefreshing: _teamCubit.teamDetailPageLoading,
+            child: _teamCubit.teamDetailPageLoading
+                ? Column(mainAxisSize: MainAxisSize.max)
+                : TeamDetailSection(_teamCubit.clubDetail),
           ),
         );
       },

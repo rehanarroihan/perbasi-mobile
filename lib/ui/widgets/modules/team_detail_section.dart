@@ -226,36 +226,6 @@ class TeamDetailSection extends StatelessWidget {
   }
 
   Widget _playerThumbnail({String photoUrl, String name, String post, String yearsOld}) {
-    return Container(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: Container(
-              color: Colors.red,
-              height: ScreenUtil().setHeight(160),
-              width: ScreenUtil().setWidth(160),
-              child: CachedNetworkImage(
-                imageUrl: photoUrl,
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          Space(height: 12),
-          Flexible(
-            child: Text(
-              name,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontWeight: FontWeight.w600
-              ),
-            ),
-          ),
-          Text('Posisi: -'),
-          Text('Umur: -'),
-        ],
-      ),
-    );
+
   }
 }
