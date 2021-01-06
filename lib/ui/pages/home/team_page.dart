@@ -5,10 +5,8 @@ import 'package:perbasitlg/cubit/team/team_cubit.dart';
 import 'package:perbasitlg/models/club_model.dart';
 import 'package:perbasitlg/ui/pages/team/team_detail_page.dart';
 import 'package:perbasitlg/ui/widgets/base/reactive_refresh_indicator.dart';
-import 'package:perbasitlg/ui/widgets/base/space.dart';
 import 'package:perbasitlg/ui/widgets/modules/team_detail_section.dart';
 import 'package:perbasitlg/ui/widgets/modules/team_header.dart';
-import 'package:perbasitlg/utils/app_color.dart';
 import 'package:perbasitlg/utils/url_constant_helper.dart';
 
 class TeamPage extends StatefulWidget {
@@ -65,7 +63,7 @@ class _TeamPageState extends State<TeamPage> {
 
   Widget _buildPage() {
     if (_teamCubit.userHaveTeam) {
-      return _myTeamSection();
+      return TeamDetailSection(_teamCubit.myClubDetail);
     } else {
       return ListView.builder(
         shrinkWrap: true,
@@ -84,9 +82,5 @@ class _TeamPageState extends State<TeamPage> {
         },
       );
     }
-  }
-
-  Widget _myTeamSection() {
-    return Container();
   }
 }

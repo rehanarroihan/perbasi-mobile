@@ -129,12 +129,17 @@ class TeamDetailSection extends StatelessWidget {
                   vertical: ScreenUtil().setHeight(24)
                 ),
                 shrinkWrap: true,
-                children: clubDetail.teamPlayer.map<Widget>((UserModel item) {
+                children: clubDetail.teamPlayer.map<Widget>((TeamPlayer item) {
+                  String photoUrl = '';
+                  if (item.document.length > 0) {
+                    photoUrl = UrlConstantHelper.IMAGE_BASE_URL + item.document[0].file;
+                  }
+
                   return _playerThumbnail(
-                    photoUrl: item.foto,
-                    name: item.name,
+                    photoUrl: photoUrl,
+                    name: item.detail.name,
                     post: 'Player',
-                    yearsOld: item.birthDate
+                    yearsOld: item.detail.birthDate
                   );
                 }).toList(),
               ) :
@@ -232,7 +237,7 @@ class TeamDetailSection extends StatelessWidget {
               height: ScreenUtil().setHeight(160),
               width: ScreenUtil().setWidth(160),
               child: CachedNetworkImage(
-                imageUrl: 'https://scontent-cgk1-1.cdninstagram.com/v/t51.2885-15/e35/90474346_194335755205095_8700616338898959281_n.jpg?_nc_ht=scontent-cgk1-1.cdninstagram.com&_nc_cat=103&_nc_ohc=SH9fQFqQAiAAX-OChgH&tp=1&oh=5a8306558cbcaf46eeeba5c4f7bf8dc7&oe=60207AF2',
+                imageUrl: photoUrl,
                 fit: BoxFit.cover,
               ),
             ),

@@ -3,30 +3,25 @@ import 'package:perbasitlg/app.dart';
 import 'package:perbasitlg/models/api_return.dart';
 import 'package:perbasitlg/models/club_detail.dart';
 import 'package:perbasitlg/models/club_model.dart';
-import 'package:perbasitlg/models/my_team_model.dart';
 import 'package:perbasitlg/utils/url_constant_helper.dart';
 
 class TeamService {
   Dio _dio = App().dio;
 
-  Future<ApiReturn<MyTeamModel>> getMyTeam() async {
+  Future<ApiReturn<ClubDetail>> getMyTeam() async {
     try {
       Response response = await _dio.get(UrlConstantHelper.GET_MY_TEAM);
       if (response.statusCode == 200) {
         return ApiReturn(
           success: response.data['success'],
           message: response.data['message'],
-          data: MyTeamModel.fromJson(response.data['data'])
+          data: ClubDetail.fromJson(response.data['data'])
         );
       }
 
       return ApiReturn(success: false, message: response.data['message']);
     } catch (e, stackTrace) {
       print(e);
-      return ApiReturn(
-        success: false,
-        message: e?.response?.data['message'] ?? 'Something went wrong'
-      );
     }
   }
 

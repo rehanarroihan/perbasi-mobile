@@ -3,7 +3,6 @@ import 'package:equatable/equatable.dart';
 import 'package:perbasitlg/models/api_return.dart';
 import 'package:perbasitlg/models/club_detail.dart';
 import 'package:perbasitlg/models/club_model.dart';
-import 'package:perbasitlg/models/my_team_model.dart';
 import 'package:perbasitlg/services/team_service.dart';
 
 part 'team_state.dart';
@@ -16,6 +15,7 @@ class TeamCubit extends Cubit<TeamState> {
   bool teamPageLoading = false;
 
   bool userHaveTeam = false;
+  ClubDetail myClubDetail = ClubDetail();
   bool userCanVerif = false;
   List<ClubModel> teamList = List<ClubModel>();
 
@@ -26,9 +26,11 @@ class TeamCubit extends Cubit<TeamState> {
     this.teamPageLoading = true;
     emit(GetMyTeamPageInit());
 
-    ApiReturn<MyTeamModel> apiResult = await _teamService.getMyTeam();
+    ApiReturn<ClubDetail> apiResult = await _teamService.getMyTeam();
     this.teamPageLoading = false;
     if (apiResult.success) {
+      this.userHaveTeam = true;
+      this.myClubDetail = apiResult.data;
       emit(GetMyTeamPageSuccessfulState());
     } else {
       ApiReturn<List<ClubModel>> apiResult = await _teamService.getTeamList();
