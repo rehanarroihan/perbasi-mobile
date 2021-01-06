@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:perbasitlg/ui/widgets/base/space.dart';
 import 'package:perbasitlg/utils/app_color.dart';
@@ -21,15 +22,17 @@ class TeamHeader extends StatelessWidget {
       padding: EdgeInsets.all(16),
       child: Row(
         children: [
-          Container(
-            width: 80.0,
-            height: 80.0,
-            decoration: BoxDecoration(
-              color: AppColor.lightOrange,
-              shape: BoxShape.circle,
-              image: DecorationImage(
-                fit: BoxFit.cover,
-                image: AssetImage(logoUrl),
+          CachedNetworkImage(
+            imageUrl: logoUrl,
+            imageBuilder: (context, imageProvider) => Container(
+              width: 80.0,
+              height: 80.0,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                image: DecorationImage(
+                  image: imageProvider,
+                  fit: BoxFit.cover
+                ),
               ),
             ),
           ),

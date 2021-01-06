@@ -31,6 +31,9 @@ class TeamCubit extends Cubit<TeamState> {
     if (apiResult.success) {
       this.userHaveTeam = true;
       this.myClubDetail = apiResult.data;
+      if (this.myClubDetail.canVerification) {
+        this.userCanVerif = true;
+      }
       emit(GetMyTeamPageSuccessfulState());
     } else {
       ApiReturn<List<ClubModel>> apiResult = await _teamService.getTeamList();

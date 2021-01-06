@@ -245,15 +245,15 @@ class TeamDetailSection extends StatelessWidget {
           Space(height: 12),
           Flexible(
             child: Text(
-              'Galbie Elinour',
+              name,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 fontWeight: FontWeight.w600
               ),
             ),
           ),
-          Text('sf'),
-          Text('sf'),
+          Text('Posisi: -'),
+          Text('Umur: -'),
         ],
       ),
     );

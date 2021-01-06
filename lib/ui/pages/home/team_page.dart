@@ -5,6 +5,7 @@ import 'package:perbasitlg/cubit/team/team_cubit.dart';
 import 'package:perbasitlg/models/club_model.dart';
 import 'package:perbasitlg/ui/pages/team/team_detail_page.dart';
 import 'package:perbasitlg/ui/widgets/base/reactive_refresh_indicator.dart';
+import 'package:perbasitlg/ui/widgets/base/space.dart';
 import 'package:perbasitlg/ui/widgets/modules/team_detail_section.dart';
 import 'package:perbasitlg/ui/widgets/modules/team_header.dart';
 import 'package:perbasitlg/utils/url_constant_helper.dart';
@@ -49,6 +50,19 @@ class _TeamPageState extends State<TeamPage> {
                   fontSize: ScreenUtil().setSp(14)
                 ),
               ),
+              actions: _teamCubit.userCanVerif ? [
+                Center(
+                  child: FlatButton(
+                    onPressed: () {},
+                    child: Text(
+                      'Lihat Pendaftar',
+                      style: TextStyle(
+                        color: Colors.deepOrangeAccent
+                      ),
+                    ),
+                  ),
+                )
+              ] : [],
             ),
             body: ReactiveRefreshIndicator(
               isRefreshing: _teamCubit.teamPageLoading,
@@ -63,7 +77,19 @@ class _TeamPageState extends State<TeamPage> {
 
   Widget _buildPage() {
     if (_teamCubit.userHaveTeam) {
-      return TeamDetailSection(_teamCubit.myClubDetail);
+      return SingleChildScrollView(
+        child: Column(
+          children: [
+            TeamDetailSection(_teamCubit.myClubDetail),
+            Space(height: 12),
+            RaisedButton(
+              onPressed: () {},
+              child: Text('Keluar Team'),
+            ),
+            Space(height: 12),
+          ],
+        ),
+      );
     } else {
       return ListView.builder(
         shrinkWrap: true,
