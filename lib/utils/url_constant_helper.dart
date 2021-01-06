@@ -2,6 +2,7 @@ class UrlConstantHelper {
   static const String POST_AUTH_REGISTER = "register";
   static const String POST_AUTH_LOGIN = "login";
   static const String GET_PROFILE = "me";
+  static const String GET_MY_TEAM = "myteam";
 
   static const String GET_NEWS = "news";
   static const String GET_NEWS_DETAIL = "news/";
@@ -19,4 +20,6 @@ class UrlConstantHelper {
   static const String POST_CHANGE_COACH_PROFILE = "profile/coach";
 
   static const String POST_CHANGE_REFEREE_PROFILE = "profile/referee";
+
+  static const String IMAGE_BASE_URL = 'http://perbasitulungagung.com/adm/';
 }

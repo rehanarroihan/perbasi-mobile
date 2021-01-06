@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:perbasitlg/ui/pages/home/home_page.dart';
+import 'package:perbasitlg/ui/pages/home/team_page.dart';
 import 'package:perbasitlg/ui/pages/profile/profile_page.dart';
 
 class NavigatorPage extends StatefulWidget {
@@ -12,7 +13,7 @@ class _NavigatorPageState extends State<NavigatorPage> {
     HomePage(),
     Container(),
     Container(),
-    Container(),
+    TeamPage(),
     ProfilePage(),
   ];
 

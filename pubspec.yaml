@@ -30,6 +30,7 @@ dependencies:
   network_to_file_image: ^2.3.6
   path_provider: ^1.4.4
   url_launcher: ^5.7.10
+  expandable: ^4.1.4
 
 dev_dependencies:
   flutter_test:
