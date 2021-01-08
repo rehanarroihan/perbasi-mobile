@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:perbasitlg/models/club_detail.dart';
+import 'package:perbasitlg/ui/pages/team/registrant_detail_page.dart';
 import 'package:perbasitlg/ui/widgets/modules/player_thumbnail.dart';
 import 'package:perbasitlg/utils/url_constant_helper.dart';
 
@@ -50,11 +51,16 @@ class _TeamRegistrantPageState extends State<TeamRegistrantPage> {
             photoUrl = UrlConstantHelper.IMAGE_BASE_URL + item.document[0].file;
           }
 
-          return PlayerThumbnail(
-            photoUrl: photoUrl,
-            name: item.detail.name,
-            post: 'Player',
-            birthDay: item.detail.birthDate
+          return GestureDetector(
+            onTap: () => Navigator.push(context, MaterialPageRoute(
+              builder: (context) => RegistrantDetailPage(item: item)
+            )),
+            child: PlayerThumbnail(
+              photoUrl: photoUrl,
+              name: item.detail.name,
+              post: 'Player',
+              birthDay: item.detail.birthDate
+            ),
           );
         }).toList(),
       ) :
