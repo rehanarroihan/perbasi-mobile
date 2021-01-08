@@ -3,8 +3,6 @@ import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:perbasitlg/models/club_detail.dart';
-import 'package:perbasitlg/models/club_model.dart';
-import 'package:perbasitlg/models/user_model.dart';
 import 'package:perbasitlg/ui/widgets/base/space.dart';
 import 'package:perbasitlg/ui/widgets/modules/player_thumbnail.dart';
 import 'package:perbasitlg/ui/widgets/modules/team_header.dart';
@@ -26,7 +24,7 @@ class TeamDetailSection extends StatelessWidget {
               boxShadow: [
                 BoxShadow(
                   color: Color(0x1A000000),
-                  offset: const Offset(0, -3),
+                  offset: const Offset(0, 2),
                   blurRadius: 24,
                 ),
               ],

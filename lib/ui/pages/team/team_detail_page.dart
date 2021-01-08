@@ -5,6 +5,7 @@ import 'package:perbasitlg/cubit/team/team_cubit.dart';
 import 'package:perbasitlg/models/club_model.dart';
 import 'package:perbasitlg/ui/widgets/base/button.dart';
 import 'package:perbasitlg/ui/widgets/base/reactive_refresh_indicator.dart';
+import 'package:perbasitlg/ui/widgets/base/space.dart';
 import 'package:perbasitlg/ui/widgets/modules/app_alert_dialog.dart';
 import 'package:perbasitlg/ui/widgets/modules/loading_dialog.dart';
 import 'package:perbasitlg/ui/widgets/modules/team_detail_section.dart';
@@ -87,37 +88,40 @@ class _TeamDetailPageState extends State<TeamDetailPage> {
               isRefreshing: _teamCubit.teamDetailPageLoading,
               child: _teamCubit.teamDetailPageLoading
                   ? Column(mainAxisSize: MainAxisSize.max)
-                  : Column(
-                    children: [
-                      TeamDetailSection(_teamCubit.clubDetail),
-                      !_teamCubit.userHaveTeam ?
-                      Container(
-                        width: double.infinity,
-                        margin: EdgeInsets.only(top: 24),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: ScreenUtil().setWidth(46)
-                        ),
-                        child: Button(
-                          style: AppButtonStyle.secondary,
-                          text: 'Daftar Team',
-                          fontSize: 14,
-                          padding: 12,
-                          onPressed: () {
-                            AppAlertDialog(
-                              title: 'Daftar Team',
-                              description: 'Apakah anda yakin ingin daftar ke team ${widget.clubDetail.name} ?',
-                              negativeButtonText: 'Tidak',
-                              negativeButtonOnTap: () => Navigator.pop(context),
-                              positiveButtonText: 'Ya',
-                              positiveButtonOnTap: () => _teamCubit.registerToTeam(
-                                _teamCubit.clubDetail.detailTeam.id.toString()
-                              ),
-                            ).show(context);
-                          },
-                        ),
-                      ) :
-                      Container()
-                    ],
+                  : SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        TeamDetailSection(_teamCubit.clubDetail),
+                        !_teamCubit.userHaveTeam ?
+                        Container(
+                          width: double.infinity,
+                          margin: EdgeInsets.only(top: 24),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: ScreenUtil().setWidth(46)
+                          ),
+                          child: Button(
+                            style: AppButtonStyle.secondary,
+                            text: 'Daftar Team',
+                            fontSize: 14,
+                            padding: 12,
+                            onPressed: () {
+                              AppAlertDialog(
+                                title: 'Daftar Team',
+                                description: 'Apakah anda yakin ingin daftar ke team ${widget.clubDetail.name} ?',
+                                negativeButtonText: 'Tidak',
+                                negativeButtonOnTap: () => Navigator.pop(context),
+                                positiveButtonText: 'Ya',
+                                positiveButtonOnTap: () => _teamCubit.registerToTeam(
+                                  _teamCubit.clubDetail.detailTeam.id.toString()
+                                ),
+                              ).show(context);
+                            },
+                          ),
+                        ) :
+                        Container(),
+                        Space(height: 32)
+                      ],
+                    ),
                   ),
             ),
           );

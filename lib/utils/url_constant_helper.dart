@@ -13,6 +13,8 @@ class UrlConstantHelper {
 
   static const String GET_TEAMS = "teams";
   static const String GET_TEAM_DETAIL = "teams/";
+  static const String PUT_VERIF_PLAYER = "teams/players";
+  static const String PUT_EXIT_FROM_TEAM = "teams/out";
 
   static const String POST_CHANGE_PLAYER_PROFILE = "profile/player";
   static const String POST_REGISTER_TEAM = "teams/register/player/";

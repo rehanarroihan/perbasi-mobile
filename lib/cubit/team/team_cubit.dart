@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:perbasitlg/models/api_return.dart';
 import 'package:perbasitlg/models/club_detail.dart';
 import 'package:perbasitlg/models/club_model.dart';
+import 'package:perbasitlg/models/request/exit_club_request.dart';
 import 'package:perbasitlg/services/team_service.dart';
 
 part 'team_state.dart';
@@ -72,6 +73,17 @@ class TeamCubit extends Cubit<TeamState> {
       } else {
         emit(RegisterToTeamFailedState(message: 'Gagal mendaftar ke team ini'));
       }
+    }
+  }
+
+  void exitFromTeam(ExitClubRequest data) async {
+    emit(ExitTeamInit());
+
+    ApiReturn apiResult = await _teamService.exitFromTeam(data);
+    if (apiResult.success) {
+      emit(ExitTeamSuccessfulState());
+    } else {
+      emit(ExitTeamFailedState());
     }
   }
 }

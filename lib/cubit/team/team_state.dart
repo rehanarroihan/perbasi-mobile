@@ -30,3 +30,9 @@ class RegisterToTeamFailedState extends TeamState {
 
   RegisterToTeamFailedState({this.message});
 }
+
+class ExitTeamInit extends TeamState {}
+
+class ExitTeamSuccessfulState extends TeamState {}
+
+class ExitTeamFailedState extends TeamState {}

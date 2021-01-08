@@ -3,6 +3,7 @@ import 'package:perbasitlg/app.dart';
 import 'package:perbasitlg/models/api_return.dart';
 import 'package:perbasitlg/models/club_detail.dart';
 import 'package:perbasitlg/models/club_model.dart';
+import 'package:perbasitlg/models/request/exit_club_request.dart';
 import 'package:perbasitlg/utils/url_constant_helper.dart';
 
 class TeamService {
@@ -72,6 +73,28 @@ class TeamService {
   Future<ApiReturn> registerToTeam(String teamId) async {
     try {
       Response response = await _dio.post(UrlConstantHelper.POST_REGISTER_TEAM + teamId);
+      if (response.statusCode == 200) {
+        return ApiReturn(
+          success: response.data['success'] ?? response.data['status'],
+          message: response.data['message'],
+        );
+      }
+
+      return ApiReturn(success: false, message: response.data['message']);
+    } catch (e) {
+      return ApiReturn(
+        success: false,
+        message: e?.response?.data['message'] ?? 'Something went wrong'
+      );
+    }
+  }
+
+  Future<ApiReturn> exitFromTeam(ExitClubRequest datas) async {
+    try {
+      Response response = await _dio.put(
+        UrlConstantHelper.PUT_EXIT_FROM_TEAM,
+        data: datas.toMap()
+      );
       if (response.statusCode == 200) {
         return ApiReturn(
           success: response.data['success'],
