@@ -20,3 +20,13 @@ class GetTeamDetailInit extends TeamState {}
 class GetTeamDetailSuccessfulState extends TeamState {}
 
 class GetTeamDetailFailedState extends TeamState {}
+
+class RegisterToTeamInit extends TeamState {}
+
+class RegisterToTeamSuccessfulState extends TeamState {}
+
+class RegisterToTeamFailedState extends TeamState {
+  final String message;
+
+  RegisterToTeamFailedState({this.message});
+}

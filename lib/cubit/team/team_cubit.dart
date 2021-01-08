@@ -59,4 +59,19 @@ class TeamCubit extends Cubit<TeamState> {
       emit(GetTeamDetailFailedState());
     }
   }
+
+  void registerToTeam(String teamId) async {
+    emit(RegisterToTeamInit());
+
+    ApiReturn apiResult = await _teamService.registerToTeam(teamId);
+    if (apiResult.success) {
+      emit(RegisterToTeamSuccessfulState());
+    } else {
+      if (apiResult.message.toLowerCase() == 'Kamu sudah mendaftar diteam ini'.toLowerCase()) {
+        emit(RegisterToTeamFailedState(message: 'Anda sudah mendaftar ke team ini'));
+      } else {
+        emit(RegisterToTeamFailedState(message: 'Gagal mendaftar ke team ini'));
+      }
+    }
+  }
 }

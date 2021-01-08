@@ -68,4 +68,23 @@ class TeamService {
       );
     }
   }
+
+  Future<ApiReturn> registerToTeam(String teamId) async {
+    try {
+      Response response = await _dio.post(UrlConstantHelper.POST_REGISTER_TEAM + teamId);
+      if (response.statusCode == 200) {
+        return ApiReturn(
+          success: response.data['success'],
+          message: response.data['message'],
+        );
+      }
+
+      return ApiReturn(success: false, message: response.data['message']);
+    } catch (e) {
+      return ApiReturn(
+        success: false,
+        message: e?.response?.data['message'] ?? 'Something went wrong'
+      );
+    }
+  }
 }

@@ -68,7 +68,7 @@ class _TeamPageState extends State<TeamPage> {
                       )
                     )),
                     child: Text(
-                      'Lihat Pendaftar',
+                      'Lihat Pendaftar (${_teamCubit.myClubDetail.playerVerification.length})',
                       style: TextStyle(
                         color: Colors.deepOrangeAccent
                       ),
