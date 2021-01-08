@@ -36,3 +36,9 @@ class ExitTeamInit extends TeamState {}
 class ExitTeamSuccessfulState extends TeamState {}
 
 class ExitTeamFailedState extends TeamState {}
+
+class PlayerVerificationInitState extends TeamState {}
+
+class PlayerVerificationSuccessfulState extends TeamState {}
+
+class PlayerVerificationFailedState extends TeamState {}

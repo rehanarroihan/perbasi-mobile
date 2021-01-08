@@ -4,6 +4,7 @@ import 'package:perbasitlg/models/api_return.dart';
 import 'package:perbasitlg/models/club_detail.dart';
 import 'package:perbasitlg/models/club_model.dart';
 import 'package:perbasitlg/models/request/exit_club_request.dart';
+import 'package:perbasitlg/models/request/verify_player_request.dart';
 import 'package:perbasitlg/services/team_service.dart';
 
 part 'team_state.dart';
@@ -84,6 +85,17 @@ class TeamCubit extends Cubit<TeamState> {
       emit(ExitTeamSuccessfulState());
     } else {
       emit(ExitTeamFailedState());
+    }
+  }
+
+  void verifyPlayer(VerifyPlayerRequest data) async {
+    emit(PlayerVerificationInitState());
+
+    ApiReturn apiResult = await _teamService.verifyPlayer(data);
+    if (apiResult.success) {
+      emit(PlayerVerificationSuccessfulState());
+    } else {
+      emit(PlayerVerificationFailedState());
     }
   }
 }

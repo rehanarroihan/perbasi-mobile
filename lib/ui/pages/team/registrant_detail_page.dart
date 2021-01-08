@@ -5,13 +5,16 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:perbasitlg/cubit/team/team_cubit.dart';
 import 'package:perbasitlg/models/club_detail.dart';
 import 'package:perbasitlg/models/document_model.dart';
+import 'package:perbasitlg/models/request/verify_player_request.dart';
 import 'package:perbasitlg/ui/widgets/base/box_input.dart';
 import 'package:perbasitlg/ui/widgets/base/button.dart';
 import 'package:perbasitlg/ui/widgets/base/space.dart';
 import 'package:perbasitlg/ui/widgets/modules/app_alert_dialog.dart';
+import 'package:perbasitlg/ui/widgets/modules/loading_dialog.dart';
 import 'package:perbasitlg/utils/app_color.dart';
 import 'package:intl/intl.dart';
 import 'package:perbasitlg/utils/global_method_helper.dart';
+import 'package:perbasitlg/utils/show_flutter_toast.dart';
 import 'package:perbasitlg/utils/url_constant_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -34,11 +37,22 @@ class _RegistrantDetailPageState extends State<RegistrantDetailPage> {
 
   String _kkFileLink = '';
 
+  String _actionType = '';
+
   @override
   void initState() {
     _teamCubit = BlocProvider.of<TeamCubit>(context);
 
     super.initState();
+  }
+
+  void verifyPlayer(String status) {
+    _actionType = status;
+    _teamCubit.verifyPlayer(VerifyPlayerRequest(
+      teamId: widget.item.teamId,
+      playerId: widget.item.playerId,
+      status: status
+    ));
   }
 
   @override
@@ -56,118 +70,139 @@ class _RegistrantDetailPageState extends State<RegistrantDetailPage> {
       }
     }
 
-    return BlocBuilder(
+    return BlocListener(
       cubit: _teamCubit,
-      builder: (context, state) {
-        return Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.white,
-            iconTheme: IconThemeData(
-              color: Colors.black
-            ),
-            title: Text(
-              'Detail Pemain Pendaftar',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: ScreenUtil().setSp(14)
+      listener: (context, state) {
+        if (state is PlayerVerificationInitState) {
+          Navigator.pop(context);
+          LoadingDialog(
+            title: 'Loading',
+            description: 'Silahkan tunggu...'
+          ).show(context);
+        } else if (state is PlayerVerificationSuccessfulState) {
+          showFlutterToast('Berhasil ${_actionType == 'accepted' ? 'menerima' : 'menolak'} pendaftar');
+          Navigator.pop(context);
+          Navigator.pop(context);
+          Navigator.pop(context);
+          _teamCubit.getMyTeamPage();
+        } else if (state is PlayerVerificationFailedState) {
+          Navigator.pop(context);
+          showFlutterToast('Gagal ${_actionType == 'accepted' ? 'menerima' : 'menolak'} pendaftar, mohon coba lagi');
+        }
+      },
+      child: BlocBuilder(
+        cubit: _teamCubit,
+        builder: (context, state) {
+          return Scaffold(
+            appBar: AppBar(
+              backgroundColor: Colors.white,
+              iconTheme: IconThemeData(
+                color: Colors.black
+              ),
+              title: Text(
+                'Detail Pemain Pendaftar',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: ScreenUtil().setSp(14)
+                ),
+              ),
+              leading: IconButton(
+                icon: Icon(Icons.arrow_back),
+                onPressed: () => Navigator.pop(context)
               ),
             ),
-            leading: IconButton(
-              icon: Icon(Icons.arrow_back),
-              onPressed: () => Navigator.pop(context)
-            ),
-          ),
-          body: SingleChildScrollView(
-            child: Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: ScreenUtil().setWidth(24),
-                vertical: ScreenUtil().setHeight(24)
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildProfilePicture(),
-                      Space(width: ScreenUtil().setWidth(12)),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            widget.item.detail.name,
-                            style: TextStyle(
-                              fontSize: ScreenUtil().setSp(14),
-                              fontWeight: FontWeight.w500
+            body: SingleChildScrollView(
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: ScreenUtil().setWidth(24),
+                  vertical: ScreenUtil().setHeight(24)
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildProfilePicture(),
+                        Space(width: ScreenUtil().setWidth(12)),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.item.detail.name,
+                              style: TextStyle(
+                                fontSize: ScreenUtil().setSp(14),
+                                fontWeight: FontWeight.w500
+                              ),
                             ),
-                          ),
-                          Text(
-                            'Player',
-                            style: TextStyle(
-                              fontSize: ScreenUtil().setSp(12),
-                              color: AppColor.primaryColor,
-                              fontWeight: FontWeight.w500
+                            Text(
+                              'Player',
+                              style: TextStyle(
+                                fontSize: ScreenUtil().setSp(12),
+                                color: AppColor.primaryColor,
+                                fontWeight: FontWeight.w500
+                              ),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                    Space(height: 24),
+                    BoxInput(
+                      controller: _nikInput,
+                      label: 'NIK',
+                      onClick: () {},
+                    ),
+                    Space(height: 40),
+                    BoxInput(
+                      controller: _birthDetailInput,
+                      label: 'Tempat, Tanggal Lahir',
+                      onClick: () {},
+                    ),
+                    Space(height: 40),
+                    BoxInput(
+                      controller: _emailInput,
+                      label: 'Alamat Email',
+                      onClick: () {},
+                    ),
+                    Space(height: 40),
+                    BoxInput(
+                      controller: _documentInput,
+                      label: 'Dokumen',
+                      onClick: GlobalMethodHelper.isEmpty(_kkFileLink) ? null : () async {
+                        if (await canLaunch(_kkFileLink)) {
+                          await launch(_kkFileLink);
+                        } else {
+                          throw 'Could not launch url';
+                        }
+                      },
+                      suffixWidget: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: ScreenUtil().setWidth(72),
+                            height: ScreenUtil().setHeight(32),
+                            child: Button(
+                              onPressed: () {},
+                              fontSize: 10,
+                              text: 'Lihat File',
+                              style: AppButtonStyle.primary,
+                              padding: 0,
+                              fontWeight: FontWeight.w300,
                             ),
                           ),
                         ],
-                      )
-                    ],
-                  ),
-                  Space(height: 24),
-                  BoxInput(
-                    controller: _nikInput,
-                    label: 'NIK',
-                    onClick: () {},
-                  ),
-                  Space(height: 40),
-                  BoxInput(
-                    controller: _birthDetailInput,
-                    label: 'Tempat, Tanggal Lahir',
-                    onClick: () {},
-                  ),
-                  Space(height: 40),
-                  BoxInput(
-                    controller: _emailInput,
-                    label: 'Alamat Email',
-                    onClick: () {},
-                  ),
-                  Space(height: 40),
-                  BoxInput(
-                    controller: _documentInput,
-                    label: 'Dokumen',
-                    onClick: GlobalMethodHelper.isEmpty(_kkFileLink) ? null : () async {
-                      if (await canLaunch(_kkFileLink)) {
-                        await launch(_kkFileLink);
-                      } else {
-                        throw 'Could not launch url';
-                      }
-                    },
-                    suffixWidget: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          width: ScreenUtil().setWidth(72),
-                          height: ScreenUtil().setHeight(32),
-                          child: Button(
-                            onPressed: () {},
-                            fontSize: 10,
-                            text: 'Lihat File',
-                            style: AppButtonStyle.primary,
-                            padding: 0,
-                            fontWeight: FontWeight.w300,
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                  Space(height: 16),
-                  _callToActionButtons()
-                ],
+                    Space(height: 16),
+                    _callToActionButtons()
+                  ],
+                ),
               ),
             ),
-          ),
-        );
-      }
+          );
+        }
+      ),
     );
   }
 
@@ -185,7 +220,14 @@ class _RegistrantDetailPageState extends State<RegistrantDetailPage> {
             width: double.infinity,
             child: Button(
               onPressed: () {
-
+                AppAlertDialog(
+                  title: 'Terima Pendaftar',
+                  description: 'Apakah anda yakin akan menerima ${widget.item.detail.name} ?',
+                  negativeButtonText: 'Kembali',
+                  negativeButtonOnTap: () => Navigator.pop(context),
+                  positiveButtonText: 'Terima',
+                  positiveButtonOnTap: () => verifyPlayer('accepted'),
+                ).show(context);
               },
               text: 'Terima',
               style: AppButtonStyle.secondary,
@@ -202,14 +244,12 @@ class _RegistrantDetailPageState extends State<RegistrantDetailPage> {
               ),
               onPressed: () {
                 AppAlertDialog(
-                  title: 'Logout',
-                  description: 'Apakah anda yakin ingin keluar dari aplikasi ?',
-                  negativeButtonText: 'Tidak',
+                  title: 'Tolak Pendaftar',
+                  description: 'Apakah anda yakin akan menolak ${widget.item.detail.name} ?',
+                  negativeButtonText: 'Kembali',
                   negativeButtonOnTap: () => Navigator.pop(context),
-                  positiveButtonText: 'Ya',
-                  positiveButtonOnTap: () {
-
-                  },
+                  positiveButtonText: 'Tolak',
+                  positiveButtonOnTap: () => verifyPlayer('rejected'),
                 ).show(context);
               },
               shape: RoundedRectangleBorder(
