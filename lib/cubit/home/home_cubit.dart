@@ -21,6 +21,9 @@ class HomeCubit extends Cubit<HomeState> {
   bool scheduleListLoading = false;
   List<ScheduleModel> schedule = List<ScheduleModel>();
 
+  bool allScheduleListLoading = false;
+  List<ScheduleModel> allSchedule = List<ScheduleModel>();
+
   void getHomePageData() async {
     this.homePageLoading = true;
     emit(GetHomePageDatasInit());
@@ -55,6 +58,20 @@ class HomeCubit extends Cubit<HomeState> {
       emit(GetCompetitionScheduleSuccess());
     } else {
       emit(GetCompetitionScheduleFailed());
+    }
+  }
+
+  void getAllCompetitionScheduleList() async {
+    this.allScheduleListLoading = true;
+    emit(GetCompetitionScheduleInit()); // State should be replaced with the new one
+
+    ApiReturn<List<ScheduleModel>> apiResult = await _homeService.getAllCompetitionScheduleList();
+    this.allScheduleListLoading = false;
+    if (apiResult.success) {
+      this.allSchedule = apiResult.data;
+      emit(GetCompetitionScheduleSuccess()); // State should be replaced with the new one
+    } else {
+      emit(GetCompetitionScheduleFailed()); // State should be replaced with the new one
     }
   }
 }

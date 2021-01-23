@@ -1,13 +1,12 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_uploader/flutter_uploader.dart';
 import 'package:perbasitlg/app.dart';
 import 'package:perbasitlg/models/api_return.dart';
-import 'package:perbasitlg/models/login_model.dart';
-import 'package:perbasitlg/models/request/login_request.dart';
 import 'package:perbasitlg/models/request/profile_coach_request.dart';
 import 'package:perbasitlg/models/request/profile_player_request.dart';
-import 'package:perbasitlg/models/request/register_request.dart';
-import 'package:perbasitlg/models/user_model.dart';
 import 'package:perbasitlg/utils/constant_helper.dart';
 import 'package:perbasitlg/utils/url_constant_helper.dart';
 
@@ -16,7 +15,50 @@ class ProfileService {
 
   Future<ApiReturn> updatePlayerProfile({ProfilePlayerRequest data, ValueChanged<double> onSendProgress}) async {
     try {
-      Response response = await _dio.post(
+      final uploader = FlutterUploader();
+
+      await uploader.enqueue(
+        url: App().apiBaseURL +  UrlConstantHelper.POST_CHANGE_PLAYER_PROFILE,
+        method: UploadMethod.POST,
+        headers: {
+          "Authorization": "Bearer ${App().prefs.getString(ConstantHelper.PREFS_TOKEN_KEY)}"
+        },
+        files: [
+          FileItem(
+            filename: data.foto.path.split('/').last,
+            savedDir: data.foto.path,
+            fieldname: 'foto'
+          ),
+          FileItem(
+            filename: data.kk.path.split('/').last,
+            savedDir: data.kk.path,
+            fieldname: 'kk'
+          )
+        ],
+        data: {
+          'email': data.email,
+          'nik': data.nik,
+          'name': data.name,
+          'birthPlace': data.birthPlace,
+          'birthDate': data.birthDate,
+          'phone': data.phone,
+          'address': data.address,
+          'positionId': data.positionId
+        },
+        showNotification: false,
+        tag: "upload1"
+      );
+
+      uploader.result.listen((result) {
+        return ApiReturn(
+          success: true,
+          message: 'haha',
+        );
+      }, onError: (ex, stacktrace) {
+        // ... code to handle error
+      });
+
+      /*Response response = await _dio.post(
         UrlConstantHelper.POST_CHANGE_PLAYER_PROFILE,
         data: FormData.fromMap(await data.toMap()),
         onSendProgress: (int sent, int total) {
@@ -29,9 +71,9 @@ class ProfileService {
           success: response.data['success'],
           message: response.data['message'],
         );
-      }
+      }*/
 
-      return ApiReturn(success: false, message: response.data['message']);
+      return ApiReturn(success: false);
     } catch (e, stackTrace) {
       print(e);
       return ApiReturn(

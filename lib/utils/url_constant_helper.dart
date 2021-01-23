@@ -10,6 +10,7 @@ class UrlConstantHelper {
   static const String GET_COMPETITIONS = "competitions";
   static const String GET_COMPETITION_DETAIL = "competitions/";
   static const String GET_COMPETITION_SCHEDULE_DETAIL = "competitions/schedule/";
+  static const String GET_ALL_COMPETITION_SCHEDULE = "schedule";
 
   static const String GET_TEAMS = "teams";
   static const String GET_TEAM_DETAIL = "teams/";

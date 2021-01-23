@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:perbasitlg/ui/pages/competition/all_competition_schedule_page.dart';
 import 'package:perbasitlg/ui/pages/home/home_page.dart';
 import 'package:perbasitlg/ui/pages/home/team_page.dart';
 import 'package:perbasitlg/ui/pages/profile/profile_page.dart';
@@ -11,8 +12,7 @@ class NavigatorPage extends StatefulWidget {
 class _NavigatorPageState extends State<NavigatorPage> {
   List<Widget> _pages = [
     HomePage(),
-    Container(),
-    Container(),
+    AllCompetitionSchedulePage(),
     TeamPage(),
     ProfilePage(),
   ];
@@ -46,11 +46,7 @@ class _NavigatorPageState extends State<NavigatorPage> {
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.calendar_today_outlined),
-              label:'Email',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.search),
-              label: 'Search'
+              label:'Jadwal Kompetisi',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.people_rounded),

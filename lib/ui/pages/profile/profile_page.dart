@@ -106,7 +106,7 @@ class _ProfilePageState extends State<ProfilePage> {
         address: _addressInput.text.trim(),
         phone: _phoneInput.text.trim(),
         foto: _profilePict,
-        positionId: _authCubit.loggedInUserData.positionId.id.toString(),
+        positionId: '1',
         kk: _kk,
       );
 
@@ -701,7 +701,7 @@ class _ProfilePageState extends State<ProfilePage> {
           shape: BoxShape.circle,
           image: DecorationImage(
             fit: BoxFit.cover,
-            image: AssetImage(_profilePict.path),
+            image: FileImage(_profilePict),
           ),
         ),
       );
@@ -810,7 +810,7 @@ class _ProfilePageState extends State<ProfilePage> {
           borderRadius: BorderRadius.all(Radius.circular(4)),
           image: DecorationImage(
             fit: BoxFit.cover,
-            image: AssetImage(_kk.path),
+            image: FileImage(_kk),
           ),
         ),
       );
