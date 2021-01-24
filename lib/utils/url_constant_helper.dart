@@ -24,5 +24,7 @@ class UrlConstantHelper {
 
   static const String POST_CHANGE_REFEREE_PROFILE = "profile/referee";
 
+  static const String GET_PLAYER_POSITION = "master/position_players";
+
   static const String IMAGE_BASE_URL = 'http://perbasitulungagung.com/adm/';
 }

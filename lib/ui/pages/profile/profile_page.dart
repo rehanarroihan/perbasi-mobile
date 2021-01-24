@@ -436,10 +436,32 @@ class _ProfilePageState extends State<ProfilePage> {
       child: _loggedInRole == ConstantHelper.ROLE_PEMAIN ?
       Column(
         children: [
-          BoxInput(
-            controller: _positionInput,
-            label: 'Posisi',
-            onClick: () {},
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 10.0),
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: Colors.black38,
+                  width: 1,
+                ),
+              )
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton(
+                isExpanded: true,
+                hint: Text('Pilih Posisi'),
+                value: 1,
+                items: _authCubit.playerPositionList.map((value) {
+                  return DropdownMenuItem(
+                    child: Text(value.name),
+                    value: value.id,
+                  );
+                }).toList(),
+                onChanged: (value) {
+
+                },
+              ),
+            ),
           ),
           Space(height: 40),
           BoxInput(

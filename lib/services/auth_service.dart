@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:perbasitlg/app.dart';
 import 'package:perbasitlg/models/api_return.dart';
 import 'package:perbasitlg/models/login_model.dart';
+import 'package:perbasitlg/models/player_position_model.dart';
 import 'package:perbasitlg/models/request/login_request.dart';
 import 'package:perbasitlg/models/request/register_request.dart';
 import 'package:perbasitlg/models/user_model.dart';
@@ -66,6 +67,28 @@ class AuthService {
       return ApiReturn(success: false, message: response.data['message']);
     } catch (e, stackTrace) {
       print(e);
+      return ApiReturn(
+        success: false,
+        message: e?.response?.data['message'] ?? 'Something went wrong'
+      );
+    }
+  }
+
+  Future<ApiReturn<List<PlayerPositionModel>>> getPlayerPosition() async {
+    try {
+      Response response = await _dio.get(UrlConstantHelper.GET_PLAYER_POSITION);
+      if (response.statusCode == 200) {
+        return ApiReturn(
+          success: response.data['success'],
+          message: response.data['message'],
+          data: (response.data['data'] as Iterable)
+              .map((e) => PlayerPositionModel.fromJson(e))
+              .toList(),
+        );
+      }
+
+      return ApiReturn(success: false, message: response.data['message']);
+    } catch (e) {
       return ApiReturn(
         success: false,
         message: e?.response?.data['message'] ?? 'Something went wrong'
