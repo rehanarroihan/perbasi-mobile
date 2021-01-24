@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:perbasitlg/cubit/auth/auth_cubit.dart';
+import 'package:perbasitlg/cubit/home/home_cubit.dart';
 import 'package:perbasitlg/models/request/login_request.dart';
 import 'package:perbasitlg/ui/pages/auth/register_page.dart';
 import 'package:perbasitlg/ui/pages/splash_page.dart';
@@ -24,6 +25,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   AuthCubit _authCubit;
+  HomeCubit _homeCubit;
 
   TextEditingController _emailInput = TextEditingController();
   TextEditingController _passwordInput = TextEditingController();
@@ -31,6 +33,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     _authCubit = BlocProvider.of<AuthCubit>(context);
+    _homeCubit = BlocProvider.of<HomeCubit>(context);
 
     if (widget.isAfterRegisterSuccess) {
       Future.delayed(Duration(milliseconds: 500)).then((_) async {
@@ -58,6 +61,7 @@ class _LoginPageState extends State<LoginPage> {
           ).show(context);
         } else if (state is LoginSuccessfulState) {
           Navigator.pop(context);
+          _homeCubit.changeSelectedPage(0);
           Navigator.pushReplacement(context, MaterialPageRoute(
             builder: (context) => SplashPage()
           ));
