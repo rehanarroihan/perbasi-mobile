@@ -69,6 +69,7 @@ class _ProfilePageState extends State<ProfilePage> {
   TextEditingController _licensePhotoInput = TextEditingController();
   File _licensePhoto;
   String _licenseDateForServer = '';
+  int _selectedPositionId;
 
   GlobalKey<FormState> _formKey;
 
@@ -112,7 +113,7 @@ class _ProfilePageState extends State<ProfilePage> {
         address: _addressInput.text.trim(),
         phone: _phoneInput.text.trim(),
         foto: _profilePict,
-        positionId: '1',
+        positionId: _selectedPositionId,
         kk: _kk,
       );
 
@@ -196,6 +197,12 @@ class _ProfilePageState extends State<ProfilePage> {
 
           if (_teamCubit.userHaveTeam) {
             _teamInput.text = _teamCubit.myClubDetail.detailTeam.name;
+          } else {
+            _teamInput.text = 'Belum memiliki team';
+          }
+
+          if (GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.positionId)) {
+            _selectedPositionId = _authCubit.loggedInUserData.positionId.id;
           }
 
           return Scaffold(
@@ -460,7 +467,7 @@ class _ProfilePageState extends State<ProfilePage> {
               child: DropdownButton(
                 isExpanded: true,
                 hint: Text('Pilih Posisi'),
-                value: 1,
+                value: _selectedPositionId,
                 items: _authCubit.playerPositionList.map((value) {
                   return DropdownMenuItem(
                     child: Text(value.name),
@@ -468,7 +475,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   );
                 }).toList(),
                 onChanged: (value) {
-
+                  setState(() {
+                    _selectedPositionId = value;
+                  });
                 },
               ),
             ),

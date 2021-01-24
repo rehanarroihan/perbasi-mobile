@@ -15,9 +15,9 @@ class ProfileService {
 
   Future<ApiReturn> updatePlayerProfile({ProfilePlayerRequest data, ValueChanged<double> onSendProgress}) async {
     try {
-      final uploader = FlutterUploader();
+      /*final uploader = FlutterUploader();
 
-      await uploader.enqueue(
+      final taskId = uploader.enqueue(
         url: App().apiBaseURL +  UrlConstantHelper.POST_CHANGE_PLAYER_PROFILE,
         method: UploadMethod.POST,
         headers: {
@@ -56,9 +56,9 @@ class ProfileService {
         );
       }, onError: (ex, stacktrace) {
         // ... code to handle error
-      });
+      });*/
 
-      /*Response response = await _dio.post(
+      Response response = await _dio.post(
         UrlConstantHelper.POST_CHANGE_PLAYER_PROFILE,
         data: FormData.fromMap(await data.toMap()),
         onSendProgress: (int sent, int total) {
@@ -71,7 +71,7 @@ class ProfileService {
           success: response.data['success'],
           message: response.data['message'],
         );
-      }*/
+      }
 
       return ApiReturn(success: false);
     } catch (e, stackTrace) {
