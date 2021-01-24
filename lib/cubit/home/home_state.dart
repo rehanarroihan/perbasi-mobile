@@ -20,3 +20,7 @@ class GetCompetitionScheduleInit extends HomeState {}
 class GetCompetitionScheduleSuccess extends HomeState {}
 
 class GetCompetitionScheduleFailed extends HomeState {}
+
+class ChangeMainPageInit extends HomeState {}
+
+class ChangedMainPage extends HomeState {}

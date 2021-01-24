@@ -9,7 +9,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:network_to_file_image/network_to_file_image.dart';
 import 'package:perbasitlg/app.dart';
 import 'package:perbasitlg/cubit/auth/auth_cubit.dart';
+import 'package:perbasitlg/cubit/home/home_cubit.dart';
 import 'package:perbasitlg/cubit/profile/profile_cubit.dart';
+import 'package:perbasitlg/cubit/team/team_cubit.dart';
 import 'package:perbasitlg/models/request/profile_coach_request.dart';
 import 'package:perbasitlg/models/request/profile_player_request.dart';
 import 'package:perbasitlg/ui/pages/splash_page.dart';
@@ -34,7 +36,9 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   AuthCubit _authCubit = AuthCubit();
   ProfileCubit _profileCubit = ProfileCubit();
-  
+  TeamCubit _teamCubit = TeamCubit();
+  HomeCubit _homeCubit = HomeCubit();
+
   String _loggedInRole;
 
   TextEditingController _nikInput = TextEditingController();
@@ -72,6 +76,8 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     _authCubit = BlocProvider.of<AuthCubit>(context);
     _profileCubit = BlocProvider.of<ProfileCubit>(context);
+    _teamCubit = BlocProvider.of<TeamCubit>(context);
+    _homeCubit = BlocProvider.of<HomeCubit>(context);
 
     _loggedInRole = _authCubit.loggedInUserData.role.name;
 
@@ -186,6 +192,10 @@ class _ProfilePageState extends State<ProfilePage> {
 
           if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.licenseFile)) {
             _kkInput.text = 'Foto lisensi sudah di upload';
+          }
+
+          if (_teamCubit.userHaveTeam) {
+            _teamInput.text = _teamCubit.myClubDetail.detailTeam.name;
           }
 
           return Scaffold(
@@ -467,7 +477,7 @@ class _ProfilePageState extends State<ProfilePage> {
           BoxInput(
             controller: _teamInput,
             label: 'Team',
-            onClick: () {},
+            onClick: () => _homeCubit.changeSelectedPage(2),
             suffixWidget: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -475,7 +485,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   width: ScreenUtil().setWidth(72),
                   height: ScreenUtil().setHeight(32),
                   child: Button(
-                    onPressed: () {},
+                    onPressed: () => _homeCubit.changeSelectedPage(2),
                     fontSize: 10,
                     text: 'Lihat Team',
                     padding: 0,

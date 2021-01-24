@@ -13,6 +13,8 @@ class HomeCubit extends Cubit<HomeState> {
 
   HomeService _homeService = HomeService();
 
+  int selectedPage = 0;
+
   bool homePageLoading = false;
   List<NewsModel> newsList = List<NewsModel>();
   CompetitionModel highlightCompetition = CompetitionModel();
@@ -72,5 +74,11 @@ class HomeCubit extends Cubit<HomeState> {
     } else {
       emit(GetCompetitionScheduleFailed()); // State should be replaced with the new one
     }
+  }
+
+  void changeSelectedPage(int targetPage) {
+    emit(ChangeMainPageInit());
+    this.selectedPage = targetPage;
+    emit(ChangedMainPage());
   }
 }
