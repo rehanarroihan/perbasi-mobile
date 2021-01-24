@@ -82,6 +82,7 @@ class _NewsListPageState extends State<NewsListPage> {
                       child: FeedItem(
                         imageUrl: imageUrl,
                         title: item.title,
+                        date: item.createdAt,
                         desc: GlobalMethodHelper.parseHtmlString(item.description)
                       ),
                     );

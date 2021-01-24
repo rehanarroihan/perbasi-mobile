@@ -76,6 +76,7 @@ class _CompetitionListPageState extends State<CompetitionListPage> {
                       child: FeedItem(
                         imageUrl: item.foto,
                         title: item.name,
+                        date: item.createdAt,
                         desc: GlobalMethodHelper.parseHtmlString(item.description)
                       ),
                     );

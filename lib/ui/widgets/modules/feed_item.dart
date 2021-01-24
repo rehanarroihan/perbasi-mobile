@@ -2,11 +2,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:perbasitlg/ui/widgets/base/space.dart';
+import 'package:intl/intl.dart';
 
 class FeedItem extends StatelessWidget {
-  final String imageUrl, title, desc;
+  final String imageUrl, title, desc, date;
 
-  FeedItem({this.imageUrl, this.title, this.desc});
+  FeedItem({this.imageUrl, this.title, this.desc, this.date});
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +57,16 @@ class FeedItem extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                       fontSize: 15
                     ),
+                  ),
+                ),
+                Flexible(
+                  child: Text(
+                    'Diterbitkan pada '+DateFormat('dd MMMM yyyy').format(DateTime.parse(this.date)),
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500
+                    ),
+                    maxLines: 1,
                   ),
                 ),
                 Flexible(

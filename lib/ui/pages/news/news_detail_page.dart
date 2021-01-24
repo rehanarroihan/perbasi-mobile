@@ -5,6 +5,7 @@ import 'package:perbasitlg/models/news_model.dart';
 import 'package:perbasitlg/ui/widgets/base/space.dart';
 import 'package:perbasitlg/utils/app_color.dart';
 import 'package:perbasitlg/utils/global_method_helper.dart';
+import 'package:intl/intl.dart';
 
 class NewsDetailPage extends StatelessWidget {
   NewsModel newsDetail;
@@ -38,6 +39,7 @@ class NewsDetailPage extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               width: double.infinity,
@@ -64,6 +66,15 @@ class NewsDetailPage extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(16)),
               child: Text(
                 GlobalMethodHelper.parseHtmlString(newsDetail.description),
+                style: TextStyle(
+                  fontSize: 15
+                ),
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(16)),
+              child: Text(
+                'Update: ${DateFormat('dd MMMM yyyy').format(DateTime.parse(newsDetail.createdAt))} by ${newsDetail.createdBy}',
                 style: TextStyle(
                   fontSize: 15
                 ),
