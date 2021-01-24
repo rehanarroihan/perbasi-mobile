@@ -36,7 +36,6 @@ class HomeCubit extends Cubit<HomeState> {
       this.competitions = apiResult.data;
       if (this.competitions.length >= 1) {
         this.highlightCompetition = this.competitions[0];
-        this.competitions.removeAt(0);
       }
 
       this.homePageLoading = false;

@@ -190,6 +190,7 @@ class _HomePageState extends State<HomePage> {
         scrollDirection: Axis.horizontal,
         itemBuilder: (context, index) {
           CompetitionModel item = _homeCubit.competitions[index];
+          if (index == 0) { return Space(height: 0); }
           return GestureDetector(
             onTap: () {
               Navigator.push(context, MaterialPageRoute(
