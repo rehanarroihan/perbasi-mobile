@@ -87,14 +87,8 @@ class _RegisterPageState extends State<RegisterPage> {
         } else if (state is RegisterSuccessfulState) {
           Navigator.pop(context);
           Navigator.pushReplacement(context, MaterialPageRoute(
-            builder: (context) => LoginPage()
+            builder: (context) => LoginPage(isAfterRegisterSuccess: true)
           ));
-          AppAlertDialog(
-            title: 'Registrasi Berhasil',
-            description: 'Silahkan login menggunakan email dan password yang telah anda buat',
-            positiveButtonText: 'Ok',
-            positiveButtonOnTap: () => Navigator.pop(context)
-          ).show(context);
         } else if (state is RegisterFailedState) {
           Navigator.pop(context);
           AppAlertDialog(

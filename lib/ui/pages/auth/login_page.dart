@@ -15,7 +15,8 @@ import 'package:perbasitlg/utils/global_method_helper.dart';
 import 'package:perbasitlg/utils/show_flutter_toast.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage({Key key}) : super(key: key);
+  final bool isAfterRegisterSuccess;
+  LoginPage({Key key, this.isAfterRegisterSuccess = false}) : super(key: key);
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -30,6 +31,17 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     _authCubit = BlocProvider.of<AuthCubit>(context);
+
+    if (widget.isAfterRegisterSuccess) {
+      Future.delayed(Duration(milliseconds: 500)).then((_) async {
+        AppAlertDialog(
+          title: 'Registrasi Berhasil',
+          description: 'Silahkan login menggunakan email dan password yang telah anda buat',
+          positiveButtonText: 'Ok',
+          positiveButtonOnTap: () => Navigator.pop(context)
+        ).show(context);
+      });
+    }
 
     super.initState();
   }
