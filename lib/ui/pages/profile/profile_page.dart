@@ -82,6 +82,10 @@ class _ProfilePageState extends State<ProfilePage> {
 
     _loggedInRole = _authCubit.loggedInUserData.role.name;
 
+    if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.positionId.id)) {
+      _selectedPositionId = _authCubit.loggedInUserData.positionId.id;
+    }
+
     _formKey = GlobalKey<FormState>();
     
     super.initState();
@@ -113,7 +117,7 @@ class _ProfilePageState extends State<ProfilePage> {
         address: _addressInput.text.trim(),
         phone: _phoneInput.text.trim(),
         foto: _profilePict,
-        positionId: _selectedPositionId,
+        positionId: _selectedPositionId.toString(),
         kk: _kk,
       );
 
@@ -199,10 +203,6 @@ class _ProfilePageState extends State<ProfilePage> {
             _teamInput.text = _teamCubit.myClubDetail.detailTeam.name;
           } else {
             _teamInput.text = 'Belum memiliki team';
-          }
-
-          if (GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.positionId)) {
-            _selectedPositionId = _authCubit.loggedInUserData.positionId.id;
           }
 
           return Scaffold(
