@@ -55,6 +55,7 @@ class NewsDetailPage extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(16)),
               child: Text(
                 newsDetail.title,
+                textAlign: TextAlign.justify,
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
                   fontSize: 16
@@ -66,6 +67,7 @@ class NewsDetailPage extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(16)),
               child: Text(
                 GlobalMethodHelper.parseHtmlString(newsDetail.description),
+                textAlign: TextAlign.justify,
                 style: TextStyle(
                   fontSize: 15
                 ),

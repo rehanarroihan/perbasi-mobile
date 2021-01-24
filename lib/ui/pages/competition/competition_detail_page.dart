@@ -51,6 +51,7 @@ class CompetitionDetailPage extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(16)),
               child: Text(
                 competitionDetail.name,
+                textAlign: TextAlign.justify,
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
                   fontSize: 16
@@ -118,19 +119,20 @@ class ExpandableText extends StatefulWidget {
 class _ExpandableTextState extends State<ExpandableText> {
   @override
   Widget build(BuildContext context) {
-    return new Column(children: <Widget>[
-      new ConstrainedBox(
+    return Column(children: <Widget>[
+      ConstrainedBox(
           constraints: widget.isExpanded
-              ? new BoxConstraints()
-              : new BoxConstraints(maxHeight: 90.0),
-          child: new Text(
+              ? BoxConstraints()
+              : BoxConstraints(maxHeight: 90.0),
+          child: Text(
             widget.text,
+            textAlign: TextAlign.justify,
             softWrap: true,
             overflow: TextOverflow.fade,
           )),
       widget.isExpanded
-          ? new Container()
-          : new FlatButton(
+          ? Container()
+          : FlatButton(
           child: const Text('Lihat Selengkapnya...', style: TextStyle(color: Colors.deepOrangeAccent)),
           onPressed: () => setState(() => widget.isExpanded = true))
     ]);
