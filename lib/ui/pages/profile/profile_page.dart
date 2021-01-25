@@ -82,7 +82,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     _loggedInRole = _authCubit.loggedInUserData.role.name;
 
-    if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.positionId.id)) {
+    if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData?.positionId?.id)) {
       _selectedPositionId = _authCubit.loggedInUserData.positionId.id;
     }
 
