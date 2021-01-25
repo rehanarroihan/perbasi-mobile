@@ -867,7 +867,7 @@ class _ProfilePageState extends State<ProfilePage> {
             fit: BoxFit.cover,
             image: NetworkToFileImage(
               url: _authCubit.loggedInUserData.kk,
-              file: generateKKFromUrl(_authCubit.loggedInUserData.foto.split('/').last)
+              file: generateKKFromUrl(_authCubit.loggedInUserData.kk.split('/').last)
             ),
           ),
         ),
