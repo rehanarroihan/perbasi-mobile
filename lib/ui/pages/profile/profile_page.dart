@@ -14,6 +14,7 @@ import 'package:perbasitlg/cubit/profile/profile_cubit.dart';
 import 'package:perbasitlg/cubit/team/team_cubit.dart';
 import 'package:perbasitlg/models/request/profile_coach_request.dart';
 import 'package:perbasitlg/models/request/profile_player_request.dart';
+import 'package:perbasitlg/ui/pages/profile/qr_code_page.dart';
 import 'package:perbasitlg/ui/pages/splash_page.dart';
 import 'package:perbasitlg/ui/widgets/base/box_input.dart';
 import 'package:perbasitlg/ui/widgets/base/button.dart';
@@ -717,7 +718,13 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           Expanded(
             child: GestureDetector(
-              onTap: () {},
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => QrCodePage(
+                    qrCodeUrl: _authCubit.loggedInUserData.qrcode,
+                  )
+                ));
+              },
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
