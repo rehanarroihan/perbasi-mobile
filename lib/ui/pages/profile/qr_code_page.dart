@@ -46,11 +46,7 @@ class _QrCodePageState extends State<QrCodePage> {
       ),
       body: PhotoViewGallery(
         pageController: _controller,
-        onPageChanged: (int index) {
-          setState(() {
-            _currentImagePage = index;
-          });
-        },
+        onPageChanged: (int index) {},
         pageOptions: [
           PhotoViewGalleryPageOptions(
             imageProvider: NetworkImage(widget.qrCodeUrl),
