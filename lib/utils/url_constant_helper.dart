@@ -26,5 +26,7 @@ class UrlConstantHelper {
 
   static const String GET_PLAYER_POSITION = "master/position_players";
 
+  static const String POST_SCAN_QR_CODE = "scan";
+
   static const String IMAGE_BASE_URL = 'http://perbasitulungagung.com/adm/';
 }

@@ -25,7 +25,7 @@ import 'package:perbasitlg/utils/app_color.dart';
 import 'package:perbasitlg/utils/constant_helper.dart';
 import 'package:perbasitlg/utils/global_method_helper.dart';
 import 'package:intl/intl.dart';
-import 'package:perbasitlg/utils/qr_view_example.dart';
+import 'package:perbasitlg/ui/pages/profile/qr_scanner_page.dart';
 import 'package:perbasitlg/utils/show_flutter_toast.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -226,7 +226,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 IconButton(
                   icon: Icon(Icons.camera_sharp),
                   onPressed: () => Navigator.push(context, MaterialPageRoute(
-                    builder: (context) => QRViewExample()
+                    builder: (context) => QRScannerPage()
                   )),
                 )
               ]

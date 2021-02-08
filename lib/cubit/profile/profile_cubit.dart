@@ -53,4 +53,12 @@ class ProfileCubit extends Cubit<ProfileState> {
       emit(UpdateProfileFailed());
     }
   }
+
+  void scanQRCode(String code) async {
+    emit(ScanQrCodeInit());
+
+    ApiReturn apiReturn = await _profileService.scanQRCode(code);
+
+    emit(ScanQrCodeSuccessful(apiReturn.message));
+  }
 }

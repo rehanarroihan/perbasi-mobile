@@ -115,4 +115,29 @@ class ProfileService {
       );
     }
   }
+
+  Future<ApiReturn> scanQRCode(String code) async {
+    try {
+      Response response = await _dio.post(
+        UrlConstantHelper.POST_SCAN_QR_CODE,
+        data: { 'qrcode': code },
+      );
+      if (response.statusCode == 200) {
+        return ApiReturn(
+          success: response.data['success'],
+          message: response.data['message'],
+        );
+      }
+
+      return ApiReturn(
+        success: false,
+        message: 'Gagal mengirim code, silahkan coba lagi',
+      );
+    } catch (e) {
+      return ApiReturn(
+        success: false,
+        message: 'Gagal mengirim code, silahkan coba lagi',
+      );
+    }
+  }
 }

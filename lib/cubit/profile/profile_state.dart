@@ -18,3 +18,17 @@ class UpdateProfileProgressChanged extends ProfileState {}
 class UpdateProfileSuccessful extends ProfileState {}
 
 class UpdateProfileFailed extends ProfileState {}
+
+class ScanQrCodeInit extends ProfileState {}
+
+class ScanQrCodeSuccessful extends ProfileState {
+  final String message;
+
+  ScanQrCodeSuccessful(this.message);
+}
+
+class ScanQrCodeFailedState extends ProfileState {
+  final String message;
+
+  ScanQrCodeFailedState(this.message);
+}
