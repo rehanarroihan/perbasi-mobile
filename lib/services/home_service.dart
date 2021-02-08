@@ -100,7 +100,7 @@ class HomeService {
     } catch (e, stackTrace) {
       return ApiReturn(
         success: false,
-        message: e?.response?.data['message'] ?? 'Something went wrong'
+        message: 'Something went wrong'
       );
     }
   }

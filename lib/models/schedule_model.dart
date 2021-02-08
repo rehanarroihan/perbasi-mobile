@@ -67,8 +67,13 @@ class Results {
   Results({this.home, this.away});
 
   Results.fromJson(Map<String, dynamic> json) {
-    home = json['home'];
-    away = json['away'];
+    try {
+      home = json['home'];
+      away = json['away'];
+    } catch (e) {
+      home = int.parse(json['home'].toString());
+      away = int.parse(json['away'].toString());
+    }
   }
 
   Map<String, dynamic> toJson() {
