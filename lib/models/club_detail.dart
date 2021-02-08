@@ -126,7 +126,7 @@ class TeamPlayer {
   String status;
   String createdAt;
   String updatedAt;
-  Null createdBy;
+  String createdBy;
   Detail detail;
   List<DocumentModel> document;
 
