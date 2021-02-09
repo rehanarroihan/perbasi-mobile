@@ -89,6 +89,8 @@ class _ProfilePageState extends State<ProfilePage> {
     }
 
     _formKey = GlobalKey<FormState>();
+
+    _updateFields();
     
     super.initState();
   }
@@ -138,7 +140,7 @@ class _ProfilePageState extends State<ProfilePage> {
         foto: _profilePict,
         licence: _licenseNameInput.text.trim(),
         licenceNumber: _licenseNumberInput.text.trim(),
-        licenceFrom: _licenseNumberInput.text.trim(),
+        licenceFrom: _licensePublisherInput.text.trim(),
         licenceFile: _licensePhoto,
         licenceActiveDate: _licenseDateForServer
       );
@@ -147,15 +149,21 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  File generateProfilePictFileFromUrl(String filename) {
+  File _generateProfilePictFileFromUrl(String filename) {
     String pathName = p.join(App().appDocsDir.path, filename);
     _profilePict = File(pathName);
     return File(pathName);
   }
 
-  File generateKKFromUrl(String filename) {
+  File _generateKKFileFromUrl(String filename) {
     String pathName = p.join(App().appDocsDir.path, filename);
     _kk = File(pathName);
+    return File(pathName);
+  }
+
+  File _generateLicenseFileFromUrl(String filename) {
+    String pathName = p.join(App().appDocsDir.path, filename);
+    _licensePhoto = File(pathName);
     return File(pathName);
   }
 
@@ -178,35 +186,13 @@ class _ProfilePageState extends State<ProfilePage> {
           Navigator.pop(context);
           showFlutterToast('Berhasil menyimpan perubahan');
           _authCubit.getUserDetail();
+        } else if (state is GetUserDataSuccessfulState) {
+          _updateFields();
         }
       },
       child: BlocBuilder(
         cubit: _authCubit,
         builder: (context, state) {
-          _nikInput.text = _authCubit.loggedInUserData.nik;
-          _nameInput.text = _authCubit.loggedInUserData.name;
-          _birthPlaceInput.text = _authCubit.loggedInUserData.birthPlace;
-          _birthDateInput.text = DateFormat('dd MMMM yyyy').format(
-            DateTime.parse(_authCubit.loggedInUserData.birthDate)
-          );
-          _emailInput.text = _authCubit.loggedInUserData.email;
-          _addressInput.text = _authCubit.loggedInUserData.address;
-          _phoneInput.text = _authCubit.loggedInUserData.phone;
-          _positionInput.text = _authCubit.loggedInUserData.positionId?.name ?? '';
-          if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.kk)) {
-            _kkInput.text = 'KK sudah di upload';
-          }
-
-          if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.licenseFile)) {
-            _kkInput.text = 'Foto lisensi sudah di upload';
-          }
-
-          if (_teamCubit.userHaveTeam) {
-            _teamInput.text = _teamCubit.myClubDetail.detailTeam.name;
-          } else {
-            _teamInput.text = 'Belum memiliki team';
-          }
-
           return Scaffold(
             backgroundColor: AppColor.pageBackgroundColor,
             appBar: AppBar(
@@ -254,6 +240,39 @@ class _ProfilePageState extends State<ProfilePage> {
         },
       ),
     );
+  }
+
+  void _updateFields() {
+    _nikInput.text = _authCubit.loggedInUserData.nik;
+    _nameInput.text = _authCubit.loggedInUserData.name;
+    _birthPlaceInput.text = _authCubit.loggedInUserData.birthPlace;
+    _birthDateInput.text = DateFormat('dd MMMM yyyy').format(
+      DateTime.parse(_authCubit.loggedInUserData.birthDate)
+    );
+    _emailInput.text = _authCubit.loggedInUserData.email;
+    _addressInput.text = _authCubit.loggedInUserData.address;
+    _phoneInput.text = _authCubit.loggedInUserData.phone;
+    _positionInput.text = _authCubit.loggedInUserData.positionId?.name ?? '';
+    if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.kk)) {
+      _kkInput.text = 'KK sudah di upload';
+    }
+
+    if (_teamCubit.userHaveTeam) {
+      _teamInput.text = _teamCubit.myClubDetail.detailTeam.name;
+    } else {
+      _teamInput.text = 'Belum memiliki team';
+    }
+
+    // Coach input
+    _licenseNameInput.text = _authCubit.loggedInUserData.licence;
+    _licenseNumberInput.text = _authCubit.loggedInUserData.licenceNumber;
+    _licensePublisherInput.text = _authCubit.loggedInUserData.licenceFrom;
+    _licenseDateInput.text = DateFormat('dd MMMM yyyy').format(
+      DateTime.parse(_authCubit.loggedInUserData.licenceActiveDate)
+    );
+    if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.licenseFile)) {
+      _licensePhotoInput.text = 'Foto lisensi sudah di upload';
+    }
   }
 
   Widget _callToActionButtons() {
@@ -774,7 +793,7 @@ class _ProfilePageState extends State<ProfilePage> {
             fit: BoxFit.cover,
             image: NetworkToFileImage(
               url: _authCubit.loggedInUserData.foto,
-              file: generateProfilePictFileFromUrl(_authCubit.loggedInUserData.foto.split('/').last)
+              file: _generateProfilePictFileFromUrl(_authCubit.loggedInUserData.foto.split('/').last)
             ),
           ),
         ),
@@ -873,7 +892,7 @@ class _ProfilePageState extends State<ProfilePage> {
       );
     }
 
-    if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.nik)) {
+    if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.kk)) {
       return Container(
         width: ScreenUtil().setWidth(32),
         height: ScreenUtil().setHeight(32),
@@ -883,7 +902,7 @@ class _ProfilePageState extends State<ProfilePage> {
             fit: BoxFit.cover,
             image: NetworkToFileImage(
               url: _authCubit.loggedInUserData.kk,
-              file: generateKKFromUrl(_authCubit.loggedInUserData.kk.split('/').last)
+              file: _generateKKFileFromUrl(_authCubit.loggedInUserData.kk.split('/').last)
             ),
           ),
         ),
@@ -921,7 +940,7 @@ class _ProfilePageState extends State<ProfilePage> {
             fit: BoxFit.cover,
             image: NetworkToFileImage(
               url: _authCubit.loggedInUserData.licenseFile,
-              file: generateKKFromUrl(_authCubit.loggedInUserData.licenseFile.split('/').last)
+              file: _generateLicenseFileFromUrl(_authCubit.loggedInUserData.licenseFile.split('/').last)
             ),
           ),
         ),
