@@ -267,9 +267,11 @@ class _ProfilePageState extends State<ProfilePage> {
     _licenseNameInput.text = _authCubit.loggedInUserData.licence;
     _licenseNumberInput.text = _authCubit.loggedInUserData.licenceNumber;
     _licensePublisherInput.text = _authCubit.loggedInUserData.licenceFrom;
-    _licenseDateInput.text = DateFormat('dd MMMM yyyy').format(
-      DateTime.parse(_authCubit.loggedInUserData.licenceActiveDate)
-    );
+    if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.licenceActiveDate)) {
+      _licenseDateInput.text = DateFormat('dd MMMM yyyy').format(
+        DateTime.parse(_authCubit.loggedInUserData.licenceActiveDate)
+      );
+    }
     if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.licenseFile)) {
       _licensePhotoInput.text = 'Foto lisensi sudah di upload';
     }
@@ -748,8 +750,9 @@ class _ProfilePageState extends State<ProfilePage> {
             child: GestureDetector(
               onTap: () {
                 Navigator.push(context, MaterialPageRoute(
-                  builder: (context) => QrCodePage(
-                    qrCodeUrl: _authCubit.loggedInUserData.qrcode,
+                  builder: (context) => ImageDetailPage(
+                    title: 'QR Code',
+                    imageDetail: _authCubit.loggedInUserData.qrcode,
                   )
                 ));
               },

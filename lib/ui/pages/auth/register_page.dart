@@ -137,7 +137,10 @@ class _RegisterPageState extends State<RegisterPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Space(height: 24),
-                  Icon(Icons.arrow_back_outlined),
+                  GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Icon(Icons.arrow_back_outlined)
+                  ),
                   Space(height: 24),
                   Text(
                     'Daftar',
