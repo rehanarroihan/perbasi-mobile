@@ -58,8 +58,8 @@ class _RegistrantDetailPageState extends State<RegistrantDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    _nikInput.text = '';
-    _emailInput.text = '';
+    _nikInput.text = widget.item.detail.nik ?? '';
+    _emailInput.text = widget.item.detail.email ?? '';
     _birthDetailInput.text = widget.item.detail.birthPlace + ', '
         + DateFormat('dd MMMM yyyy').format(DateTime.parse(widget.item.detail.birthDate));
     if (widget.item.document.length > 0) {
