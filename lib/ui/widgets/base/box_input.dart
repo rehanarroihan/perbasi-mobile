@@ -87,6 +87,9 @@ class _BoxInputState extends State<BoxInput> {
         validator: widget.validator ?? (String args) => null,
         decoration: InputDecoration(
           labelText: widget.label,
+          labelStyle: TextStyle(
+            color: Colors.grey
+          ),
           suffixIcon: widget.suffixWidget != null
               ? widget.suffixWidget
               : Space()

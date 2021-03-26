@@ -18,6 +18,7 @@ import 'package:perbasitlg/ui/pages/profile/qr_code_page.dart';
 import 'package:perbasitlg/ui/pages/splash_page.dart';
 import 'package:perbasitlg/ui/widgets/base/box_input.dart';
 import 'package:perbasitlg/ui/widgets/base/button.dart';
+import 'package:perbasitlg/ui/widgets/base/dropdown_input.dart';
 import 'package:perbasitlg/ui/widgets/base/space.dart';
 import 'package:perbasitlg/ui/widgets/modules/app_alert_dialog.dart';
 import 'package:perbasitlg/ui/widgets/modules/upload_progress_dialog.dart';
@@ -543,16 +544,42 @@ class _ProfilePageState extends State<ProfilePage> {
       _loggedInRole == ConstantHelper.ROLE_PELATIH
       || _loggedInRole == ConstantHelper.ROLE_WASIT ?
       Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          BoxInput(
-            controller: _licenseNameInput,
-            label: 'Nama Lisensi',
-            validator: (String val) {
-              if (GlobalMethodHelper.isEmpty(val)) {
-                return 'nama lisensi harus di isi';
-              }
-            },
+          Text(
+            'Nama Lisensi',
+            style: TextStyle(
+              fontSize: 11.sp,
+              color: Colors.grey
+            ),
           ),
+          _loggedInRole == ConstantHelper.ROLE_WASIT ? DropdownInput(
+            onChanged: (value) {
+              setState(() {
+                _licenseNameInput.text = value;
+              });
+            },
+            listItem: ['C', 'B2', 'B1', 'A', 'FIBA', 'Pengawas'].map((bank) {
+              return DropdownData(
+                value: bank,
+                text: bank
+              );
+            }).toList(),
+            defaultValues: 'C',
+          ) : _loggedInRole == ConstantHelper.ROLE_PELATIH ? DropdownInput(
+            onChanged: (value) {
+              setState(() {
+                _licenseNameInput.text = value;
+              });
+            },
+            listItem: ['C', 'B', 'A'].map((bank) {
+              return DropdownData(
+                value: bank,
+                text: bank
+              );
+            }).toList(),
+            defaultValues: 'C',
+          ) : Container(),
           Space(height: 40),
           BoxInput(
             controller: _licenseNumberInput,
