@@ -50,8 +50,7 @@ class _RegistrantDetailPageState extends State<RegistrantDetailPage> {
   void verifyPlayer(String status) {
     _actionType = status;
     _teamCubit.verifyPlayer(VerifyPlayerRequest(
-      teamId: widget.item.teamId,
-      playerId: widget.item.playerId,
+      registerId: widget.item.id.toString(),
       status: status
     ));
   }

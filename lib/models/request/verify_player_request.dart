@@ -1,12 +1,11 @@
 class VerifyPlayerRequest {
-  String teamId, playerId, status;
+  String registerId, status;
 
-  VerifyPlayerRequest({this.teamId, this.playerId, this.status});
+  VerifyPlayerRequest({this.registerId, this.status});
 
   factory VerifyPlayerRequest.fromMap(Map<String, dynamic> map) {
     return new VerifyPlayerRequest(
-      teamId: map['team_id'] as String,
-      playerId: map['player_id'] as String,
+      registerId: map['register_id'] as String,
       status: map['status'] as String,
     );
   }
@@ -14,8 +13,7 @@ class VerifyPlayerRequest {
   Map<String, dynamic> toMap() {
     // ignore: unnecessary_cast
     return {
-      'team_id': this.teamId,
-      'player_id': this.playerId,
+      'register_id': this.registerId,
       'status': this.status,
     } as Map<String, dynamic>;
   }
