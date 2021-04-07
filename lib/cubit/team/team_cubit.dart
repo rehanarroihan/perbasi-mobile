@@ -30,11 +30,13 @@ class TeamCubit extends Cubit<TeamState> {
     this.userCanVerif = false;
     emit(GetMyTeamPageInit());
 
-    ApiReturn<ClubDetail> apiResult = await _teamService.getMyTeam();
+    ApiReturn<List<ClubDetail>> apiResult = await _teamService.getMyTeam();
     this.teamPageLoading = false;
     if (apiResult.success) {
       this.userHaveTeam = true;
-      this.myClubDetail = apiResult.data;
+      if (apiResult.data.isNotEmpty) {
+        this.myClubDetail = apiResult.data[0];
+      }
       if (this.myClubDetail.canVerification) {
         this.userCanVerif = true;
       }

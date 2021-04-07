@@ -1,4 +1,8 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:html/parser.dart';
+import 'package:image/image.dart';
 
 class GlobalMethodHelper {
   static bool isEmpty(text){
@@ -31,5 +35,14 @@ class GlobalMethodHelper {
     final String parsedString = parse(document.body.text).documentElement.text;
 
     return parsedString;
+  }
+
+  static Future<File> resizeImage(File file, {String fileName, int preferredWidth}) async {
+    var image = await compute(decodeImage, file.readAsBytesSync());
+    var resized = copyResize(image, width: preferredWidth ?? 640);
+
+    File resizedFile = File(file.path)..writeAsBytesSync(encodePng(resized));
+
+    return resizedFile;
   }
 }

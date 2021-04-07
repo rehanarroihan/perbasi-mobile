@@ -21,6 +21,7 @@ import 'package:perbasitlg/ui/widgets/base/button.dart';
 import 'package:perbasitlg/ui/widgets/base/dropdown_input.dart';
 import 'package:perbasitlg/ui/widgets/base/space.dart';
 import 'package:perbasitlg/ui/widgets/modules/app_alert_dialog.dart';
+import 'package:perbasitlg/ui/widgets/modules/loading_dialog.dart';
 import 'package:perbasitlg/ui/widgets/modules/upload_progress_dialog.dart';
 import 'package:perbasitlg/utils/app_color.dart';
 import 'package:perbasitlg/utils/constant_helper.dart';
@@ -106,13 +107,30 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  void _updateProfile() {
+  void _updateProfile() async {
     // Checking _birhDateForServer value
     if (GlobalMethodHelper.isEmpty(_birthDateForServer)) {
       _birthDateForServer = _authCubit.loggedInUserData.birthDate;
     }
 
     if (_loggedInRole == ConstantHelper.ROLE_PEMAIN) {
+      LoadingDialog(
+        title: 'Loading',
+        description: 'Silahkan tunggu...'
+      ).show(context);
+
+      File resizedProfileImage = await GlobalMethodHelper.resizeImage(
+        _profilePict, preferredWidth: 320,
+        fileName: _profilePict.path.split("/").last
+      );
+
+      File resizedKKImage = await GlobalMethodHelper.resizeImage(
+        _kk, preferredWidth: 320,
+        fileName: _kk.path.split("/").last
+      );
+
+      Navigator.pop(context);
+
       ProfilePlayerRequest requestData = ProfilePlayerRequest(
         nik: _nikInput.text.trim(),
         name: _nameInput.text.trim(),
@@ -121,15 +139,32 @@ class _ProfilePageState extends State<ProfilePage> {
         email: _emailInput.text.trim(),
         address: _addressInput.text.trim(),
         phone: _phoneInput.text.trim(),
-        foto: _profilePict,
+        foto: resizedProfileImage,
         positionId: _selectedPositionId.toString(),
-        kk: _kk,
+        kk: resizedKKImage,
       );
 
       _profileCubit.updateProfilePlayer(requestData);
     }
 
     if (_loggedInRole == ConstantHelper.ROLE_PELATIH || _loggedInRole == ConstantHelper.ROLE_WASIT) {
+      LoadingDialog(
+        title: 'Loading',
+        description: 'Silahkan tunggu...'
+      ).show(context);
+
+      File resizedProfileImage = await GlobalMethodHelper.resizeImage(
+        _profilePict, preferredWidth: 320,
+        fileName: _profilePict.path.split("/").last
+      );
+
+      File resizedLicenseImage = await GlobalMethodHelper.resizeImage(
+        _licensePhoto, preferredWidth: 320,
+        fileName: _licensePhoto.path.split("/").last
+      );
+
+      Navigator.pop(context);
+
       ProfileCoachRequest requestData = ProfileCoachRequest(
         nik: _nikInput.text.trim(),
         name: _nameInput.text.trim(),
@@ -138,11 +173,11 @@ class _ProfilePageState extends State<ProfilePage> {
         email: _emailInput.text.trim(),
         address: _addressInput.text.trim(),
         phone: _phoneInput.text.trim(),
-        foto: _profilePict,
+        foto: resizedProfileImage,
         licence: _licenseNameInput.text.trim(),
         licenceNumber: _licenseNumberInput.text.trim(),
         licenceFrom: _licensePublisherInput.text.trim(),
-        licenceFile: _licensePhoto,
+        licenceFile: resizedLicenseImage,
         licenceActiveDate: _licenseDateForServer
       );
 
