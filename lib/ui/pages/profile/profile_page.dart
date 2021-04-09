@@ -113,6 +113,10 @@ class _ProfilePageState extends State<ProfilePage> {
       _birthDateForServer = _authCubit.loggedInUserData.birthDate;
     }
 
+    if (GlobalMethodHelper.isEmpty(_licenseDateForServer)) {
+      _licenseDateForServer = _authCubit.loggedInUserData.licenceActiveDate;
+    }
+
     if (_loggedInRole == ConstantHelper.ROLE_PEMAIN) {
       LoadingDialog(
         title: 'Loading',
