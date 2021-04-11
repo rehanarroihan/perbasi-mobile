@@ -74,6 +74,7 @@ class _ProfilePageState extends State<ProfilePage> {
   File _licensePhoto;
   String _licenseDateForServer = '';
   int _selectedPositionId;
+  String _selectedLicenseName;
 
   GlobalKey<FormState> _formKey;
 
@@ -228,6 +229,7 @@ class _ProfilePageState extends State<ProfilePage> {
           _authCubit.getUserDetail();
         } else if (state is GetUserDataSuccessfulState) {
           _updateFields();
+          setState(() {});
         }
       },
       child: BlocBuilder(
@@ -315,6 +317,7 @@ class _ProfilePageState extends State<ProfilePage> {
     if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.licenseFile)) {
       _licensePhotoInput.text = 'Foto lisensi sudah di upload';
     }
+    _selectedLicenseName = _authCubit.loggedInUserData.licence;
   }
 
   Widget _callToActionButtons() {
@@ -604,7 +607,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 text: bank
               );
             }).toList(),
-            defaultValues: 'C',
+            defaultValues: _selectedLicenseName,
           ) : _loggedInRole == ConstantHelper.ROLE_PELATIH ? DropdownInput(
             onChanged: (value) {
               setState(() {
@@ -617,7 +620,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 text: bank
               );
             }).toList(),
-            defaultValues: 'C',
+            defaultValues: _selectedLicenseName,
           ) : Container(),
           Space(height: 40),
           BoxInput(
