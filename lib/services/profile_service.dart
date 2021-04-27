@@ -113,8 +113,8 @@ class ProfileService {
           : UrlConstantHelper.POST_CHANGE_REFEREE_PROFILE;
 
       var request = http.MultipartRequest(
-          'POST', Uri.parse(
-          App().apiBaseURL + url
+        'POST', Uri.parse(
+        App().apiBaseURL + url
       ));
       request.fields['email'] = data.email;
       request.fields['nik'] = data.nik;

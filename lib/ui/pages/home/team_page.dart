@@ -30,6 +30,8 @@ class _TeamPageState extends State<TeamPage> {
   TeamCubit _teamCubit = TeamCubit();
   AuthCubit _authCubit = AuthCubit();
 
+  ClubDetail _selectedMyClub;
+
   @override
   void initState() {
     _teamCubit = BlocProvider.of<TeamCubit>(context);
@@ -74,6 +76,14 @@ class _TeamPageState extends State<TeamPage> {
               iconTheme: IconThemeData(
                 color: Colors.black
               ),
+              leading: _selectedMyClub != null ? IconButton(
+                icon: Icon(Icons.chevron_left),
+                onPressed: () {
+                  setState(() {
+                    _selectedMyClub = null;
+                  });
+                },
+              ) : null,
               title: Text(
                 _teamCubit.teamPageLoading
                     ? 'Loading...'
@@ -85,23 +95,23 @@ class _TeamPageState extends State<TeamPage> {
                   fontSize: ScreenUtil().setSp(14)
                 ),
               ),
-              actions: _teamCubit.userCanVerif ? [
+              actions: _selectedMyClub != null ? _selectedMyClub.canVerification ? [
                 Center(
                   child: FlatButton(
                     onPressed: () => Navigator.push(context, MaterialPageRoute(
                       builder: (context) => TeamRegistrantPage(
-                        registrantList: _teamCubit.myClubDetail.playerVerification
+                        registrantList: _selectedMyClub.playerVerification
                       )
                     )),
                     child: Text(
-                      'Lihat Pendaftar (${_teamCubit.myClubDetail.playerVerification.length})',
+                      'Lihat Pendaftar (${_selectedMyClub.playerVerification.length})',
                       style: TextStyle(
                         color: Colors.deepOrangeAccent
                       ),
                     ),
                   ),
                 )
-              ] : [],
+              ] : [] : [],
             ),
             body: ReactiveRefreshIndicator(
               isRefreshing: _teamCubit.teamPageLoading,
@@ -116,49 +126,70 @@ class _TeamPageState extends State<TeamPage> {
 
   Widget _buildPage() {
     if (_teamCubit.userHaveTeam) {
-      return SingleChildScrollView(
-        child: Column(
-          children: [
-            TeamDetailSection(_teamCubit.myClubDetail),
-            Space(height: 12),
-            _authCubit.loggedInUserData.role.name == ConstantHelper.ROLE_PEMAIN ?
-            Container(
-              width: double.infinity,
-              margin: EdgeInsets.only(top: 24),
-              padding: EdgeInsets.symmetric(
-                horizontal: ScreenUtil().setWidth(46)
+      if (_selectedMyClub == null) {
+        return ListView.builder(
+          shrinkWrap: true,
+          itemCount: _teamCubit.myClubList.length,
+          itemBuilder: (context, index) {
+            ClubDetail item = _teamCubit.myClubList[index];
+            return GestureDetector(
+              onTap: () {
+                setState(() {
+                  _selectedMyClub = item;
+                });
+              },
+              child: TeamHeader(
+                teamName: item.detailTeam.name,
+                logoUrl: UrlConstantHelper.IMAGE_BASE_URL + item.detailTeam.logo,
               ),
-              child: Button(
-                style: AppButtonStyle.primary,
-                text: 'Keluar Team',
-                fontSize: 14,
-                padding: 12,
-                onPressed: () {
-                  AppAlertDialog(
-                    title: 'Keluar Team',
-                    description: 'Apakah anda yakin ingin keluar dari team ?',
-                    negativeButtonText: 'Tidak',
-                    negativeButtonOnTap: () => Navigator.pop(context),
-                    positiveButtonText: 'Ya',
-                    positiveButtonOnTap: () {
-                      TeamPlayer tp = _teamCubit.myClubDetail.teamPlayer.where((ply) {
-                        return ply.detail.userId == _authCubit.loggedInUserData.id.toString();
-                      }).toList().first;
+            );
+          },
+        );
+      } else {
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              TeamDetailSection(_selectedMyClub),
+              Space(height: 12),
+              _authCubit.loggedInUserData.role.name == ConstantHelper.ROLE_PEMAIN ?
+              Container(
+                width: double.infinity,
+                margin: EdgeInsets.only(top: 24),
+                padding: EdgeInsets.symmetric(
+                  horizontal: ScreenUtil().setWidth(46)
+                ),
+                child: Button(
+                  style: AppButtonStyle.primary,
+                  text: 'Keluar Team',
+                  fontSize: 14,
+                  padding: 12,
+                  onPressed: () {
+                    AppAlertDialog(
+                      title: 'Keluar Team',
+                      description: 'Apakah anda yakin ingin keluar dari team ?',
+                      negativeButtonText: 'Tidak',
+                      negativeButtonOnTap: () => Navigator.pop(context),
+                      positiveButtonText: 'Ya',
+                      positiveButtonOnTap: () {
+                        TeamPlayer tp = _selectedMyClub.teamPlayer.where((ply) {
+                          return ply.detail.userId == _authCubit.loggedInUserData.id.toString();
+                        }).toList().first;
 
-                      _teamCubit.exitFromTeam(ExitClubRequest(
-                        playerId: tp.playerId,
-                        teamId: _teamCubit.myClubDetail.detailTeam.id.toString()
-                      ));
-                    },
-                  ).show(context);
-                },
-              ),
-            ) :
-            Container(),
-            Space(height: 32),
-          ],
-        ),
-      );
+                        _teamCubit.exitFromTeam(ExitClubRequest(
+                          playerId: tp.playerId,
+                          teamId: _selectedMyClub.detailTeam.id.toString()
+                        ));
+                      },
+                    ).show(context);
+                  },
+                ),
+              ) :
+              Container(),
+              Space(height: 32),
+            ],
+          ),
+        );
+      }
     } else {
       return ListView.builder(
         shrinkWrap: true,

@@ -302,7 +302,15 @@ class _ProfilePageState extends State<ProfilePage> {
     }
 
     if (_teamCubit.userHaveTeam) {
-      _teamInput.text = _teamCubit.myClubDetail.detailTeam.name;
+      String clubNames = '';
+      for (int i = 0; i<_teamCubit.myClubList.length; i++) {
+        if (i == 0) {
+          clubNames += _teamCubit.myClubList[0].detailTeam.name;
+        } else {
+          clubNames += ', ' + _teamCubit.myClubList[0].detailTeam.name;
+        }
+      }
+      _teamInput.text = clubNames;
     } else {
       _teamInput.text = 'Belum memiliki team';
     }
