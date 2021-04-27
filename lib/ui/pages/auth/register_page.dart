@@ -71,7 +71,7 @@ class _RegisterPageState extends State<RegisterPage> {
       name: _nameInput.text.trim(),
       password: _confirmPasswordInput.text.trim(),
       birthDate: _birthDateForServer,
-      gender: _selectedGender.toString()
+      gender: _selectedGender
     );
     _authCubit.registerUser(registerData);
   }
@@ -437,7 +437,7 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  int _selectedGender = 0;
+  String _selectedGender = 'L';
   Widget _buildGenderOptions() {
     return Row(
       mainAxisSize: MainAxisSize.max,
@@ -447,10 +447,10 @@ class _RegisterPageState extends State<RegisterPage> {
             child: _genderOption(
               assetUri: 'assets/icons/male.svg',
               title: 'Laki-laki',
-              selected: _selectedGender == 1,
+              selected: _selectedGender == 'L',
               onTap: () {
                 setState(() {
-                  _selectedGender = 1;
+                  _selectedGender = 'L';
                 });
               }
             )
@@ -461,10 +461,10 @@ class _RegisterPageState extends State<RegisterPage> {
             child: _genderOption(
               assetUri: 'assets/icons/female.svg',
               title: 'Perempuan',
-              selected: _selectedGender == 0,
+              selected: _selectedGender == 'P',
               onTap: () {
                 setState(() {
-                  _selectedGender = 0;
+                  _selectedGender = 'P';
                 });
               }
             )
