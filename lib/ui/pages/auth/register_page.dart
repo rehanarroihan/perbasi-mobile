@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:perbasitlg/cubit/auth/auth_cubit.dart';
 import 'package:perbasitlg/models/request/register_request.dart';
 import 'package:perbasitlg/ui/pages/auth/login_page.dart';
@@ -69,7 +70,8 @@ class _RegisterPageState extends State<RegisterPage> {
       birthPlace: _birthPlaceInput.text.trim(),
       name: _nameInput.text.trim(),
       password: _confirmPasswordInput.text.trim(),
-      birthDate: _birthDateForServer
+      birthDate: _birthDateForServer,
+      gender: _selectedGender.toString()
     );
     _authCubit.registerUser(registerData);
   }
@@ -102,7 +104,7 @@ class _RegisterPageState extends State<RegisterPage> {
       child: Scaffold(
         key: _scaffoldKey,
         backgroundColor: AppColor.pageBackgroundColor,
-        bottomNavigationBar: Container(
+        bottomSheet: Container(
           padding: EdgeInsets.all(24),
           decoration: BoxDecoration(
             color: Colors.white,
@@ -190,6 +192,16 @@ class _RegisterPageState extends State<RegisterPage> {
                           },
                         ),
                         Space(height: 40),
+                        Text(
+                          'Jenis Kelamin',
+                          style: TextStyle(
+                            fontSize: ScreenUtil().setSp(11),
+                            color: Colors.grey.withOpacity(0.9)
+                          ),
+                        ),
+                        Space(height: 8),
+                        _buildGenderOptions(),
+                        Space(height: 32),
                         BoxInput(
                           controller: _birthDateInput,
                           label: 'Tanggal Lahir',
@@ -421,6 +433,93 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
           ],
         )
+      ),
+    );
+  }
+
+  int _selectedGender = 0;
+  Widget _buildGenderOptions() {
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        Expanded(
+            flex: 1,
+            child: _genderOption(
+              assetUri: 'assets/icons/male.svg',
+              title: 'Laki-laki',
+              selected: _selectedGender == 1,
+              onTap: () {
+                setState(() {
+                  _selectedGender = 1;
+                });
+              }
+            )
+        ),
+        SizedBox(width: 12),
+        Expanded(
+            flex: 1,
+            child: _genderOption(
+              assetUri: 'assets/icons/female.svg',
+              title: 'Perempuan',
+              selected: _selectedGender == 0,
+              onTap: () {
+                setState(() {
+                  _selectedGender = 0;
+                });
+              }
+            )
+        ),
+      ],
+    );
+  }
+
+  Widget _genderOption({
+    String assetUri,
+    String title,
+    bool selected,
+    Function onTap
+  }) {
+    return OutlineButton(
+      onPressed: onTap,
+      highlightedBorderColor: AppColor.primaryColor,
+      splashColor: AppColor.primaryColor.withOpacity(0.25),
+      highlightColor: AppColor.primaryColor.withOpacity(0.2),
+      padding: EdgeInsets.symmetric(vertical: 12.h),
+      borderSide: BorderSide(
+        width: 1,
+        color: selected
+            ? AppColor.primaryColor
+            : AppColor.primaryColor.withOpacity(0.2),
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Container(
+            alignment: Alignment.center,
+            child: SvgPicture.asset(
+              assetUri,
+              color: selected
+                ? AppColor.primaryColor
+                : AppColor.primaryColor.withOpacity(0.2),
+            ),
+          ),
+          SizedBox(width: 20.w),
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              color: selected
+                  ? AppColor.primaryColor
+                  : AppColor.primaryColor.withOpacity(0.2),
+              fontSize: 15
+            ),
+          )
+        ],
       ),
     );
   }
