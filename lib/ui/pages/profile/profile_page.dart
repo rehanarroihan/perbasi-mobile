@@ -75,6 +75,7 @@ class _ProfilePageState extends State<ProfilePage> {
   String _licenseDateForServer = '';
   int _selectedPositionId;
   String _selectedLicenseName;
+  String _selectedCoachTypeId;
 
   GlobalKey<FormState> _formKey;
 
@@ -183,7 +184,8 @@ class _ProfilePageState extends State<ProfilePage> {
         licenceNumber: _licenseNumberInput.text.trim(),
         licenceFrom: _licensePublisherInput.text.trim(),
         licenceFile: resizedLicenseImage,
-        licenceActiveDate: _licenseDateForServer
+        licenceActiveDate: _licenseDateForServer,
+        typeId: _selectedCoachTypeId
       );
 
       _profileCubit.updateProfileCoach(requestData, _loggedInRole);
@@ -318,6 +320,7 @@ class _ProfilePageState extends State<ProfilePage> {
       _licensePhotoInput.text = 'Foto lisensi sudah di upload';
     }
     _selectedLicenseName = _authCubit.loggedInUserData.licence;
+    _selectedCoachTypeId = _authCubit.loggedInUserData.typeId.id.toString();
   }
 
   Widget _callToActionButtons() {
@@ -524,8 +527,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ScreenUtil().setWidth(30),
         0
       ),
-      child: _loggedInRole == ConstantHelper.ROLE_PEMAIN ?
-      Column(
+      child: _loggedInRole == ConstantHelper.ROLE_PEMAIN ? Column(
         children: [
           Container(
             padding: EdgeInsets.symmetric(horizontal: 10.0),
@@ -584,10 +586,10 @@ class _ProfilePageState extends State<ProfilePage> {
         ],
       ) :
       _loggedInRole == ConstantHelper.ROLE_PELATIH
-      || _loggedInRole == ConstantHelper.ROLE_WASIT ?
-      Column(
+      || _loggedInRole == ConstantHelper.ROLE_WASIT ? Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          _loggedInRole == ConstantHelper.ROLE_PELATIH ? _coachTypeField() : Container(),
           Text(
             'Nama Lisensi',
             style: TextStyle(
@@ -608,7 +610,8 @@ class _ProfilePageState extends State<ProfilePage> {
               );
             }).toList(),
             defaultValues: _selectedLicenseName,
-          ) : _loggedInRole == ConstantHelper.ROLE_PELATIH ? DropdownInput(
+          ) :
+          _loggedInRole == ConstantHelper.ROLE_PELATIH ? DropdownInput(
             onChanged: (value) {
               setState(() {
                 _licenseNameInput.text = value;
@@ -730,7 +733,7 @@ class _ProfilePageState extends State<ProfilePage> {
               Text(
                 '*Upload file (PNG, JPG, JPEG) max. 5 MB',
                 style: TextStyle(
-                    fontSize: 12
+                  fontSize: 12
                 ),
               )
             ],
@@ -738,6 +741,36 @@ class _ProfilePageState extends State<ProfilePage> {
         ],
       ) :
       Container(),
+    );
+  }
+
+  Widget _coachTypeField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Jenis Pelatih',
+          style: TextStyle(
+            fontSize: 11.sp,
+            color: Colors.grey
+          ),
+        ),
+        DropdownInput(
+          onChanged: (value) {
+            setState(() {
+              _selectedCoachTypeId = value;
+            });
+          },
+          listItem: _authCubit.coachTypeList.map((coachType) {
+            return DropdownData(
+              value: coachType.id.toString(),
+              text: coachType.name
+            );
+          }).toList(),
+          defaultValues: _selectedCoachTypeId,
+        ),
+        Space(height: 40),
+      ],
     );
   }
 

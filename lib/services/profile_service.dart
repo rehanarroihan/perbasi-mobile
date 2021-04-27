@@ -127,6 +127,9 @@ class ProfileService {
       request.fields['licence_number'] = data.licenceNumber;
       request.fields['licence_from'] = data.licenceFrom;
       request.fields['licence_active_date'] = data.licenceActiveDate;
+      if (role == ConstantHelper.ROLE_PELATIH) {
+        request.fields['type_id'] = data.typeId;
+      }
       request.files.add(
         http.MultipartFile.fromBytes(
           'licence_file',

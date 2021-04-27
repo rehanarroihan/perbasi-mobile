@@ -19,6 +19,7 @@ class UserModel {
   String licenseFile;
   String foto;
   String kk;
+  Position typeId;
 
   UserModel(
       {this.id,
@@ -40,7 +41,9 @@ class UserModel {
         this.licenceActiveDate,
         this.licenseFile,
         this.foto,
-        this.kk});
+        this.kk,
+        this.typeId
+      });
 
   UserModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -48,6 +51,7 @@ class UserModel {
     email = json['email'];
     role = json['role'] != null ? new Role.fromJson(json['role']) : null;
     positionId = json['position_id'] != null ? new Position.fromJson(json['position_id']) : null;
+    typeId = json['type_id'] != null ? new Position.fromJson(json['type_id']) : null;
     verified = json['verified'];
     coachId = json['coach_id'];
     qrcode = json['qrcode'];
@@ -80,6 +84,7 @@ class UserModel {
     data['coach_id'] = this.coachId;
     data['qrcode'] = this.qrcode;
     data['name'] = this.name;
+    data['type_id'] = this.typeId;
     data['birth_place'] = this.birthPlace;
     data['birth_date'] = this.birthDate;
     data['address'] = this.address;

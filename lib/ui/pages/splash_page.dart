@@ -25,7 +25,7 @@ class _SplashPageState extends State<SplashPage> {
         _authCubit.getUserDetail();
       } else {
         Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
-            builder: (context) => LoginPage()
+          builder: (context) => LoginPage()
         ), (Route<dynamic> route) => false);
       }
     });

@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:perbasitlg/app.dart';
 import 'package:perbasitlg/models/api_return.dart';
+import 'package:perbasitlg/models/coach_type_model.dart';
 import 'package:perbasitlg/models/login_model.dart';
 import 'package:perbasitlg/models/player_position_model.dart';
 import 'package:perbasitlg/models/request/login_request.dart';
@@ -19,6 +20,7 @@ class AuthCubit extends Cubit<AuthState> {
   UserModel loggedInUserData = UserModel();
 
   List<PlayerPositionModel> playerPositionList = List<PlayerPositionModel>();
+  List<CoachTypeModel> coachTypeList = List<CoachTypeModel>();
 
   void registerUser(RegisterRequest data) async {
     emit(RegisterInitialState());
@@ -54,9 +56,11 @@ class AuthCubit extends Cubit<AuthState> {
 
     ApiReturn<UserModel> apiResult = await _authService.getUserDetail();
     ApiReturn<List<PlayerPositionModel>> apiPosResult = await _authService.getPlayerPosition();
+    ApiReturn<List<CoachTypeModel>> apiCoachTypeResult = await _authService.getCoachType();
     if (apiResult.success) {
       this.loggedInUserData = apiResult.data;
       this.playerPositionList = apiPosResult.data;
+      this.coachTypeList = apiCoachTypeResult.data;
       emit(GetUserDataSuccessfulState());
     } else {
       emit(GetUserDataFailedState());
