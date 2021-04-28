@@ -9,6 +9,7 @@ import 'package:perbasitlg/ui/widgets/modules/app_alert_dialog.dart';
 import 'package:perbasitlg/ui/widgets/base/box_input.dart';
 import 'package:perbasitlg/ui/widgets/base/button.dart';
 import 'package:perbasitlg/ui/widgets/base/space.dart';
+import 'package:perbasitlg/ui/widgets/modules/gender_options.dart';
 import 'package:perbasitlg/ui/widgets/modules/loading_dialog.dart';
 import 'package:perbasitlg/utils/app_color.dart';
 import 'package:perbasitlg/utils/global_method_helper.dart';
@@ -53,6 +54,8 @@ class _RegisterPageState extends State<RegisterPage> {
   TextEditingController _confirmPasswordInput = TextEditingController();
   TextEditingController _emailInput = TextEditingController();
 
+  Gender _selectedGender = Gender.L;
+
   @override
   void initState() {
     _authCubit = BlocProvider.of<AuthCubit>(context);
@@ -71,7 +74,7 @@ class _RegisterPageState extends State<RegisterPage> {
       name: _nameInput.text.trim(),
       password: _confirmPasswordInput.text.trim(),
       birthDate: _birthDateForServer,
-      gender: _selectedGender
+      gender: _selectedGender.toString()
     );
     _authCubit.registerUser(registerData);
   }
@@ -200,7 +203,14 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                         ),
                         Space(height: 8),
-                        _buildGenderOptions(),
+                        GenderOptions(
+                          value: _selectedGender,
+                          onChange: (Gender gend) {
+                            setState(() {
+                              _selectedGender = gend;
+                            });
+                          },
+                        ),
                         Space(height: 32),
                         BoxInput(
                           controller: _birthDateInput,
@@ -433,93 +443,6 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
           ],
         )
-      ),
-    );
-  }
-
-  String _selectedGender = 'L';
-  Widget _buildGenderOptions() {
-    return Row(
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        Expanded(
-            flex: 1,
-            child: _genderOption(
-              assetUri: 'assets/icons/male.svg',
-              title: 'Laki-laki',
-              selected: _selectedGender == 'L',
-              onTap: () {
-                setState(() {
-                  _selectedGender = 'L';
-                });
-              }
-            )
-        ),
-        SizedBox(width: 12),
-        Expanded(
-            flex: 1,
-            child: _genderOption(
-              assetUri: 'assets/icons/female.svg',
-              title: 'Perempuan',
-              selected: _selectedGender == 'P',
-              onTap: () {
-                setState(() {
-                  _selectedGender = 'P';
-                });
-              }
-            )
-        ),
-      ],
-    );
-  }
-
-  Widget _genderOption({
-    String assetUri,
-    String title,
-    bool selected,
-    Function onTap
-  }) {
-    return OutlineButton(
-      onPressed: onTap,
-      highlightedBorderColor: AppColor.primaryColor,
-      splashColor: AppColor.primaryColor.withOpacity(0.25),
-      highlightColor: AppColor.primaryColor.withOpacity(0.2),
-      padding: EdgeInsets.symmetric(vertical: 12.h),
-      borderSide: BorderSide(
-        width: 1,
-        color: selected
-            ? AppColor.primaryColor
-            : AppColor.primaryColor.withOpacity(0.2),
-      ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(10)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          Container(
-            alignment: Alignment.center,
-            child: SvgPicture.asset(
-              assetUri,
-              color: selected
-                ? AppColor.primaryColor
-                : AppColor.primaryColor.withOpacity(0.2),
-            ),
-          ),
-          SizedBox(width: 20.w),
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontWeight: FontWeight.w500,
-              color: selected
-                  ? AppColor.primaryColor
-                  : AppColor.primaryColor.withOpacity(0.2),
-              fontSize: 15
-            ),
-          )
-        ],
       ),
     );
   }

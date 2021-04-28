@@ -3,6 +3,8 @@ import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:perbasitlg/models/club_detail.dart';
+import 'package:perbasitlg/ui/pages/team/player_detail_page.dart';
+import 'package:perbasitlg/ui/pages/team/registrant_detail_page.dart';
 import 'package:perbasitlg/ui/widgets/base/space.dart';
 import 'package:perbasitlg/ui/widgets/modules/player_thumbnail.dart';
 import 'package:perbasitlg/ui/widgets/modules/team_header.dart';
@@ -134,11 +136,16 @@ class TeamDetailSection extends StatelessWidget {
                     photoUrl = UrlConstantHelper.IMAGE_BASE_URL + item.document[0].file;
                   }
 
-                  return PlayerThumbnail(
-                    photoUrl: photoUrl,
-                    name: item.detail.name,
-                    post: 'Player',
-                    birthDay: item.detail.birthDate
+                  return GestureDetector(
+                    onTap: () => Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => PlayerDetailPage(item: item)
+                    )),
+                    child: PlayerThumbnail(
+                      photoUrl: photoUrl,
+                      name: item.detail.name,
+                      post: 'Player',
+                      birthDay: item.detail.birthDate
+                    ),
                   );
                 }).toList(),
               ) :
