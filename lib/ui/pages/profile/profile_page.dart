@@ -104,10 +104,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
     _loggedInRole = _authCubit.loggedInUserData.role.name;
 
-    if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData?.positionId?.id)) {
-      _selectedPositionId = _authCubit.loggedInUserData.positionId.id;
-    }
-
     _formKey = GlobalKey<FormState>();
 
     _updateFields();
@@ -126,7 +122,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void _updateProfile() async {
-    // Checking _birhDateForServer value
+    // Checking _birthDateForServer value
     if (GlobalMethodHelper.isEmpty(_birthDateForServer)) {
       _birthDateForServer = _authCubit.loggedInUserData.birthDate;
     }
@@ -151,6 +147,21 @@ class _ProfilePageState extends State<ProfilePage> {
         fileName: _kk.path.split("/").last
       );
 
+      File resizedKTPImage = await GlobalMethodHelper.resizeImage(
+        _ktp, preferredWidth: 320,
+        fileName: _ktp.path.split("/").last
+      );
+
+      File resizedSelfieImage = await GlobalMethodHelper.resizeImage(
+        _selfie, preferredWidth: 320,
+        fileName: _selfie.path.split("/").last
+      );
+
+      File resizedBirthCertImage = await GlobalMethodHelper.resizeImage(
+        _birthCert, preferredWidth: 320,
+        fileName: _birthCert.path.split("/").last
+      );
+
       Navigator.pop(context);
 
       ProfilePlayerRequest requestData = ProfilePlayerRequest(
@@ -161,10 +172,16 @@ class _ProfilePageState extends State<ProfilePage> {
         email: _emailInput.text.trim(),
         address: _addressInput.text.trim(),
         phone: _phoneInput.text.trim(),
-        foto: resizedProfileImage,
         positionId: _selectedPositionId.toString(),
+        gender: _selectedGender.toString(),
+        almaMater: _almaMaterInput.text,
+        identityAddress: _selectedDomicile,
+        noKK: _noKKInput.text,
+        foto: resizedProfileImage,
         kk: resizedKKImage,
-        gender: _selectedGender.toString()
+        akta: resizedBirthCertImage,
+        ktp: resizedKTPImage,
+        selfie: resizedSelfieImage
       );
 
       _profileCubit.updateProfilePlayer(requestData);
@@ -336,23 +353,14 @@ class _ProfilePageState extends State<ProfilePage> {
     if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.kk)) {
       _kkInput.text = 'KK sudah di upload';
     }
-
-    if (_teamCubit.userHaveTeam) {
-      String clubNames = '';
-      for (int i = 0; i<_teamCubit.myClubList.length; i++) {
-        if (i == 0) {
-          clubNames += _teamCubit.myClubList[0].detailTeam.name;
-        } else {
-          clubNames += ', ' + _teamCubit.myClubList[0].detailTeam.name;
-        }
-      }
-      _teamInput.text = clubNames;
-    } else {
-      _teamInput.text = 'Belum memiliki team';
+    if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.gender)) {
+      _selectedGender = _authCubit.loggedInUserData.gender == 'L'
+          ? Gender.L
+          : Gender.P;
     }
 
     // Coach input
-    if (_authCubit.loggedInUserData.role.name == ConstantHelper.ROLE_PELATIH) {
+    if (_loggedInRole == ConstantHelper.ROLE_PELATIH) {
       _licenseNameInput.text = _authCubit.loggedInUserData.licence;
       _licenseNumberInput.text = _authCubit.loggedInUserData.licenceNumber;
       _licensePublisherInput.text = _authCubit.loggedInUserData.licenceFrom;
@@ -366,6 +374,39 @@ class _ProfilePageState extends State<ProfilePage> {
       }
       _selectedLicenseName = _authCubit.loggedInUserData.licence;
       _selectedCoachTypeId = _authCubit.loggedInUserData.typeId.id.toString();
+    }
+
+    if (_loggedInRole == ConstantHelper.ROLE_PEMAIN) {
+      if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.identityAddress)) {
+        _selectedDomicile = _authCubit.loggedInUserData.identityAddress;
+      }
+      _noKKInput.text = _authCubit.loggedInUserData.noKK;
+      _almaMaterInput.text = _authCubit.loggedInUserData.almamater;
+      if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData?.positionId?.id)) {
+        _selectedPositionId = _authCubit.loggedInUserData.positionId.id;
+      }
+      if (_teamCubit.userHaveTeam) {
+        String clubNames = '';
+        for (int i = 0; i<_teamCubit.myClubList.length; i++) {
+          if (i == 0) {
+            clubNames += _teamCubit.myClubList[0].detailTeam.name;
+          } else {
+            clubNames += ', ' + _teamCubit.myClubList[0].detailTeam.name;
+          }
+        }
+        _teamInput.text = clubNames;
+      } else {
+        _teamInput.text = 'Belum memiliki team';
+      }
+      if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.ktp)) {
+        _ktpInput.text = 'Foto ktp sudah di upload';
+      }
+      if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.akta)) {
+        _birthCertInput.text = 'Foto akta sudah di upload';
+      }
+      if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.selfie)) {
+        _selfieInput.text = 'Foto selfie sudah di upload';
+      }
     }
   }
 
