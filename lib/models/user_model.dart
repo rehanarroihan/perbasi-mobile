@@ -18,6 +18,9 @@ class UserModel {
   String licenceActiveDate;
   String licenseFile;
   String foto;
+  String akta;
+  String selfie;
+  String ktp;
   String kk;
   Position typeId;
 
@@ -41,6 +44,9 @@ class UserModel {
         this.licenceActiveDate,
         this.licenseFile,
         this.foto,
+        this.selfie,
+        this.akta,
+        this.ktp,
         this.kk,
         this.typeId
       });
@@ -66,7 +72,10 @@ class UserModel {
     licenceActiveDate = json['licence_active_date'];
     licenseFile = json['licence_file'];
     foto = json['foto'];
+    ktp = json['ktp'];
+    akta = json['akta'];
     kk = json['kk'];
+    kk = json['selfie'];
   }
 
   Map<String, dynamic> toJson() {
@@ -95,7 +104,10 @@ class UserModel {
     data['licence_active_date'] = this.licenceActiveDate;
     data['licence_file'] = this.licenseFile;
     data['foto'] = this.foto;
+    data['akta'] = this.akta;
+    data['ktp'] = this.ktp;
     data['kk'] = this.kk;
+    data['selfie'] = this.selfie;
     return data;
   }
 }

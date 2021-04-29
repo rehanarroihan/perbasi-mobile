@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 
 class ProfilePlayerRequest {
-  String email, nik, name, birthPlace, birthDate, phone, address, positionId;
+  String email, nik, name, birthPlace, birthDate, phone, address, positionId, gender;
   File kk, foto;
 
   ProfilePlayerRequest(
@@ -15,6 +15,7 @@ class ProfilePlayerRequest {
       this.birthPlace,
       this.birthDate,
       this.phone,
+      this.gender,
       this.kk,
       this.foto});
 
@@ -28,6 +29,7 @@ class ProfilePlayerRequest {
       birthPlace: map['birth_place'] as String,
       phone: map['phone'] as String,
       birthDate: map['birth_date'] as String,
+      gender: map['gender'] as String,
       kk: map['kk'] as File,
       foto: map['foto'] as File,
     );
@@ -41,6 +43,7 @@ class ProfilePlayerRequest {
       'position_id': this.positionId,
       'nik': this.nik,
       'name': this.name,
+      'gender': this.gender,
       'birth_place': this.birthPlace,
       'birth_date': this.birthDate,
       'phone': this.phone,

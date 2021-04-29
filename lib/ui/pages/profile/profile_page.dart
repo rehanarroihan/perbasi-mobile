@@ -21,7 +21,9 @@ import 'package:perbasitlg/ui/widgets/base/button.dart';
 import 'package:perbasitlg/ui/widgets/base/dropdown_input.dart';
 import 'package:perbasitlg/ui/widgets/base/space.dart';
 import 'package:perbasitlg/ui/widgets/modules/app_alert_dialog.dart';
+import 'package:perbasitlg/ui/widgets/modules/gender_options.dart';
 import 'package:perbasitlg/ui/widgets/modules/loading_dialog.dart';
+import 'package:perbasitlg/ui/widgets/modules/upload_form.dart';
 import 'package:perbasitlg/ui/widgets/modules/upload_progress_dialog.dart';
 import 'package:perbasitlg/utils/app_color.dart';
 import 'package:perbasitlg/utils/constant_helper.dart';
@@ -57,13 +59,27 @@ class _ProfilePageState extends State<ProfilePage> {
 
   bool _isProfilePictPreview = false;
   bool _isKKPictPreview = false;
+  bool _isBirthCertPictPreview = false;
   bool _isLicensePictPreview = false;
+  bool _isKTPPictPreview = false;
+  bool _isSelfiePictPreview = false;
+
+  Gender _selectedGender = Gender.L;
 
   // Player additional form
   TextEditingController _positionInput = TextEditingController();
   TextEditingController _teamInput = TextEditingController();
-  TextEditingController _kkInput = TextEditingController();
+  TextEditingController _noKKInput = TextEditingController();
+  TextEditingController _almaMaterInput = TextEditingController();
   File _kk;
+  File _birthCert;
+  File _ktp;
+  File _selfie;
+  TextEditingController _kkInput = TextEditingController();
+  TextEditingController _birthCertInput = TextEditingController();
+  TextEditingController _ktpInput = TextEditingController();
+  TextEditingController _selfieInput = TextEditingController();
+  String _selectedDomicile;
 
   // Kuch additional form
   TextEditingController _licenseNameInput = TextEditingController();
@@ -148,6 +164,7 @@ class _ProfilePageState extends State<ProfilePage> {
         foto: resizedProfileImage,
         positionId: _selectedPositionId.toString(),
         kk: resizedKKImage,
+        gender: _selectedGender.toString()
       );
 
       _profileCubit.updateProfilePlayer(requestData);
@@ -185,7 +202,8 @@ class _ProfilePageState extends State<ProfilePage> {
         licenceFrom: _licensePublisherInput.text.trim(),
         licenceFile: resizedLicenseImage,
         licenceActiveDate: _licenseDateForServer,
-        typeId: _selectedCoachTypeId
+        typeId: _selectedCoachTypeId,
+        gender: _selectedGender.toString()
       );
 
       _profileCubit.updateProfileCoach(requestData, _loggedInRole);
@@ -207,6 +225,24 @@ class _ProfilePageState extends State<ProfilePage> {
   File _generateLicenseFileFromUrl(String filename) {
     String pathName = p.join(App().appDocsDir.path, filename);
     _licensePhoto = File(pathName);
+    return File(pathName);
+  }
+
+  File _generateBirthCertFileFromUrl(String filename) {
+    String pathName = p.join(App().appDocsDir.path, filename);
+    _birthCert = File(pathName);
+    return File(pathName);
+  }
+
+  File _generateKTPFileFromUrl(String filename) {
+    String pathName = p.join(App().appDocsDir.path, filename);
+    _ktp = File(pathName);
+    return File(pathName);
+  }
+
+  File _generateSelfieFileFromUrl(String filename) {
+    String pathName = p.join(App().appDocsDir.path, filename);
+    _selfie = File(pathName);
     return File(pathName);
   }
 
@@ -316,19 +352,21 @@ class _ProfilePageState extends State<ProfilePage> {
     }
 
     // Coach input
-    _licenseNameInput.text = _authCubit.loggedInUserData.licence;
-    _licenseNumberInput.text = _authCubit.loggedInUserData.licenceNumber;
-    _licensePublisherInput.text = _authCubit.loggedInUserData.licenceFrom;
-    if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.licenceActiveDate)) {
-      _licenseDateInput.text = DateFormat('dd MMMM yyyy').format(
-        DateTime.parse(_authCubit.loggedInUserData.licenceActiveDate)
-      );
+    if (_authCubit.loggedInUserData.role.name == ConstantHelper.ROLE_PELATIH) {
+      _licenseNameInput.text = _authCubit.loggedInUserData.licence;
+      _licenseNumberInput.text = _authCubit.loggedInUserData.licenceNumber;
+      _licensePublisherInput.text = _authCubit.loggedInUserData.licenceFrom;
+      if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.licenceActiveDate)) {
+        _licenseDateInput.text = DateFormat('dd MMMM yyyy').format(
+            DateTime.parse(_authCubit.loggedInUserData.licenceActiveDate)
+        );
+      }
+      if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.licenseFile)) {
+        _licensePhotoInput.text = 'Foto lisensi sudah di upload';
+      }
+      _selectedLicenseName = _authCubit.loggedInUserData.licence;
+      _selectedCoachTypeId = _authCubit.loggedInUserData.typeId.id.toString();
     }
-    if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.licenseFile)) {
-      _licensePhotoInput.text = 'Foto lisensi sudah di upload';
-    }
-    _selectedLicenseName = _authCubit.loggedInUserData.licence;
-    _selectedCoachTypeId = _authCubit.loggedInUserData.typeId.id.toString();
   }
 
   Widget _callToActionButtons() {
@@ -402,7 +440,155 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
     );
   }
-  
+
+  Widget _profileHeader() {
+    return Container(
+      padding: EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Color(0x1A000000),
+            offset: const Offset(0, 3),
+            blurRadius: 20,
+          ),
+        ]
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: GestureDetector(
+              onTap: () async {
+                String filePath = await getImagePathFromGallery();
+                if (!GlobalMethodHelper.isEmpty(filePath)) {
+                  _profilePict = File(filePath);
+
+                  if (_profilePict.lengthSync() > 5120000) {
+                    showFlutterToast('Maximum photo size is 5 MB');
+                    return;
+                  }
+
+                  _isProfilePictPreview = true;
+                  setState(() {});
+                  showFlutterToast('Tekan tombol simpan untuk menyimpan foto profile yang telah dipilih');
+                }
+              },
+              child: Column(
+                children: [
+                  _buildRoundedProfilePict(),
+                  Text(
+                    'Ubah',
+                    style: TextStyle(
+                      color: AppColor.primaryColor,
+                      fontSize: ScreenUtil().setSp(10)
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+          Space(width: ScreenUtil().setWidth(14)),
+          Expanded(
+            flex: 3,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start  ,
+              children: [
+                Text(
+                  _authCubit.loggedInUserData.name,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: ScreenUtil().setSp(14)
+                  ),
+                ),
+                Text(
+                  _authCubit.loggedInUserData.role.name == ConstantHelper.ROLE_PEMAIN
+                      ? _authCubit.loggedInUserData.verified ? 'Terverifikasi' : 'Belum Terverifikasi'
+                      : _authCubit.loggedInUserData.role.name,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w300,
+                    fontSize: ScreenUtil().setSp(13),
+                    color: _authCubit.loggedInUserData.role.name == ConstantHelper.ROLE_PEMAIN
+                        ? _authCubit.loggedInUserData.verified ? Colors.green : Colors.red
+                        : Colors.red,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => ImageDetailPage(
+                    title: 'QR Code',
+                    imageDetail: _authCubit.loggedInUserData.qrcode,
+                  )
+                ));
+              },
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SvgPicture.asset('assets/icons/qrcode.svg'),
+                  Space(height: 4),
+                  Text('QR Code')
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRoundedProfilePict() {
+    if (_isProfilePictPreview) {
+      return Container(
+        width: 80.0,
+        height: 80.0,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          image: DecorationImage(
+            fit: BoxFit.cover,
+            image: FileImage(_profilePict),
+          ),
+        ),
+      );
+    }
+
+    if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.foto)) {
+      return Container(
+        width: 80.0,
+        height: 80.0,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          image: DecorationImage(
+            fit: BoxFit.cover,
+            image: NetworkToFileImage(
+              url: _authCubit.loggedInUserData.foto,
+              file: _generateProfilePictFileFromUrl(_authCubit.loggedInUserData.foto.split('/').last)
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Container(
+      width: 80.0,
+      height: 80.0,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: AppColor.primaryColor
+      ),
+      child: Center(
+        child: Icon(
+          Icons.person,
+          color: Colors.white,
+          size: 32,
+        ),
+      ),
+    );
+  }
+
   Widget _profileForm() {
     return Container(
       padding: EdgeInsets.fromLTRB(
@@ -435,6 +621,23 @@ class _ProfilePageState extends State<ProfilePage> {
             },
           ),
           Space(height: 40),
+          Text(
+            'Jenis Kelamin',
+            style: TextStyle(
+              fontSize: ScreenUtil().setSp(11),
+              color: Colors.grey.withOpacity(0.9)
+            ),
+          ),
+          Space(height: 8),
+          GenderOptions(
+            value: _selectedGender,
+            onChange: (Gender gend) {
+              setState(() {
+                _selectedGender = gend;
+              });
+            },
+          ),
+          Space(height: 32),
           BoxInput(
             controller: _birthPlaceInput,
             label: 'Tempat Lahir',
@@ -536,35 +739,73 @@ class _ProfilePageState extends State<ProfilePage> {
         0
       ),
       child: _loggedInRole == ConstantHelper.ROLE_PEMAIN ? Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 10.0),
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(
-                  color: Colors.black38,
-                  width: 1,
-                ),
-              )
+          Text(
+            'Domisili',
+            style: TextStyle(
+              fontSize: ScreenUtil().setSp(11),
+              color: Colors.grey.withOpacity(0.9)
             ),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton(
-                isExpanded: true,
-                hint: Text('Pilih Posisi'),
-                value: _selectedPositionId,
-                items: _authCubit.playerPositionList.map((value) {
-                  return DropdownMenuItem(
-                    child: Text(value.name),
-                    value: value.id,
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _selectedPositionId = value;
-                  });
-                },
-              ),
+          ),
+          DropdownInput(
+            placeholder: 'Pilih domisili',
+            onChanged: (value) {
+              setState(() {
+                _selectedDomicile = value;
+              });
+            },
+            listItem: ['Tulungagung', 'Luar Kota'].map((dom) {
+              return DropdownData(
+                value: dom,
+                text: dom
+              );
+            }).toList(),
+            defaultValues: _selectedDomicile,
+          ),
+          Space(height: 40),
+          BoxInput(
+            controller: _noKKInput,
+            label: 'Nomor KK',
+            keyboardType: TextInputType.number,
+            validator: (String val) {
+              if (val.length < 16) {
+                return 'nomor kk harus valid';
+              }
+            },
+          ),
+          Space(height: 40),
+          BoxInput(
+            controller: _almaMaterInput,
+            label: 'Sekolah / Almamater',
+            validator: (String val) {
+              if (GlobalMethodHelper.isEmpty(val)) {
+                return 'almamater harus di isi';
+              }
+            },
+          ),
+          Space(height: 40),
+          Text(
+            'Posisi',
+            style: TextStyle(
+              fontSize: ScreenUtil().setSp(11),
+              color: Colors.grey.withOpacity(0.9)
             ),
+          ),
+          DropdownInput(
+            placeholder: 'Pilih posisi',
+            onChanged: (value) {
+              setState(() {
+                _selectedPositionId = value;
+              });
+            },
+            listItem: _authCubit.playerPositionList.map((value) {
+              return DropdownData(
+                value: value.id.toString(),
+                text: value.name,
+              );
+            }).toList(),
+            defaultValues: _selectedPositionId.toString(),
           ),
           Space(height: 40),
           BoxInput(
@@ -590,7 +831,141 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
           Space(height: 40),
-          _kkUploadForm()
+          UploadForm(
+            input: _ktpInput,
+            label: 'Upload KTP',
+            imageUrl: _authCubit.loggedInUserData.ktp,
+            isPreviewThumbnail: _isKTPPictPreview,
+            image: _ktp,
+            urlBasedFile: NetworkToFileImage(
+              url: _authCubit.loggedInUserData.ktp,
+              file: _generateKTPFileFromUrl(_authCubit.loggedInUserData.ktp?.split('/')?.last)
+            ),
+            validator: (String args) {
+              if (_ktp == null) {
+                return 'file ktp harus di pilih';
+              }
+            },
+            onPickImage: () async {
+              String filePath = await getImagePathFromGallery();
+              if (!GlobalMethodHelper.isEmpty(filePath)) {
+                _ktp = File(filePath);
+
+                if (_ktp.lengthSync() > 5120000) {
+                  showFlutterToast('Maximum photo size is 5 MB');
+                  return;
+                }
+
+                _ktpInput.text = 'File sudah dipilih';
+
+                _isKTPPictPreview = true;
+                setState(() {});
+                showFlutterToast('Tekan tombol simpan untuk menyimpan foto KTP yang telah dipilih');
+              }
+            }
+          ),
+          Space(height: 40),
+          UploadForm(
+            input: _kkInput,
+            label: 'Upload KK',
+            imageUrl: _authCubit.loggedInUserData.kk,
+            isPreviewThumbnail: _isKKPictPreview,
+            image: _kk,
+            urlBasedFile: NetworkToFileImage(
+              url: _authCubit.loggedInUserData.kk,
+              file: _generateKKFileFromUrl(_authCubit.loggedInUserData.kk?.split('/')?.last)
+            ),
+            validator: (String args) {
+              if (_kk == null) {
+                return 'file kk harus di pilih';
+              }
+            },
+            onPickImage: () async {
+              String filePath = await getImagePathFromGallery();
+              if (!GlobalMethodHelper.isEmpty(filePath)) {
+                _kk = File(filePath);
+
+                if (_kk.lengthSync() > 5120000) {
+                  showFlutterToast('Maximum photo size is 5 MB');
+                  return;
+                }
+
+                _kkInput.text = 'File sudah dipilih';
+
+                _isKKPictPreview = true;
+                setState(() {});
+                showFlutterToast('Tekan tombol simpan untuk menyimpan foto KK yang telah dipilih');
+              }
+            }
+          ),
+          Space(height: 40),
+          UploadForm(
+            input: _birthCertInput,
+            label: 'Akta Kelahiran',
+            imageUrl: _authCubit.loggedInUserData.akta,
+            isPreviewThumbnail: _isBirthCertPictPreview,
+            image: _birthCert,
+            urlBasedFile: NetworkToFileImage(
+              url: _authCubit.loggedInUserData.akta,
+              file: _generateBirthCertFileFromUrl(_authCubit.loggedInUserData.akta?.split('/')?.last)
+            ),
+            onPickImage: () async {
+              String filePath = await getImagePathFromGallery();
+              if (!GlobalMethodHelper.isEmpty(filePath)) {
+                _birthCert = File(filePath);
+
+                if (_birthCert.lengthSync() > 5120000) {
+                  showFlutterToast('Maximum photo size is 5 MB');
+                  return;
+                }
+
+                _birthDateInput.text = 'File sudah dipilih';
+
+                _isBirthCertPictPreview = true;
+                setState(() {});
+                showFlutterToast('Tekan tombol simpan untuk menyimpan foto akta kelahiran yang telah dipilih');
+              }
+            },
+            validator: (String args) {
+              if (_birthCert == null) {
+                return 'file akta kelahiran harus di pilih';
+              }
+            },
+          ),
+          Space(height: 40),
+          UploadForm(
+            input: _selfieInput,
+            label: 'Foto selfie dengan KTP / Kartu Pelajar',
+            imageUrl: _authCubit.loggedInUserData.selfie,
+            isPreviewThumbnail: _isSelfiePictPreview,
+            image: _selfie,
+            urlBasedFile: NetworkToFileImage(
+              url: _authCubit.loggedInUserData.selfie,
+              file: _generateSelfieFileFromUrl(_authCubit.loggedInUserData.selfie?.split('/')?.last)
+            ),
+            onPickImage: () async {
+              String filePath = await getImagePathFromGallery();
+              if (!GlobalMethodHelper.isEmpty(filePath)) {
+                _selfie = File(filePath);
+
+                if (_selfie.lengthSync() > 5120000) {
+                  showFlutterToast('Maximum photo size is 5 MB');
+                  return;
+                }
+
+                _selfieInput.text = 'File sudah dipilih';
+
+                _isSelfiePictPreview = true;
+                setState(() {});
+                showFlutterToast('Tekan tombol simpan untuk menyimpan foto selfie yang telah dipilih');
+              }
+            },
+            validator: (String args) {
+              if (_selfie == null) {
+                return 'file selfie harus di pilih';
+              }
+            },
+          ),
         ],
       ) :
       _loggedInRole == ConstantHelper.ROLE_PELATIH
@@ -691,61 +1066,37 @@ class _ProfilePageState extends State<ProfilePage> {
             },
           ),
           Space(height: 40),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              BoxInput(
-                controller: _licensePhotoInput,
-                label: 'Foto Lisensi',
-                onClick: () async {
-                  String filePath = await getImagePathFromGallery();
-                  if (!GlobalMethodHelper.isEmpty(filePath)) {
-                    _licensePhoto = File(filePath);
+          UploadForm(
+            input: _licensePhotoInput,
+            label: 'Foto Lisensi',
+            imageUrl: _authCubit.loggedInUserData.licenseFile,
+            isPreviewThumbnail: _isLicensePictPreview,
+            image: _licensePhoto,
+            urlBasedFile: NetworkToFileImage(
+              url: _authCubit.loggedInUserData.licenseFile,
+              file: _generateLicenseFileFromUrl(_authCubit.loggedInUserData.licenseFile?.split('/')?.last)
+            ),
+            onPickImage: () async {
+              String filePath = await getImagePathFromGallery();
+              if (!GlobalMethodHelper.isEmpty(filePath)) {
+                _licensePhoto = File(filePath);
 
-                    if (_licensePhoto.lengthSync() > 5120000) {
-                      showFlutterToast('Maximum photo size is 5 MB');
-                      return;
-                    }
+                if (_licensePhoto.lengthSync() > 5120000) {
+                  showFlutterToast('Maximum photo size is 5 MB');
+                  return;
+                }
 
-                    _licensePhotoInput.text = 'File sudah dipilih';
+                _licensePhotoInput.text = 'File sudah dipilih';
 
-                    showFlutterToast('Tekan tombol simpan untuk menyimpan foto lisensi yang telah dipilih');
-                  }
-                },
-                validator: (String args) {
-                  if (_licensePhoto == null) {
-                    return 'foto lisensi harus di pilih';
-                  }
-                },
-                suffixWidget: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _buildLicensePhoto(),
-                    Space(width: 8),
-                    Container(
-                      width: ScreenUtil().setWidth(72),
-                      height: ScreenUtil().setHeight(32),
-                      child: Button(
-                        onPressed: () {},
-                        fontSize: 10,
-                        text: 'Pilih File',
-                        style: AppButtonStyle.primary,
-                        padding: 0,
-                        fontWeight: FontWeight.w300,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Space(height: 4),
-              Text(
-                '*Upload file (PNG, JPG, JPEG) max. 5 MB',
-                style: TextStyle(
-                  fontSize: 12
-                ),
-              )
-            ],
-          )
+                showFlutterToast('Tekan tombol simpan untuk menyimpan foto lisensi yang telah dipilih');
+              }
+            },
+            validator: (String args) {
+              if (_licensePhoto == null) {
+                return 'foto lisensi harus di pilih';
+              }
+            },
+          ),
         ],
       ) :
       Container(),
@@ -779,290 +1130,6 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         Space(height: 40),
       ],
-    );
-  }
-
-  Widget _profileHeader() {
-    return Container(
-      padding: EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Color(0x1A000000),
-            offset: const Offset(0, 3),
-            blurRadius: 20,
-          ),
-        ]
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: GestureDetector(
-              onTap: () async {
-                String filePath = await getImagePathFromGallery();
-                if (!GlobalMethodHelper.isEmpty(filePath)) {
-                  _profilePict = File(filePath);
-
-                  if (_profilePict.lengthSync() > 5120000) {
-                    showFlutterToast('Maximum photo size is 5 MB');
-                    return;
-                  }
-
-                  _isProfilePictPreview = true;
-                  setState(() {});
-                  showFlutterToast('Tekan tombol simpan untuk menyimpan foto profile yang telah dipilih');
-                }
-              },
-              child: Column(
-                children: [
-                  _buildRoundedProfilePict(),
-                  Text(
-                    'Ubah',
-                    style: TextStyle(
-                      color: AppColor.primaryColor,
-                      fontSize: ScreenUtil().setSp(10)
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
-          Space(width: ScreenUtil().setWidth(14)),
-          Expanded(
-            flex: 3,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start  ,
-              children: [
-                Text(
-                  _authCubit.loggedInUserData.name,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: ScreenUtil().setSp(14)
-                  ),
-                ),
-                Text(
-                  _authCubit.loggedInUserData.role.name == ConstantHelper.ROLE_PEMAIN
-                    ? _authCubit.loggedInUserData.verified ? 'Terverifikasi' : 'Belum Terverifikasi'
-                  : _authCubit.loggedInUserData.role.name,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w300,
-                    fontSize: ScreenUtil().setSp(13),
-                    color: _authCubit.loggedInUserData.role.name == ConstantHelper.ROLE_PEMAIN
-                        ? _authCubit.loggedInUserData.verified ? Colors.green : Colors.red
-                        : Colors.red,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: GestureDetector(
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(
-                  builder: (context) => ImageDetailPage(
-                    title: 'QR Code',
-                    imageDetail: _authCubit.loggedInUserData.qrcode,
-                  )
-                ));
-              },
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SvgPicture.asset('assets/icons/qrcode.svg'),
-                  Space(height: 4),
-                  Text('QR Code')
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildRoundedProfilePict() {
-    if (_isProfilePictPreview) {
-      return Container(
-        width: 80.0,
-        height: 80.0,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          image: DecorationImage(
-            fit: BoxFit.cover,
-            image: FileImage(_profilePict),
-          ),
-        ),
-      );
-    }
-
-    if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.foto)) {
-      return Container(
-        width: 80.0,
-        height: 80.0,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          image: DecorationImage(
-            fit: BoxFit.cover,
-            image: NetworkToFileImage(
-              url: _authCubit.loggedInUserData.foto,
-              file: _generateProfilePictFileFromUrl(_authCubit.loggedInUserData.foto.split('/').last)
-            ),
-          ),
-        ),
-      );
-    }
-
-    return Container(
-      width: 80.0,
-      height: 80.0,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: AppColor.primaryColor
-      ),
-      child: Center(
-        child: Icon(
-          Icons.person,
-          color: Colors.white,
-          size: 32,
-        ),
-      ),
-    );
-  }
-
-  Widget _kkUploadForm() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        BoxInput(
-          controller: _kkInput,
-          label: 'Upload KK',
-          onClick: () async {
-            String filePath = await getImagePathFromGallery();
-            if (!GlobalMethodHelper.isEmpty(filePath)) {
-              _kk = File(filePath);
-
-              if (_kk.lengthSync() > 5120000) {
-                showFlutterToast('Maximum photo size is 5 MB');
-                return;
-              }
-
-              _kkInput.text = 'File sudah dipilih';
-
-              _isKKPictPreview = true;
-              setState(() {});
-              showFlutterToast('Tekan tombol simpan untuk menyimpan foto KK yang telah dipilih');
-            }
-          },
-          validator: (String args) {
-            if (_kk == null) {
-              return 'file kk harus di pilih';
-            }
-          },
-          suffixWidget: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildKkThumbnail(),
-              Space(width: 8),
-              Container(
-                width: ScreenUtil().setWidth(72),
-                height: ScreenUtil().setHeight(32),
-                child: Button(
-                  onPressed: () {},
-                  fontSize: 10,
-                  text: 'Pilih File',
-                  style: AppButtonStyle.primary,
-                  padding: 0,
-                  fontWeight: FontWeight.w300,
-                ),
-              ),
-            ],
-          ),
-        ),
-        Space(height: 4),
-        Text(
-          '*Upload file (PNG, JPG, JPEG) max. 5 MB',
-          style: TextStyle(
-            fontSize: 12
-          ),
-        )
-      ],
-    );
-  }
-
-  Widget _buildKkThumbnail() {
-    if (_isKKPictPreview) {
-      return Container(
-        width: ScreenUtil().setWidth(32),
-        height: ScreenUtil().setHeight(32),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(4)),
-          image: DecorationImage(
-            fit: BoxFit.cover,
-            image: FileImage(_kk),
-          ),
-        ),
-      );
-    }
-
-    if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.kk)) {
-      return Container(
-        width: ScreenUtil().setWidth(32),
-        height: ScreenUtil().setHeight(32),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(4)),
-          image: DecorationImage(
-            fit: BoxFit.cover,
-            image: NetworkToFileImage(
-              url: _authCubit.loggedInUserData.kk,
-              file: _generateKKFileFromUrl(_authCubit.loggedInUserData.kk.split('/').last)
-            ),
-          ),
-        ),
-      );
-    }
-
-    return Container(
-      width: ScreenUtil().setWidth(32),
-      height: ScreenUtil().setHeight(32),
-    );
-  }
-
-  Widget _buildLicensePhoto() {
-    if (_isLicensePictPreview) {
-      return Container(
-        width: ScreenUtil().setWidth(32),
-        height: ScreenUtil().setHeight(32),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(4)),
-          image: DecorationImage(
-            fit: BoxFit.cover,
-            image: AssetImage(_licensePhoto.path),
-          ),
-        ),
-      );
-    }
-
-    if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.licenseFile)) {
-      return Container(
-        width: ScreenUtil().setWidth(32),
-        height: ScreenUtil().setHeight(32),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(4)),
-          image: DecorationImage(
-            fit: BoxFit.cover,
-            image: NetworkToFileImage(
-              url: _authCubit.loggedInUserData.licenseFile,
-              file: _generateLicenseFileFromUrl(_authCubit.loggedInUserData.licenseFile.split('/').last)
-            ),
-          ),
-        ),
-      );
-    }
-
-    return Container(
-      width: ScreenUtil().setWidth(32),
-      height: ScreenUtil().setHeight(32),
     );
   }
 }

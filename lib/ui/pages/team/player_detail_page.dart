@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:perbasitlg/cubit/auth/auth_cubit.dart';
 import 'package:perbasitlg/cubit/team/team_cubit.dart';
 import 'package:perbasitlg/models/club_detail.dart';
 import 'package:perbasitlg/models/document_model.dart';
@@ -14,6 +15,7 @@ import 'package:perbasitlg/ui/widgets/modules/app_alert_dialog.dart';
 import 'package:perbasitlg/ui/widgets/modules/loading_dialog.dart';
 import 'package:perbasitlg/utils/app_color.dart';
 import 'package:intl/intl.dart';
+import 'package:perbasitlg/utils/constant_helper.dart';
 import 'package:perbasitlg/utils/global_method_helper.dart';
 import 'package:perbasitlg/utils/show_flutter_toast.dart';
 import 'package:perbasitlg/utils/url_constant_helper.dart';
@@ -30,6 +32,7 @@ class PlayerDetailPage extends StatefulWidget {
 
 class _PlayerDetailPageState extends State<PlayerDetailPage> {
   TeamCubit _teamCubit = TeamCubit();
+  AuthCubit _authCubit = AuthCubit();
 
   TextEditingController _nikInput = TextEditingController();
   TextEditingController _birthDetailInput = TextEditingController();
@@ -43,6 +46,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> {
   @override
   void initState() {
     _teamCubit = BlocProvider.of<TeamCubit>(context);
+    _authCubit = BlocProvider.of<AuthCubit>(context);
 
     super.initState();
   }
@@ -80,14 +84,13 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> {
             description: 'Silahkan tunggu...'
           ).show(context);
         } else if (state is PlayerVerificationSuccessfulState) {
-          showFlutterToast('Berhasil ${_actionType == 'accepted' ? 'menerima' : 'menolak'} pendaftar');
-          Navigator.pop(context);
+          showFlutterToast('Berhasil mengeluarkan pemain dari club');
           Navigator.pop(context);
           Navigator.pop(context);
           _teamCubit.getMyTeamPage();
         } else if (state is PlayerVerificationFailedState) {
           Navigator.pop(context);
-          showFlutterToast('Gagal ${_actionType == 'accepted' ? 'menerima' : 'menolak'} pendaftar, mohon coba lagi');
+          showFlutterToast('Gagal mengeluarkan pemain dari club');
         }
       },
       child: BlocBuilder(
@@ -196,7 +199,8 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> {
                       ),
                     ),
                     Space(height: 16),
-                    _callToActionButtons()
+                    _authCubit.loggedInUserData.role.name == ConstantHelper.ROLE_PELATIH ?
+                    _callToActionButtons() : Container()
                   ],
                 ),
               ),
@@ -228,7 +232,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> {
               negativeButtonText: 'Kembali',
               negativeButtonOnTap: () => Navigator.pop(context),
               positiveButtonText: 'Keluarkan',
-              positiveButtonOnTap: () => verifyPlayer('rejected'),
+              positiveButtonOnTap: () => verifyPlayer('out'),
             ).show(context);
           },
           shape: RoundedRectangleBorder(

@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 
 class ProfileCoachRequest {
-  String email, nik, name, birthPlace, birthDate, phone, address, licence, licenceNumber, licenceFrom, licenceActiveDate, typeId;
+  String email, nik, name, birthPlace, birthDate, phone, address, licence, licenceNumber, licenceFrom, licenceActiveDate, typeId, gender;
   File licenceFile, foto;
 
   ProfileCoachRequest(
@@ -14,6 +14,7 @@ class ProfileCoachRequest {
       this.birthDate,
       this.phone,
       this.address,
+      this.gender,
       this.licence,
       this.licenceNumber,
       this.licenceFrom,
@@ -29,6 +30,7 @@ class ProfileCoachRequest {
       name: map['name'] as String,
       birthPlace: map['birth_place'] as String,
       birthDate: map['birth_date'] as String,
+      gender: map['gender'] as String,
       phone: map['phone'] as String,
       address: map['address'] as String,
       licence: map['licence'] as String,
@@ -50,6 +52,7 @@ class ProfileCoachRequest {
       'birth_place': this.birthPlace,
       'birth_date': this.birthDate,
       'phone': this.phone,
+      'gender': this.gender,
       'address': this.address,
       'licence': this.licence,
       'licence_number': this.licenceNumber,

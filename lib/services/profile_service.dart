@@ -122,6 +122,7 @@ class ProfileService {
       request.fields['birth_place'] = data.birthPlace;
       request.fields['birth_date'] = data.birthDate;
       request.fields['phone'] = data.phone;
+      request.fields['gender'] = data.gender;
       request.fields['address'] = data.address;
       request.fields['licence'] = data.licence;
       request.fields['licence_number'] = data.licenceNumber;
