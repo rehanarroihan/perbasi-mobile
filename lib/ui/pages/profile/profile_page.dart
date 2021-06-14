@@ -139,27 +139,27 @@ class _ProfilePageState extends State<ProfilePage> {
 
       File resizedProfileImage = await GlobalMethodHelper.resizeImage(
         _profilePict, preferredWidth: 320,
-        fileName: _profilePict.path.split("/").last
+        fileName: _profilePict?.path?.split("/")?.last
       );
 
       File resizedKKImage = await GlobalMethodHelper.resizeImage(
         _kk, preferredWidth: 320,
-        fileName: _kk.path.split("/").last
+        fileName: _kk?.path?.split("/")?.last
       );
 
       File resizedKTPImage = await GlobalMethodHelper.resizeImage(
         _ktp, preferredWidth: 320,
-        fileName: _ktp.path.split("/").last
+        fileName: _ktp?.path?.split("/")?.last
       );
 
       File resizedSelfieImage = await GlobalMethodHelper.resizeImage(
         _selfie, preferredWidth: 320,
-        fileName: _selfie.path.split("/").last
+        fileName: _selfie?.path?.split("/")?.last
       );
 
       File resizedBirthCertImage = await GlobalMethodHelper.resizeImage(
         _birthCert, preferredWidth: 320,
-        fileName: _birthCert.path.split("/").last
+        fileName: _birthCert?.path?.split("/")?.last
       );
 
       Navigator.pop(context);
@@ -173,15 +173,15 @@ class _ProfilePageState extends State<ProfilePage> {
         address: _addressInput.text.trim(),
         phone: _phoneInput.text.trim(),
         positionId: _selectedPositionId.toString(),
-        gender: _selectedGender.toString(),
+        gender: _selectedGender == Gender.L ? 'L' : 'P',
         almaMater: _almaMaterInput.text,
         identityAddress: _selectedDomicile,
         noKK: _noKKInput.text,
-        foto: resizedProfileImage,
-        kk: resizedKKImage,
-        akta: resizedBirthCertImage,
-        ktp: resizedKTPImage,
-        selfie: resizedSelfieImage
+        foto: resizedProfileImage != null ? resizedProfileImage : null,
+        kk: resizedKKImage != null ? resizedKKImage : null,
+        akta: resizedBirthCertImage != null ? resizedBirthCertImage : null,
+        ktp: resizedKTPImage != null ? resizedKTPImage : null,
+        selfie: resizedSelfieImage != null ? resizedSelfieImage : null
       );
 
       _profileCubit.updateProfilePlayer(requestData);
@@ -213,19 +213,20 @@ class _ProfilePageState extends State<ProfilePage> {
         email: _emailInput.text.trim(),
         address: _addressInput.text.trim(),
         phone: _phoneInput.text.trim(),
-        foto: resizedProfileImage,
+        foto: resizedProfileImage != null ? resizedProfileImage : null,
         licence: _licenseNameInput.text.trim(),
         licenceNumber: _licenseNumberInput.text.trim(),
         licenceFrom: _licensePublisherInput.text.trim(),
-        licenceFile: resizedLicenseImage,
+        licenceFile: resizedLicenseImage != null ? resizedLicenseImage : null,
         licenceActiveDate: _licenseDateForServer,
         typeId: _selectedCoachTypeId,
-        gender: _selectedGender.toString()
+        gender: _selectedGender == Gender.L ? 'L' : 'P'
       );
 
       _profileCubit.updateProfileCoach(requestData, _loggedInRole);
     }
   }
+
 
   File _generateProfilePictFileFromUrl(String filename) {
     String pathName = p.join(App().appDocsDir.path, filename);
@@ -233,35 +234,6 @@ class _ProfilePageState extends State<ProfilePage> {
     return File(pathName);
   }
 
-  File _generateKKFileFromUrl(String filename) {
-    String pathName = p.join(App().appDocsDir.path, filename);
-    _kk = File(pathName);
-    return File(pathName);
-  }
-
-  File _generateLicenseFileFromUrl(String filename) {
-    String pathName = p.join(App().appDocsDir.path, filename);
-    _licensePhoto = File(pathName);
-    return File(pathName);
-  }
-
-  File _generateBirthCertFileFromUrl(String filename) {
-    String pathName = p.join(App().appDocsDir.path, filename);
-    _birthCert = File(pathName);
-    return File(pathName);
-  }
-
-  File _generateKTPFileFromUrl(String filename) {
-    String pathName = p.join(App().appDocsDir.path, filename);
-    _ktp = File(pathName);
-    return File(pathName);
-  }
-
-  File _generateSelfieFileFromUrl(String filename) {
-    String pathName = p.join(App().appDocsDir.path, filename);
-    _selfie = File(pathName);
-    return File(pathName);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -407,6 +379,21 @@ class _ProfilePageState extends State<ProfilePage> {
       if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.selfie)) {
         _selfieInput.text = 'Foto selfie sudah di upload';
       }
+    }
+
+    if (_loggedInRole == ConstantHelper.ROLE_WASIT) {
+      _licenseNameInput.text = _authCubit.loggedInUserData.licence;
+      _licenseNumberInput.text = _authCubit.loggedInUserData.licenceNumber;
+      _licensePublisherInput.text = _authCubit.loggedInUserData.licenceFrom;
+      if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.licenceActiveDate)) {
+        _licenseDateInput.text = DateFormat('dd MMMM yyyy').format(
+          DateTime.parse(_authCubit.loggedInUserData.licenceActiveDate)
+        );
+      }
+      if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.licenseFile)) {
+        _licensePhotoInput.text = 'Foto lisensi sudah di upload';
+      }
+      _selectedLicenseName = _authCubit.loggedInUserData.licence;
     }
   }
 
@@ -878,12 +865,8 @@ class _ProfilePageState extends State<ProfilePage> {
             imageUrl: _authCubit.loggedInUserData.ktp,
             isPreviewThumbnail: _isKTPPictPreview,
             image: _ktp,
-            urlBasedFile: NetworkToFileImage(
-              url: _authCubit.loggedInUserData.ktp,
-              file: _generateKTPFileFromUrl(_authCubit.loggedInUserData.ktp?.split('/')?.last)
-            ),
             validator: (String args) {
-              if (_ktp == null) {
+              if (_ktpInput == null) {
                 return 'file ktp harus di pilih';
               }
             },
@@ -912,12 +895,8 @@ class _ProfilePageState extends State<ProfilePage> {
             imageUrl: _authCubit.loggedInUserData.kk,
             isPreviewThumbnail: _isKKPictPreview,
             image: _kk,
-            urlBasedFile: NetworkToFileImage(
-              url: _authCubit.loggedInUserData.kk,
-              file: _generateKKFileFromUrl(_authCubit.loggedInUserData.kk?.split('/')?.last)
-            ),
             validator: (String args) {
-              if (_kk == null) {
+              if (_kkInput == null) {
                 return 'file kk harus di pilih';
               }
             },
@@ -946,10 +925,6 @@ class _ProfilePageState extends State<ProfilePage> {
             imageUrl: _authCubit.loggedInUserData.akta,
             isPreviewThumbnail: _isBirthCertPictPreview,
             image: _birthCert,
-            urlBasedFile: NetworkToFileImage(
-              url: _authCubit.loggedInUserData.akta,
-              file: _generateBirthCertFileFromUrl(_authCubit.loggedInUserData.akta?.split('/')?.last)
-            ),
             onPickImage: () async {
               String filePath = await getImagePathFromGallery();
               if (!GlobalMethodHelper.isEmpty(filePath)) {
@@ -960,7 +935,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   return;
                 }
 
-                _birthDateInput.text = 'File sudah dipilih';
+                _birthCertInput.text = 'File sudah dipilih';
 
                 _isBirthCertPictPreview = true;
                 setState(() {});
@@ -968,7 +943,7 @@ class _ProfilePageState extends State<ProfilePage> {
               }
             },
             validator: (String args) {
-              if (_birthCert == null) {
+              if (_birthCertInput == null) {
                 return 'file akta kelahiran harus di pilih';
               }
             },
@@ -980,10 +955,6 @@ class _ProfilePageState extends State<ProfilePage> {
             imageUrl: _authCubit.loggedInUserData.selfie,
             isPreviewThumbnail: _isSelfiePictPreview,
             image: _selfie,
-            urlBasedFile: NetworkToFileImage(
-              url: _authCubit.loggedInUserData.selfie,
-              file: _generateSelfieFileFromUrl(_authCubit.loggedInUserData.selfie?.split('/')?.last)
-            ),
             onPickImage: () async {
               String filePath = await getImagePathFromGallery();
               if (!GlobalMethodHelper.isEmpty(filePath)) {
@@ -1002,7 +973,7 @@ class _ProfilePageState extends State<ProfilePage> {
               }
             },
             validator: (String args) {
-              if (_selfie == null) {
+              if (_selfieInput == null) {
                 return 'file selfie harus di pilih';
               }
             },
@@ -1113,10 +1084,6 @@ class _ProfilePageState extends State<ProfilePage> {
             imageUrl: _authCubit.loggedInUserData.licenseFile,
             isPreviewThumbnail: _isLicensePictPreview,
             image: _licensePhoto,
-            urlBasedFile: NetworkToFileImage(
-              url: _authCubit.loggedInUserData.licenseFile,
-              file: _generateLicenseFileFromUrl(_authCubit.loggedInUserData.licenseFile?.split('/')?.last)
-            ),
             onPickImage: () async {
               String filePath = await getImagePathFromGallery();
               if (!GlobalMethodHelper.isEmpty(filePath)) {
@@ -1133,7 +1100,7 @@ class _ProfilePageState extends State<ProfilePage> {
               }
             },
             validator: (String args) {
-              if (_licensePhoto == null) {
+              if (_licensePhotoInput == null) {
                 return 'foto lisensi harus di pilih';
               }
             },

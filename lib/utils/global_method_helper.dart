@@ -38,6 +38,10 @@ class GlobalMethodHelper {
   }
 
   static Future<File> resizeImage(File file, {String fileName, int preferredWidth}) async {
+    if (file == null) {
+      return null;
+    }
+
     var image = await compute(decodeImage, file.readAsBytesSync());
     var resized = copyResize(image, width: preferredWidth ?? 640);
 

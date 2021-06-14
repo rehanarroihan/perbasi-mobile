@@ -63,16 +63,19 @@ class ProfilePlayerRequest {
       'identityAddress': this.identityAddress,
       'almamater': this.almaMater,
       'kk': this.kk != null ? await MultipartFile.fromFile(
-        this.kk.path, filename: this.kk.path.split('/').last
+        this.kk?.path, filename: this.kk?.path?.split('/')?.last
       ) : null,
       'foto': this.foto != null ? await MultipartFile.fromFile(
-        this.foto.path, filename: this.kk.path.split('/').last
+        this.foto.path, filename: this.kk?.path?.split('/')?.last
       ) : null,
       'ktp': this.ktp != null ? await MultipartFile.fromFile(
-        this.ktp.path, filename: this.ktp.path.split('/').last
+        this.ktp.path, filename: this.ktp?.path?.split('/')?.last
+      ) : null,
+      'akta': this.akta != null ? await MultipartFile.fromFile(
+          this.akta.path, filename: this.akta?.path?.split('/')?.last
       ) : null,
       'selfie': this.selfie != null ? await MultipartFile.fromFile(
-        this.selfie.path, filename: this.selfie.path.split('/').last
+        this.selfie.path, filename: this.selfie?.path?.split('/')?.last
       ) : null,
     } as Map<String, dynamic>;
   }

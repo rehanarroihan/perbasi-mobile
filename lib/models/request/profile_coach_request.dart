@@ -60,10 +60,10 @@ class ProfileCoachRequest {
       'licence_active_date': this.licenceActiveDate,
       'type_id': this.typeId,
       'licence_file': await MultipartFile.fromFile(
-        this.licenceFile.path, filename: this.licenceFile.path.split('/').last
+        this.licenceFile?.path, filename: this.licenceFile?.path?.split('/')?.last
       ),
       'foto': await MultipartFile.fromFile(
-        this.licenceFile.path, filename: this.licenceFile.path.split('/').last
+        this.licenceFile?.path, filename: this.licenceFile?.path?.split('/')?.last
       ),
     } as Map<String, dynamic>;
   }

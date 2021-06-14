@@ -15,9 +15,9 @@ class UploadForm extends StatefulWidget {
   final bool isPreviewThumbnail;
   final String imageUrl;
   final File image;
-  final ImageProvider urlBasedFile;
 
   const UploadForm({
+    Key key,
     @required this.input,
     @required this.onPickImage,
     @required this.label,
@@ -25,8 +25,7 @@ class UploadForm extends StatefulWidget {
     @required this.isPreviewThumbnail,
     @required this.imageUrl,
     @required this.image,
-    @required this.urlBasedFile,
-  });
+  }) : super(key: key);
 
   @override
   _UploadFormState createState() => _UploadFormState();
@@ -89,7 +88,7 @@ class _UploadFormState extends State<UploadForm> {
       );
     }
 
-    if (!GlobalMethodHelper.isEmpty(widget.imageUrl)) {
+    /*if (!GlobalMethodHelper.isEmpty(widget.imageUrl)) {
       return Container(
         width: ScreenUtil().setWidth(32),
         height: ScreenUtil().setHeight(32),
@@ -101,7 +100,7 @@ class _UploadFormState extends State<UploadForm> {
           ),
         ),
       );
-    }
+    }*/
 
     return Container(
       width: ScreenUtil().setWidth(32),

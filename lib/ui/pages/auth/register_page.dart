@@ -290,7 +290,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       ],
                     ),
                   ),
-                  Space(height: 32),
+                  Space(height: 148),
                 ],
               ),
             ),
