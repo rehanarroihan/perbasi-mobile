@@ -849,7 +849,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: Button(
                     onPressed: () => _homeCubit.changeSelectedPage(2),
                     fontSize: 10,
-                    text: 'Lihat Team',
+                    text: 'Lihat Club',
                     padding: 0,
                     style: AppButtonStyle.primary,
                     fontWeight: FontWeight.w300,
