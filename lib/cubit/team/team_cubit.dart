@@ -30,11 +30,10 @@ class TeamCubit extends Cubit<TeamState> {
 
     ApiReturn<List<ClubDetail>> apiResult = await _teamService.getMyTeam();
     this.teamPageLoading = false;
-    if (apiResult.success) {
+    if (apiResult.success && apiResult.data.isNotEmpty) {
       this.userHaveTeam = true;
-      if (apiResult.data.isNotEmpty) {
-        this.myClubList = apiResult.data;
-      }
+      this.myClubList = apiResult.data;
+
       emit(GetMyTeamPageSuccessfulState());
     } else {
       ApiReturn<List<ClubModel>> apiResult = await _teamService.getTeamList();
