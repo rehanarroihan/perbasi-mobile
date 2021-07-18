@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:perbasitlg/models/competition_model.dart';
+import 'package:perbasitlg/ui/pages/competition/registered_teams_page.dart';
 import 'package:perbasitlg/ui/pages/competition/schedule_list_page.dart';
 import 'package:perbasitlg/ui/widgets/base/button.dart';
 import 'package:perbasitlg/ui/widgets/base/space.dart';
@@ -117,6 +118,22 @@ class CompetitionDetailPage extends StatelessWidget {
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(
                     builder: (context) => ScheduleListPage(
+                      competitionId: competitionDetail.id.toString()
+                    )
+                  ));
+                },
+              ),
+            ),
+            Space(height: 16),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(16)),
+              width: double.infinity,
+              child: Button(
+                style: AppButtonStyle.secondary,
+                text: 'List Club Terdaftar',
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (context) => RegisteredTeamsPage(
                       competitionId: competitionDetail.id.toString()
                     )
                   ));

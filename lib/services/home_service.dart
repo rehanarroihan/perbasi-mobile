@@ -104,4 +104,26 @@ class HomeService {
       );
     }
   }
+
+  Future<ApiReturn<CompetitionModel>> getCompetitionDetail(String id) async {
+    try {
+      Response response = await _dio.get(
+        UrlConstantHelper.GET_COMPETITION_DETAIL + id,
+      );
+      if (response.statusCode == 200) {
+        return ApiReturn(
+          success: response.data['success'],
+          message: response.data['message'],
+          data: CompetitionModel.fromJson(response.data['data']),
+        );
+      }
+
+      return ApiReturn(success: false, message: response.data['message']);
+    } catch (e) {
+      return ApiReturn(
+        success: false,
+        message: 'Something went wrong'
+      );
+    }
+  }
 }
