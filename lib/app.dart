@@ -50,7 +50,7 @@ class App {
     };
 
     dio.interceptors.add(InterceptorsWrapper(onError: (DioError e) async {
-      Map<String, dynamic> data = e.response.data;
+      Map<dynamic, dynamic> data = e.response.data;
       if (e.response.statusCode != null) {
         if (e.response.statusCode == 400) {
         }

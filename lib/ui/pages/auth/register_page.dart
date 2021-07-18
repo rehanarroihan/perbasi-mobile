@@ -74,7 +74,7 @@ class _RegisterPageState extends State<RegisterPage> {
       name: _nameInput.text.trim(),
       password: _confirmPasswordInput.text.trim(),
       birthDate: _birthDateForServer,
-      gender: _selectedGender.toString()
+      gender: _selectedGender == Gender.L ? 'L' : 'P'
     );
     _authCubit.registerUser(registerData);
   }

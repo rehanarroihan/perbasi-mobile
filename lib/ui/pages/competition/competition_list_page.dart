@@ -77,7 +77,8 @@ class _CompetitionListPageState extends State<CompetitionListPage> {
                         imageUrl: item.foto,
                         title: item.name,
                         date: item.createdAt,
-                        desc: GlobalMethodHelper.parseHtmlString(item.description)
+                        desc: GlobalMethodHelper.parseHtmlString(item.description),
+                        status: item.status,
                       ),
                     );
                   }

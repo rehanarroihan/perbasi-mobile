@@ -5,9 +5,9 @@ import 'package:perbasitlg/ui/widgets/base/space.dart';
 import 'package:intl/intl.dart';
 
 class FeedItem extends StatelessWidget {
-  final String imageUrl, title, desc, date;
+  final String imageUrl, title, desc, date, status;
 
-  FeedItem({this.imageUrl, this.title, this.desc, this.date});
+  FeedItem({this.imageUrl, this.title, this.desc, this.date, this.status});
 
   @override
   Widget build(BuildContext context) {
@@ -28,15 +28,39 @@ class FeedItem extends StatelessWidget {
           Expanded(
             flex: 2,
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Container(
-                width: ScreenUtil().setWidth(80),
-                height: ScreenUtil().setHeight(80),
-                color: Colors.red,
-                child: CachedNetworkImage(
-                  imageUrl: imageUrl,
-                  fit: BoxFit.cover,
-                ),
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              child: Stack(
+                children: [
+                  Container(
+                    width: ScreenUtil().setWidth(100),
+                    height: ScreenUtil().setHeight(100),
+                    color: Colors.red,
+                    child: CachedNetworkImage(
+                      imageUrl: imageUrl,
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                  Container(
+                    width: ScreenUtil().setWidth(100),
+                    height: ScreenUtil().setHeight(100),
+                    alignment: Alignment.center,
+                    child: Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: _getBadgeColorByStatus(status)
+                      ),
+                      child: Text(
+                        status,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: ScreenUtil().setSp(12),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  )
+                ],
               ),
             ),
           ),
@@ -82,5 +106,17 @@ class FeedItem extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Color _getBadgeColorByStatus(String status) {
+    if (status == 'Pendaftaran') {
+      return Colors.red.withOpacity(0.8);
+    } else if (status == 'Berlangsung') {
+      return Colors.green.withOpacity(0.8);
+    } else if (status == 'Selesai') {
+      return Colors.orange.withOpacity(0.8);
+    } else {
+      return Colors.purple.withOpacity(0.8);
+    }
   }
 }
