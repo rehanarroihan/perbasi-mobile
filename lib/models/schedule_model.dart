@@ -8,6 +8,7 @@ class ScheduleModel {
   String teamIdHome;
   String competitionId;
   Results results;
+  Detail detail;
   ClubModel teamHome;
   ClubModel teamAway;
 
@@ -31,6 +32,8 @@ class ScheduleModel {
     competitionId = json['competition_id'];
     results =
     json['results'] != null ? new Results.fromJson(json['results']) : null;
+    detail =
+    json['detail'] != null ? new Detail.fromJson(json['detail']) : null;
     teamHome = json['team_home'] != null
         ? new ClubModel.fromJson(json['team_home'])
         : null;
@@ -56,6 +59,25 @@ class ScheduleModel {
     if (this.teamAway != null) {
       data['team_away'] = this.teamAway.toJson();
     }
+    return data;
+  }
+}
+
+class Detail {
+  String name;
+  String image;
+
+  Detail({this.name, this.image});
+
+  Detail.fromJson(Map<String, dynamic> json) {
+    name = json['name'];
+    image = json['image'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['name'] = this.name;
+    data['image'] = this.image;
     return data;
   }
 }

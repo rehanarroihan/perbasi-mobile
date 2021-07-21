@@ -95,4 +95,12 @@ class HomeCubit extends Cubit<HomeState> {
     this.competitionDetailLoading = false;
     emit(GetCompetitionDetailResult());
   }
+
+  void getCompetitionDetailForScheduleListPage(String id) async {
+    emit(GetCompetitionDetailForScheduleListInit());
+
+    ApiReturn<CompetitionModel> apiResult = await _homeService.getCompetitionDetail(id);
+
+    emit(GetCompetitionDetailForScheduleListResult(result: apiResult.data));
+  }
 }
