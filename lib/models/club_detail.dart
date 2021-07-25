@@ -251,6 +251,7 @@ class Detail {
   String createdBy;
   String status;
   String nik;
+  String gender;
   String email;
 
   Detail(
@@ -267,6 +268,7 @@ class Detail {
         this.createdAt,
         this.updatedAt,
         this.createdBy,
+        this.gender,
         this.status});
 
   Detail.fromJson(Map<String, dynamic> json) {
@@ -283,6 +285,7 @@ class Detail {
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     createdBy = json['created_by'];
+    gender = json['gender'];
     status = json['status'];
   }
 
@@ -298,6 +301,7 @@ class Detail {
     data['phone'] = this.phone;
     data['nik'] = this.nik;
     data['email'] = this.email;
+    data['gender'] = this.gender;
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
     data['created_by'] = this.createdBy;
