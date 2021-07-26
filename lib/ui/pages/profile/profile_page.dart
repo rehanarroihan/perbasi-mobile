@@ -231,7 +231,9 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
 
   Widget _profileHeader() {
     return Container(
-      padding: EdgeInsets.all(24),
+      padding: EdgeInsets.only(
+        top: 24, left: 16, bottom: 24, right: 12
+      ),
       decoration: BoxDecoration(
         color: Colors.white,
       ),
@@ -259,11 +261,13 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
               child: Column(
                 children: [
                   _buildRoundedProfilePict(),
+                  Space(height: 4),
                   Text(
                     'Ubah',
                     style: TextStyle(
                       color: AppColor.primaryColor,
-                      fontSize: ScreenUtil().setSp(10)
+                      fontSize: ScreenUtil().setSp(12),
+                      fontWeight: FontWeight.w500
                     ),
                   )
                 ],
@@ -272,9 +276,9 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
           ),
           Space(width: ScreenUtil().setWidth(14)),
           Expanded(
-            flex: 3,
+            flex: 2,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start  ,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   _authCubit.loggedInUserData.name,
@@ -299,8 +303,10 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
             ),
           ),
           Expanded(
-            child: GestureDetector(
-              onTap: () {
+            flex: 1,
+            child: FlatButton(
+              padding: EdgeInsets.fromLTRB(8, 20, 8, 12),
+              onPressed: () {
                 Navigator.push(context, MaterialPageRoute(
                   builder: (context) => ImageDetailPage(
                     title: 'QR Code',
@@ -308,14 +314,20 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                   )
                 ));
               },
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(6)
+              ),
+              color: AppColor.lightGrey.withOpacity(0.0),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   SvgPicture.asset('assets/icons/qrcode.svg'),
                   Space(height: 4),
                   Text('QR Code')
                 ],
-              ),
+              )
             ),
           ),
         ],
@@ -326,8 +338,8 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
   Widget _buildRoundedProfilePict() {
     if (_isProfilePictPreview) {
       return Container(
-        width: 80.0,
-        height: 80.0,
+        width: ScreenUtil().setWidth(68),
+        height: ScreenUtil().setHeight(68),
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           boxShadow: [
@@ -347,8 +359,8 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
 
     if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.foto)) {
       return Container(
-        width: ScreenUtil().setWidth(80),
-        height: ScreenUtil().setWidth(80),
+        width: ScreenUtil().setWidth(68),
+        height: ScreenUtil().setHeight(68),
         decoration: BoxDecoration(
           image: DecorationImage(
             fit: BoxFit.cover,
