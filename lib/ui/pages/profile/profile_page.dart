@@ -16,7 +16,10 @@ import 'package:perbasitlg/models/request/profile_player_request.dart';
 import 'package:perbasitlg/ui/pages/profile/biodata/biodata_page.dart';
 import 'package:perbasitlg/ui/pages/profile/document/document_page.dart';
 import 'package:perbasitlg/ui/pages/profile/qr_code_page.dart';
+import 'package:perbasitlg/ui/pages/splash_page.dart';
+import 'package:perbasitlg/ui/widgets/base/button.dart';
 import 'package:perbasitlg/ui/widgets/base/space.dart';
+import 'package:perbasitlg/ui/widgets/modules/app_alert_dialog.dart';
 import 'package:perbasitlg/ui/widgets/modules/loading_dialog.dart';
 import 'package:perbasitlg/ui/widgets/modules/upload_progress_dialog.dart';
 import 'package:perbasitlg/utils/app_color.dart';
@@ -95,11 +98,77 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                 ),
               ),
               actions: [
-                IconButton(
-                  icon: Icon(Icons.camera_sharp),
-                  onPressed: () => Navigator.push(context, MaterialPageRoute(
-                    builder: (context) => QRScannerPage()
-                  )),
+                Container(
+                  padding: EdgeInsets.only(top: 12, bottom: 12, right: 8),
+                  child: FlatButton(
+                    onPressed: () => Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => QRScannerPage()
+                    )),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6)
+                    ),
+                    color: AppColor.lightBlue,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.camera_sharp,
+                          size: 20,
+                          color: AppColor.secondaryColor,
+                        ),
+                        Space(width: 6),
+                        Text(
+                          'Scan QR',
+                          style: TextStyle(
+                            color: AppColor.secondaryColor,
+                            fontSize: ScreenUtil().setSp(12),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                ),
+                Container(
+                  padding: EdgeInsets.only(top: 12, bottom: 12, right: 8),
+                  child: FlatButton(
+                    onPressed: () {
+                      AppAlertDialog(
+                        title: 'Logout',
+                        description: 'Apakah anda yakin ingin keluar dari aplikasi ?',
+                        negativeButtonText: 'Tidak',
+                        negativeButtonOnTap: () => Navigator.pop(context),
+                        positiveButtonText: 'Ya',
+                        positiveButtonOnTap: () {
+                          App().prefs.setBool(ConstantHelper.PREFS_IS_USER_LOGGED_IN, false);
+                          Navigator.pushReplacement(context, MaterialPageRoute(
+                            builder: (context) => SplashPage()
+                          ));
+                        },
+                      ).show(context);
+                    },
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6)
+                    ),
+                    color: AppColor.lightOrange,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.logout,
+                          size: 20,
+                          color: AppColor.primaryColor,
+                        ),
+                        Space(width: 6),
+                        Text(
+                          'Keluar',
+                          style: TextStyle(
+                            color: AppColor.primaryColor,
+                            fontSize: ScreenUtil().setSp(12),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
                 )
               ]
             ),

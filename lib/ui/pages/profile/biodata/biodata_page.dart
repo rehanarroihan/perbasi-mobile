@@ -665,41 +665,6 @@ class _BiodataPageState extends State<BiodataPage> {
             ),
           ),
           Space(height: 8),
-          Container(
-              width: double.infinity,
-              child: FlatButton(
-                padding: EdgeInsets.symmetric(
-                  vertical: ScreenUtil().setHeight(13)
-                ),
-                onPressed: () {
-                  AppAlertDialog(
-                    title: 'Logout',
-                    description: 'Apakah anda yakin ingin keluar dari aplikasi ?',
-                    negativeButtonText: 'Tidak',
-                    negativeButtonOnTap: () => Navigator.pop(context),
-                    positiveButtonText: 'Ya',
-                    positiveButtonOnTap: () {
-                      App().prefs.setBool(ConstantHelper.PREFS_IS_USER_LOGGED_IN, false);
-                      Navigator.pushReplacement(context, MaterialPageRoute(
-                          builder: (context) => SplashPage()
-                      ));
-                    },
-                  ).show(context);
-                },
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(6)
-                ),
-                color: AppColor.lightOrange,
-                child: Text(
-                  'Log Out',
-                  style: TextStyle(
-                    color: AppColor.primaryColor,
-                    fontSize: ScreenUtil().setSp(16),
-                    fontWeight: FontWeight.w500
-                  ),
-                ),
-              )
-          )
         ],
       ),
     );

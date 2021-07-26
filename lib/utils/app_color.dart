@@ -6,4 +6,5 @@ class AppColor {
   static Color pageBackgroundColor = Colors.white;
   static Color greenColor = Color(0xFF009A19);
   static Color lightOrange = Color(0xFFF9EBE3);
+  static Color lightBlue = Color(0xFFE3E8F9);
 }
