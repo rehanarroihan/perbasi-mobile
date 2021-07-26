@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:path/path.dart' as p;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,10 +11,13 @@ import 'package:network_to_file_image/network_to_file_image.dart';
 import 'package:perbasitlg/app.dart';
 import 'package:perbasitlg/cubit/auth/auth_cubit.dart';
 import 'package:perbasitlg/cubit/profile/profile_cubit.dart';
+import 'package:perbasitlg/models/request/profile_coach_request.dart';
+import 'package:perbasitlg/models/request/profile_player_request.dart';
 import 'package:perbasitlg/ui/pages/profile/biodata/biodata_page.dart';
 import 'package:perbasitlg/ui/pages/profile/document/document_page.dart';
 import 'package:perbasitlg/ui/pages/profile/qr_code_page.dart';
 import 'package:perbasitlg/ui/widgets/base/space.dart';
+import 'package:perbasitlg/ui/widgets/modules/loading_dialog.dart';
 import 'package:perbasitlg/ui/widgets/modules/upload_progress_dialog.dart';
 import 'package:perbasitlg/utils/app_color.dart';
 import 'package:perbasitlg/ui/pages/profile/qr_scanner_page.dart';
@@ -35,6 +39,8 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
   File _profilePict;
   bool _isProfilePictPreview = false;
 
+  String _loggedInRole;
+
   TabController _tabController;
   int selectedTab = 0;
 
@@ -43,15 +49,11 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
     _authCubit = BlocProvider.of<AuthCubit>(context);
     _profileCubit = BlocProvider.of<ProfileCubit>(context);
 
+    _loggedInRole = _authCubit.loggedInUserData.role.name;
+
     _tabController = TabController(vsync: this, length: 2);
 
     super.initState();
-  }
-
-  File _generateProfilePictFileFromUrl(String filename) {
-    String pathName = p.join(App().appDocsDir.path, filename);
-    _profilePict = File(pathName);
-    return File(pathName);
   }
 
   @override
@@ -59,22 +61,19 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
     return BlocListener(
       cubit: _profileCubit,
       listener: (context, state) {
-        if (state is UpdateProfileInit) {
+        if (state is UpdateProfilePictureInit) {
           showDialog(
             context: context,
             barrierDismissible: false,
             builder: (context) => UploadProgressDialog(_profileCubit)
           );
-        } else if (state is UpdateProfileSuccessful) {
+        } else if (state is UpdateProfilePictureSuccessful) {
           Navigator.pop(context);
-          showFlutterToast('Berhasil menyimpan perubahan');
+          showFlutterToast('Berhasil menyimpan foto profile baru');
           _authCubit.getUserDetail();
-        } else if (state is UpdateProfileFailed) {
+        } else if (state is UpdateProfilePictureFailed) {
           Navigator.pop(context);
-          showFlutterToast('Berhasil menyimpan perubahan');
-          _authCubit.getUserDetail();
-        } else if (state is GetUserDataSuccessfulState) {
-
+          showFlutterToast('Gagal menyimpan perubahan');
         }
       },
       child: BlocBuilder(
@@ -186,8 +185,10 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                   }
 
                   _isProfilePictPreview = true;
+
+                  _updateProfilePict();
+
                   setState(() {});
-                  showFlutterToast('Tekan tombol simpan untuk menyimpan foto profile yang telah dipilih');
                 }
               },
               child: Column(
@@ -264,6 +265,13 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
         height: 80.0,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: Color(0x1A000000),
+              offset: const Offset(0, 0),
+              blurRadius: 4,
+            )
+          ],
           image: DecorationImage(
             fit: BoxFit.cover,
             image: FileImage(_profilePict),
@@ -274,17 +282,14 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
 
     if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.foto)) {
       return Container(
-        width: 80.0,
-        height: 80.0,
+        width: ScreenUtil().setWidth(80),
+        height: ScreenUtil().setWidth(80),
         decoration: BoxDecoration(
-          shape: BoxShape.circle,
           image: DecorationImage(
             fit: BoxFit.cover,
-            image: NetworkToFileImage(
-              url: _authCubit.loggedInUserData.foto,
-              file: _generateProfilePictFileFromUrl(_authCubit.loggedInUserData.foto.split('/').last)
-            ),
+            image: NetworkImage(_authCubit.loggedInUserData.foto)
           ),
+          shape: BoxShape.circle
         ),
       );
     }
@@ -303,6 +308,59 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
           size: 32,
         ),
       ),
+    );
+  }
+
+  void _updateProfilePict() async {
+    LoadingDialog(
+      title: 'Loading',
+      description: 'Silahkan tunggu...'
+    ).show(context);
+
+    File resizedProfileImage = await GlobalMethodHelper.resizeImage(
+      _profilePict, preferredWidth: 320,
+      fileName: _profilePict?.path?.split("/")?.last
+    );
+
+    Navigator.pop(context);
+
+    ProfilePlayerRequest playerRequest = ProfilePlayerRequest(
+      nik: _authCubit.loggedInUserData.nik,
+      name: _authCubit.loggedInUserData.name,
+      birthPlace: _authCubit.loggedInUserData.birthPlace,
+      birthDate: _authCubit.loggedInUserData.birthDate,
+      email: _authCubit.loggedInUserData.email,
+      address: _authCubit.loggedInUserData.address,
+      phone: _authCubit.loggedInUserData.phone,
+      positionId: _authCubit.loggedInUserData.positionId?.id.toString(),
+      gender: _authCubit.loggedInUserData.gender,
+      almaMater: _authCubit.loggedInUserData.almamater,
+      identityAddress: _authCubit.loggedInUserData.identityAddress,
+      noKK: _authCubit.loggedInUserData.noKK,
+      foto: resizedProfileImage != null ? resizedProfileImage : null,
+    );
+
+    ProfileCoachRequest coachRequest = ProfileCoachRequest(
+      nik: _authCubit.loggedInUserData.nik,
+      name: _authCubit.loggedInUserData.name,
+      birthPlace: _authCubit.loggedInUserData.birthPlace,
+      birthDate: _authCubit.loggedInUserData.birthDate,
+      email: _authCubit.loggedInUserData.email,
+      address: _authCubit.loggedInUserData.address,
+      phone: _authCubit.loggedInUserData.phone,
+      foto: resizedProfileImage != null ? resizedProfileImage : null,
+      licence: _authCubit.loggedInUserData.licence,
+      licenceNumber: _authCubit.loggedInUserData.licenceNumber,
+      licenceFrom: _authCubit.loggedInUserData.licenceFrom,
+      licenceActiveDate: _authCubit.loggedInUserData.licenceActiveDate,
+      typeId: _authCubit.loggedInUserData.typeId.id.toString(),
+      gender: _authCubit.loggedInUserData.gender,
+    );
+
+    _profileCubit.updatePictureProfile(
+      role: _loggedInRole,
+      playerRequest: playerRequest,
+      coachRequest: coachRequest
     );
   }
 }

@@ -131,20 +131,24 @@ class ProfileService {
       if (role == ConstantHelper.ROLE_PELATIH) {
         request.fields['type_id'] = data.typeId;
       }
-      request.files.add(
-        http.MultipartFile.fromBytes(
-          'licence_file',
-          data.licenceFile.readAsBytesSync(),
-          filename: data.licenceFile.path.split("/").last
-        )
-      );
-      request.files.add(
-        http.MultipartFile.fromBytes(
-          'foto',
-          data.foto.readAsBytesSync(),
-          filename: data.foto.path.split("/").last
-        )
-      );
+      if (data.licenceFile != null) {
+        request.files.add(
+          http.MultipartFile.fromBytes(
+            'licence_file',
+            data.licenceFile.readAsBytesSync(),
+            filename: data.licenceFile.path.split("/").last
+          )
+        );
+      }
+      if (data.foto != null) {
+        request.files.add(
+          http.MultipartFile.fromBytes(
+            'foto',
+            data.foto.readAsBytesSync(),
+            filename: data.foto.path.split("/").last
+          )
+        );
+      }
       request.headers['Authorization'] = 'Bearer ${App().prefs.getString(ConstantHelper.PREFS_TOKEN_KEY)}';
 
       var res = await request.send();

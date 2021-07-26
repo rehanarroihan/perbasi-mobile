@@ -9,6 +9,12 @@ abstract class ProfileState extends Equatable {
 
 class ProfileInitial extends ProfileState {}
 
+class UpdateProfilePictureInit extends ProfileState {}
+
+class UpdateProfilePictureSuccessful extends ProfileState {}
+
+class UpdateProfilePictureFailed extends ProfileState {}
+
 class UpdateProfileInit extends ProfileState {}
 
 class UpdateProfileProgressChangeInit extends ProfileState {}
