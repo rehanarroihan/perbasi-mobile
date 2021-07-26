@@ -1,13 +1,10 @@
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:path/path.dart' as p;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:network_to_file_image/network_to_file_image.dart';
 import 'package:perbasitlg/app.dart';
 import 'package:perbasitlg/cubit/auth/auth_cubit.dart';
 import 'package:perbasitlg/cubit/profile/profile_cubit.dart';
@@ -17,7 +14,6 @@ import 'package:perbasitlg/ui/pages/profile/biodata/biodata_page.dart';
 import 'package:perbasitlg/ui/pages/profile/document/document_page.dart';
 import 'package:perbasitlg/ui/pages/profile/qr_code_page.dart';
 import 'package:perbasitlg/ui/pages/splash_page.dart';
-import 'package:perbasitlg/ui/widgets/base/button.dart';
 import 'package:perbasitlg/ui/widgets/base/space.dart';
 import 'package:perbasitlg/ui/widgets/modules/app_alert_dialog.dart';
 import 'package:perbasitlg/ui/widgets/modules/loading_dialog.dart';

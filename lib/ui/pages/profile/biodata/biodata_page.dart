@@ -1,26 +1,19 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:perbasitlg/app.dart';
 import 'package:perbasitlg/cubit/auth/auth_cubit.dart';
 import 'package:perbasitlg/cubit/home/home_cubit.dart';
 import 'package:perbasitlg/cubit/profile/profile_cubit.dart';
 import 'package:perbasitlg/cubit/team/team_cubit.dart';
 import 'package:perbasitlg/models/request/profile_coach_request.dart';
 import 'package:perbasitlg/models/request/profile_player_request.dart';
-import 'package:perbasitlg/ui/pages/splash_page.dart';
 import 'package:perbasitlg/ui/widgets/base/box_input.dart';
 import 'package:perbasitlg/ui/widgets/base/button.dart';
 import 'package:perbasitlg/ui/widgets/base/dropdown_input.dart';
 import 'package:perbasitlg/ui/widgets/base/space.dart';
-import 'package:perbasitlg/ui/widgets/modules/app_alert_dialog.dart';
 import 'package:perbasitlg/ui/widgets/modules/gender_options.dart';
 import 'package:perbasitlg/ui/widgets/modules/loading_dialog.dart';
 import 'package:perbasitlg/ui/widgets/modules/upload_progress_dialog.dart';
-import 'package:perbasitlg/utils/app_color.dart';
 import 'package:perbasitlg/utils/constant_helper.dart';
 import 'package:perbasitlg/utils/global_method_helper.dart';
 import 'package:intl/intl.dart';

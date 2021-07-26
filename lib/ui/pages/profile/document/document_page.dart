@@ -72,35 +72,43 @@ class _DocumentPageState extends State<DocumentPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener(
-      cubit: _profileCubit,
-      listener: (context, state) {
-        if (state is UpdateProfileInit) {
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) => UploadProgressDialog(_profileCubit)
-          );
-        } else if (state is UpdateProfileSuccessful) {
-          Navigator.pop(context);
-          showFlutterToast('Berhasil menyimpan perubahan');
-          _authCubit.getUserDetail();
-        } else if (state is UpdateProfileFailed) {
-          Navigator.pop(context);
-          showFlutterToast('Berhasil menyimpan perubahan');
-          _authCubit.getUserDetail();
-        } else if (state is GetUserDataSuccessfulState) {
-          _updateFields();
-          setState(() {});
-        }
-      },
+    return MultiBlocListener(
+      listeners: [
+        BlocListener(
+          cubit: _profileCubit,
+          listener: (context, state) {
+            if (state is UpdateProfileInit) {
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) => UploadProgressDialog(_profileCubit)
+              );
+            } else if (state is UpdateProfileSuccessful) {
+              Navigator.pop(context);
+              showFlutterToast('Berhasil menyimpan perubahan');
+              _authCubit.getUserDetail();
+            } else if (state is UpdateProfileFailed) {
+              Navigator.pop(context);
+              showFlutterToast('Gagal menyimpan perubahan');
+            }
+          },
+        ),
+        BlocListener(
+          cubit: _authCubit,
+          listener: (context, state) {
+            if (state is GetUserDataSuccessfulState) {
+              _updateFields();
+            }
+          },
+        )
+      ],
       child: SingleChildScrollView(
         child: Container(
           padding: EdgeInsets.fromLTRB(
             ScreenUtil().setWidth(30),
             ScreenUtil().setHeight(28),
             ScreenUtil().setWidth(30),
-            0
+            ScreenUtil().setHeight(28),
           ),
           child: _loggedInRole == ConstantHelper.ROLE_PEMAIN ? Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,11 +134,13 @@ class _DocumentPageState extends State<DocumentPage> {
                       return;
                     }
 
+                    _isKTPPictPreview = true;
                     _ktpInput.text = 'File sudah dipilih';
 
-                    _isKTPPictPreview = true;
+                    _updateProfile();
+                    _ktpInput.text = 'Uploading...';
+
                     setState(() {});
-                    showFlutterToast('Tekan tombol simpan untuk menyimpan foto KTP yang telah dipilih');
                   }
                 }
               ),
@@ -157,10 +167,12 @@ class _DocumentPageState extends State<DocumentPage> {
                     }
 
                     _kkInput.text = 'File sudah dipilih';
-
                     _isKKPictPreview = true;
+
+                    _updateProfile();
+                    _kkInput.text = 'Uploading...';
+
                     setState(() {});
-                    showFlutterToast('Tekan tombol simpan untuk menyimpan foto KK yang telah dipilih');
                   }
                 }
               ),
@@ -182,10 +194,12 @@ class _DocumentPageState extends State<DocumentPage> {
                     }
 
                     _birthCertInput.text = 'File sudah dipilih';
-
                     _isBirthCertPictPreview = true;
+
+                    _updateProfile();
+                    _birthCertInput.text = 'Uploading...';
+
                     setState(() {});
-                    showFlutterToast('Tekan tombol simpan untuk menyimpan foto akta kelahiran yang telah dipilih');
                   }
                 },
                 validator: (String args) {
@@ -212,10 +226,12 @@ class _DocumentPageState extends State<DocumentPage> {
                     }
 
                     _selfieInput.text = 'File sudah dipilih';
-
                     _isSelfiePictPreview = true;
+
+                    _updateProfile();
+                    _selfieInput.text = 'Uploading...';
+
                     setState(() {});
-                    showFlutterToast('Tekan tombol simpan untuk menyimpan foto selfie yang telah dipilih');
                   }
                 },
                 validator: (String args) {
@@ -246,8 +262,12 @@ class _DocumentPageState extends State<DocumentPage> {
                     }
 
                     _licensePhotoInput.text = 'File sudah dipilih';
+                    _isLicensePictPreview = true;
 
-                    showFlutterToast('Tekan tombol simpan untuk menyimpan foto lisensi yang telah dipilih');
+                    _updateProfile();
+                    _licensePhotoInput.text = 'Uploading...';
+
+                    setState(() {});
                   }
                 },
                 validator: (String args) {
@@ -269,7 +289,7 @@ class _DocumentPageState extends State<DocumentPage> {
       _kkInput.text = 'KK sudah di upload';
     }
 
-    if (_loggedInRole == ConstantHelper.ROLE_PELATIH) {
+    if (_loggedInRole == ConstantHelper.ROLE_PELATIH || _loggedInRole == ConstantHelper.ROLE_WASIT) {
       if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.licenseFile)) {
         _licensePhotoInput.text = 'Foto lisensi sudah di upload';
       }
@@ -287,11 +307,19 @@ class _DocumentPageState extends State<DocumentPage> {
       }
     }
 
-    if (_loggedInRole == ConstantHelper.ROLE_WASIT) {
-      if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.licenseFile)) {
-        _licensePhotoInput.text = 'Foto lisensi sudah di upload';
-      }
-    }
+    _kk = null;
+    _birthCert = null;
+    _selfie = null;
+    _ktp = null;
+    _licensePhoto = null;
+
+    _isKKPictPreview = false;
+    _isBirthCertPictPreview = false;
+    _isLicensePictPreview = false;
+    _isKTPPictPreview = false;
+    _isSelfiePictPreview = false;
+
+    setState(() {});
   }
 
   void _updateProfile() async {
@@ -301,25 +329,37 @@ class _DocumentPageState extends State<DocumentPage> {
         description: 'Silahkan tunggu...'
       ).show(context);
 
-      File resizedKKImage = await GlobalMethodHelper.resizeImage(
-        _kk, preferredWidth: 320,
-        fileName: _kk?.path?.split("/")?.last
-      );
+      File resizedKKImage;
+      if (_kk != null) {
+        resizedKKImage = await GlobalMethodHelper.resizeImage(
+          _kk, preferredWidth: 320,
+          fileName: _kk.path.split("/").last
+        );
+      }
 
-      File resizedKTPImage = await GlobalMethodHelper.resizeImage(
-        _ktp, preferredWidth: 320,
-        fileName: _ktp?.path?.split("/")?.last
-      );
+      File resizedKTPImage;
+      if (_ktp != null) {
+        resizedKTPImage = await GlobalMethodHelper.resizeImage(
+          _ktp, preferredWidth: 320,
+          fileName: _ktp.path.split("/").last
+        );
+      }
 
-      File resizedSelfieImage = await GlobalMethodHelper.resizeImage(
-        _selfie, preferredWidth: 320,
-        fileName: _selfie?.path?.split("/")?.last
-      );
+      File resizedSelfieImage;
+      if (_selfie != null) {
+        resizedSelfieImage = await GlobalMethodHelper.resizeImage(
+          _selfie, preferredWidth: 320,
+          fileName: _selfie?.path?.split("/")?.last
+        );
+      }
 
-      File resizedBirthCertImage = await GlobalMethodHelper.resizeImage(
-        _birthCert, preferredWidth: 320,
-        fileName: _birthCert?.path?.split("/")?.last
-      );
+      File resizedBirthCertImage;
+      if (_birthCert != null) {
+        resizedBirthCertImage = await GlobalMethodHelper.resizeImage(
+          _birthCert, preferredWidth: 320,
+          fileName: _birthCert?.path?.split("/")?.last
+        );
+      }
 
       Navigator.pop(context);
 
@@ -351,10 +391,13 @@ class _DocumentPageState extends State<DocumentPage> {
         description: 'Silahkan tunggu...'
       ).show(context);
 
-      File resizedLicenseImage = await GlobalMethodHelper.resizeImage(
-        _licensePhoto, preferredWidth: 320,
-        fileName: _licensePhoto.path.split("/").last
-      );
+      File resizedLicenseImage;
+      if (_licensePhoto != null) {
+        resizedLicenseImage = await GlobalMethodHelper.resizeImage(
+          _licensePhoto, preferredWidth: 320,
+          fileName: _licensePhoto.path.split("/").last
+        );
+      }
 
       Navigator.pop(context);
 

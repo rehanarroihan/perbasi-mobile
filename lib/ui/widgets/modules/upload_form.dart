@@ -88,7 +88,7 @@ class _UploadFormState extends State<UploadForm> {
       );
     }
 
-    /*if (!GlobalMethodHelper.isEmpty(widget.imageUrl)) {
+    if (!GlobalMethodHelper.isEmpty(widget.imageUrl)) {
       return Container(
         width: ScreenUtil().setWidth(32),
         height: ScreenUtil().setHeight(32),
@@ -96,11 +96,11 @@ class _UploadFormState extends State<UploadForm> {
           borderRadius: BorderRadius.all(Radius.circular(4)),
           image: DecorationImage(
             fit: BoxFit.cover,
-            image: widget.urlBasedFile,
+            image: NetworkImage(widget.imageUrl),
           ),
         ),
       );
-    }*/
+    }
 
     return Container(
       width: ScreenUtil().setWidth(32),
