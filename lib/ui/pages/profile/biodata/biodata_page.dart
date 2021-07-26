@@ -19,7 +19,6 @@ import 'package:perbasitlg/ui/widgets/base/space.dart';
 import 'package:perbasitlg/ui/widgets/modules/app_alert_dialog.dart';
 import 'package:perbasitlg/ui/widgets/modules/gender_options.dart';
 import 'package:perbasitlg/ui/widgets/modules/loading_dialog.dart';
-import 'package:perbasitlg/ui/widgets/modules/upload_form.dart';
 import 'package:perbasitlg/ui/widgets/modules/upload_progress_dialog.dart';
 import 'package:perbasitlg/utils/app_color.dart';
 import 'package:perbasitlg/utils/constant_helper.dart';
@@ -53,12 +52,6 @@ class _BiodataPageState extends State<BiodataPage> {
   TextEditingController _phoneInput = TextEditingController();
   String _birthDateForServer = '';
 
-  bool _isKKPictPreview = false;
-  bool _isBirthCertPictPreview = false;
-  bool _isLicensePictPreview = false;
-  bool _isKTPPictPreview = false;
-  bool _isSelfiePictPreview = false;
-
   Gender _selectedGender = Gender.L;
 
   // Player additional form
@@ -66,14 +59,6 @@ class _BiodataPageState extends State<BiodataPage> {
   TextEditingController _teamInput = TextEditingController();
   TextEditingController _noKKInput = TextEditingController();
   TextEditingController _almaMaterInput = TextEditingController();
-  File _kk;
-  File _birthCert;
-  File _ktp;
-  File _selfie;
-  TextEditingController _kkInput = TextEditingController();
-  TextEditingController _birthCertInput = TextEditingController();
-  TextEditingController _ktpInput = TextEditingController();
-  TextEditingController _selfieInput = TextEditingController();
   String _selectedDomicile;
 
   // Kuch additional form
@@ -81,22 +66,10 @@ class _BiodataPageState extends State<BiodataPage> {
   TextEditingController _licenseNumberInput = TextEditingController();
   TextEditingController _licensePublisherInput = TextEditingController();
   TextEditingController _licenseDateInput = TextEditingController();
-  TextEditingController _licensePhotoInput = TextEditingController();
-  File _licensePhoto;
   String _licenseDateForServer = '';
   int _selectedPositionId;
   String _selectedLicenseName;
   String _selectedCoachTypeId;
-
-  Future<String> getImagePathFromGallery() async {
-    final pickedFile = await ImagePicker().getImage(source: ImageSource.gallery);
-
-    if (pickedFile != null) {
-      return pickedFile.path;
-    } else {
-      return '';
-    }
-  }
 
   void _updateProfile() async {
     // Checking _birthDateForServer value
@@ -114,31 +87,6 @@ class _BiodataPageState extends State<BiodataPage> {
         description: 'Silahkan tunggu...'
       ).show(context);
 
-      /*File resizedProfileImage = await GlobalMethodHelper.resizeImage(
-        _profilePict, preferredWidth: 320,
-        fileName: _profilePict?.path?.split("/")?.last
-      );*/
-
-      File resizedKKImage = await GlobalMethodHelper.resizeImage(
-        _kk, preferredWidth: 320,
-        fileName: _kk?.path?.split("/")?.last
-      );
-
-      File resizedKTPImage = await GlobalMethodHelper.resizeImage(
-        _ktp, preferredWidth: 320,
-        fileName: _ktp?.path?.split("/")?.last
-      );
-
-      File resizedSelfieImage = await GlobalMethodHelper.resizeImage(
-        _selfie, preferredWidth: 320,
-        fileName: _selfie?.path?.split("/")?.last
-      );
-
-      File resizedBirthCertImage = await GlobalMethodHelper.resizeImage(
-        _birthCert, preferredWidth: 320,
-        fileName: _birthCert?.path?.split("/")?.last
-      );
-
       Navigator.pop(context);
 
       ProfilePlayerRequest requestData = ProfilePlayerRequest(
@@ -154,11 +102,6 @@ class _BiodataPageState extends State<BiodataPage> {
         almaMater: _almaMaterInput.text,
         identityAddress: _selectedDomicile,
         noKK: _noKKInput.text,
-        // foto: resizedProfileImage != null ? resizedProfileImage : null,
-        kk: resizedKKImage != null ? resizedKKImage : null,
-        akta: resizedBirthCertImage != null ? resizedBirthCertImage : null,
-        ktp: resizedKTPImage != null ? resizedKTPImage : null,
-        selfie: resizedSelfieImage != null ? resizedSelfieImage : null
       );
 
       _profileCubit.updateProfilePlayer(requestData);
@@ -170,16 +113,6 @@ class _BiodataPageState extends State<BiodataPage> {
         description: 'Silahkan tunggu...'
       ).show(context);
 
-      /*File resizedProfileImage = await GlobalMethodHelper.resizeImage(
-        _profilePict, preferredWidth: 320,
-        fileName: _profilePict.path.split("/").last
-      );*/
-
-      File resizedLicenseImage = await GlobalMethodHelper.resizeImage(
-        _licensePhoto, preferredWidth: 320,
-        fileName: _licensePhoto.path.split("/").last
-      );
-
       Navigator.pop(context);
 
       ProfileCoachRequest requestData = ProfileCoachRequest(
@@ -190,11 +123,9 @@ class _BiodataPageState extends State<BiodataPage> {
         email: _emailInput.text.trim(),
         address: _addressInput.text.trim(),
         phone: _phoneInput.text.trim(),
-        // foto: resizedProfileImage != null ? resizedProfileImage : null,
         licence: _licenseNameInput.text.trim(),
         licenceNumber: _licenseNumberInput.text.trim(),
         licenceFrom: _licensePublisherInput.text.trim(),
-        licenceFile: resizedLicenseImage != null ? resizedLicenseImage : null,
         licenceActiveDate: _licenseDateForServer,
         typeId: _selectedCoachTypeId,
         gender: _selectedGender == Gender.L ? 'L' : 'P'
@@ -505,130 +436,9 @@ class _BiodataPageState extends State<BiodataPage> {
               ],
             ),
           ),
-          Space(height: 40),
-          UploadForm(
-              input: _ktpInput,
-              label: 'Upload KTP',
-              imageUrl: _authCubit.loggedInUserData.ktp,
-              isPreviewThumbnail: _isKTPPictPreview,
-              image: _ktp,
-              validator: (String args) {
-                if (_ktpInput == null) {
-                  return 'file ktp harus di pilih';
-                }
-              },
-              onPickImage: () async {
-                String filePath = await getImagePathFromGallery();
-                if (!GlobalMethodHelper.isEmpty(filePath)) {
-                  _ktp = File(filePath);
-
-                  if (_ktp.lengthSync() > 5120000) {
-                    showFlutterToast('Maximum photo size is 5 MB');
-                    return;
-                  }
-
-                  _ktpInput.text = 'File sudah dipilih';
-
-                  _isKTPPictPreview = true;
-                  setState(() {});
-                  showFlutterToast('Tekan tombol simpan untuk menyimpan foto KTP yang telah dipilih');
-                }
-              }
-          ),
-          Space(height: 40),
-          UploadForm(
-              input: _kkInput,
-              label: 'Upload KK',
-              imageUrl: _authCubit.loggedInUserData.kk,
-              isPreviewThumbnail: _isKKPictPreview,
-              image: _kk,
-              validator: (String args) {
-                if (_kkInput == null) {
-                  return 'file kk harus di pilih';
-                }
-              },
-              onPickImage: () async {
-                String filePath = await getImagePathFromGallery();
-                if (!GlobalMethodHelper.isEmpty(filePath)) {
-                  _kk = File(filePath);
-
-                  if (_kk.lengthSync() > 5120000) {
-                    showFlutterToast('Maximum photo size is 5 MB');
-                    return;
-                  }
-
-                  _kkInput.text = 'File sudah dipilih';
-
-                  _isKKPictPreview = true;
-                  setState(() {});
-                  showFlutterToast('Tekan tombol simpan untuk menyimpan foto KK yang telah dipilih');
-                }
-              }
-          ),
-          Space(height: 40),
-          UploadForm(
-            input: _birthCertInput,
-            label: 'Akta Kelahiran',
-            imageUrl: _authCubit.loggedInUserData.akta,
-            isPreviewThumbnail: _isBirthCertPictPreview,
-            image: _birthCert,
-            onPickImage: () async {
-              String filePath = await getImagePathFromGallery();
-              if (!GlobalMethodHelper.isEmpty(filePath)) {
-                _birthCert = File(filePath);
-
-                if (_birthCert.lengthSync() > 5120000) {
-                  showFlutterToast('Maximum photo size is 5 MB');
-                  return;
-                }
-
-                _birthCertInput.text = 'File sudah dipilih';
-
-                _isBirthCertPictPreview = true;
-                setState(() {});
-                showFlutterToast('Tekan tombol simpan untuk menyimpan foto akta kelahiran yang telah dipilih');
-              }
-            },
-            validator: (String args) {
-              if (_birthCertInput == null) {
-                return 'file akta kelahiran harus di pilih';
-              }
-            },
-          ),
-          Space(height: 40),
-          UploadForm(
-            input: _selfieInput,
-            label: 'Foto selfie dengan KTP / Kartu Pelajar',
-            imageUrl: _authCubit.loggedInUserData.selfie,
-            isPreviewThumbnail: _isSelfiePictPreview,
-            image: _selfie,
-            onPickImage: () async {
-              String filePath = await getImagePathFromGallery();
-              if (!GlobalMethodHelper.isEmpty(filePath)) {
-                _selfie = File(filePath);
-
-                if (_selfie.lengthSync() > 5120000) {
-                  showFlutterToast('Maximum photo size is 5 MB');
-                  return;
-                }
-
-                _selfieInput.text = 'File sudah dipilih';
-
-                _isSelfiePictPreview = true;
-                setState(() {});
-                showFlutterToast('Tekan tombol simpan untuk menyimpan foto selfie yang telah dipilih');
-              }
-            },
-            validator: (String args) {
-              if (_selfieInput == null) {
-                return 'file selfie harus di pilih';
-              }
-            },
-          ),
         ],
       ) :
-      _loggedInRole == ConstantHelper.ROLE_PELATIH
-          || _loggedInRole == ConstantHelper.ROLE_WASIT ? Column(
+      _loggedInRole == ConstantHelper.ROLE_PELATIH || _loggedInRole == ConstantHelper.ROLE_WASIT ? Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _loggedInRole == ConstantHelper.ROLE_PELATIH ? _coachTypeField() : Container(),
@@ -724,34 +534,6 @@ class _BiodataPageState extends State<BiodataPage> {
               }
             },
           ),
-          Space(height: 40),
-          UploadForm(
-            input: _licensePhotoInput,
-            label: 'Foto Lisensi',
-            imageUrl: _authCubit.loggedInUserData.licenseFile,
-            isPreviewThumbnail: _isLicensePictPreview,
-            image: _licensePhoto,
-            onPickImage: () async {
-              String filePath = await getImagePathFromGallery();
-              if (!GlobalMethodHelper.isEmpty(filePath)) {
-                _licensePhoto = File(filePath);
-
-                if (_licensePhoto.lengthSync() > 5120000) {
-                  showFlutterToast('Maximum photo size is 5 MB');
-                  return;
-                }
-
-                _licensePhotoInput.text = 'File sudah dipilih';
-
-                showFlutterToast('Tekan tombol simpan untuk menyimpan foto lisensi yang telah dipilih');
-              }
-            },
-            validator: (String args) {
-              if (_licensePhotoInput == null) {
-                return 'foto lisensi harus di pilih';
-              }
-            },
-          ),
         ],
       ) :
       Container(),
@@ -765,8 +547,8 @@ class _BiodataPageState extends State<BiodataPage> {
         Text(
           'Jenis Pelatih',
           style: TextStyle(
-              fontSize: 11.sp,
-              color: Colors.grey
+            fontSize: 11.sp,
+            color: Colors.grey
           ),
         ),
         DropdownInput(
@@ -799,9 +581,6 @@ class _BiodataPageState extends State<BiodataPage> {
     _addressInput.text = _authCubit.loggedInUserData.address;
     _phoneInput.text = _authCubit.loggedInUserData.phone;
     _positionInput.text = _authCubit.loggedInUserData.positionId?.name ?? '';
-    if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.kk)) {
-      _kkInput.text = 'KK sudah di upload';
-    }
     if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.gender)) {
       _selectedGender = _authCubit.loggedInUserData.gender == 'L'
           ? Gender.L
@@ -817,9 +596,6 @@ class _BiodataPageState extends State<BiodataPage> {
         _licenseDateInput.text = DateFormat('dd MMMM yyyy').format(
             DateTime.parse(_authCubit.loggedInUserData.licenceActiveDate)
         );
-      }
-      if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.licenseFile)) {
-        _licensePhotoInput.text = 'Foto lisensi sudah di upload';
       }
       _selectedLicenseName = _authCubit.loggedInUserData.licence;
       _selectedCoachTypeId = _authCubit.loggedInUserData.typeId.id.toString();
@@ -847,15 +623,6 @@ class _BiodataPageState extends State<BiodataPage> {
       } else {
         _teamInput.text = 'Belum memiliki team';
       }
-      if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.ktp)) {
-        _ktpInput.text = 'Foto ktp sudah di upload';
-      }
-      if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.akta)) {
-        _birthCertInput.text = 'Foto akta sudah di upload';
-      }
-      if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.selfie)) {
-        _selfieInput.text = 'Foto selfie sudah di upload';
-      }
     }
 
     if (_loggedInRole == ConstantHelper.ROLE_WASIT) {
@@ -866,9 +633,6 @@ class _BiodataPageState extends State<BiodataPage> {
         _licenseDateInput.text = DateFormat('dd MMMM yyyy').format(
             DateTime.parse(_authCubit.loggedInUserData.licenceActiveDate)
         );
-      }
-      if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.licenseFile)) {
-        _licensePhotoInput.text = 'Foto lisensi sudah di upload';
       }
       _selectedLicenseName = _authCubit.loggedInUserData.licence;
     }
