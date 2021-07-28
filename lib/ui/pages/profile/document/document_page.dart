@@ -413,7 +413,7 @@ class _DocumentPageState extends State<DocumentPage> {
         licenceNumber: _authCubit.loggedInUserData.licenceNumber,
         licenceFrom: _authCubit.loggedInUserData.licenceFrom,
         licenceActiveDate: _authCubit.loggedInUserData.licenceActiveDate,
-        typeId: _authCubit.loggedInUserData.typeId.id.toString(),
+        typeId: _authCubit.loggedInUserData?.typeId?.id?.toString(),
         gender: _authCubit.loggedInUserData.gender,
         licenceFile: resizedLicenseImage != null ? resizedLicenseImage : null,
       );

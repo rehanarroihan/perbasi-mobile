@@ -401,38 +401,44 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
 
     Navigator.pop(context);
 
-    ProfilePlayerRequest playerRequest = ProfilePlayerRequest(
-      nik: _authCubit.loggedInUserData.nik,
-      name: _authCubit.loggedInUserData.name,
-      birthPlace: _authCubit.loggedInUserData.birthPlace,
-      birthDate: _authCubit.loggedInUserData.birthDate,
-      email: _authCubit.loggedInUserData.email,
-      address: _authCubit.loggedInUserData.address,
-      phone: _authCubit.loggedInUserData.phone,
-      positionId: _authCubit.loggedInUserData.positionId?.id.toString(),
-      gender: _authCubit.loggedInUserData.gender,
-      almaMater: _authCubit.loggedInUserData.almamater,
-      identityAddress: _authCubit.loggedInUserData.identityAddress,
-      noKK: _authCubit.loggedInUserData.noKK,
-      foto: resizedProfileImage != null ? resizedProfileImage : null,
-    );
+    ProfilePlayerRequest playerRequest;
+    if (_loggedInRole == ConstantHelper.ROLE_PEMAIN) {
+      playerRequest = ProfilePlayerRequest(
+        nik: _authCubit.loggedInUserData.nik,
+        name: _authCubit.loggedInUserData.name,
+        birthPlace: _authCubit.loggedInUserData.birthPlace,
+        birthDate: _authCubit.loggedInUserData.birthDate,
+        email: _authCubit.loggedInUserData.email,
+        address: _authCubit.loggedInUserData.address,
+        phone: _authCubit.loggedInUserData.phone,
+        positionId: _authCubit.loggedInUserData.positionId?.id.toString(),
+        gender: _authCubit.loggedInUserData.gender,
+        almaMater: _authCubit.loggedInUserData.almamater,
+        identityAddress: _authCubit.loggedInUserData.identityAddress,
+        noKK: _authCubit.loggedInUserData.noKK,
+        foto: resizedProfileImage != null ? resizedProfileImage : null,
+      );
+    }
 
-    ProfileCoachRequest coachRequest = ProfileCoachRequest(
-      nik: _authCubit.loggedInUserData.nik,
-      name: _authCubit.loggedInUserData.name,
-      birthPlace: _authCubit.loggedInUserData.birthPlace,
-      birthDate: _authCubit.loggedInUserData.birthDate,
-      email: _authCubit.loggedInUserData.email,
-      address: _authCubit.loggedInUserData.address,
-      phone: _authCubit.loggedInUserData.phone,
-      foto: resizedProfileImage != null ? resizedProfileImage : null,
-      licence: _authCubit.loggedInUserData.licence,
-      licenceNumber: _authCubit.loggedInUserData.licenceNumber,
-      licenceFrom: _authCubit.loggedInUserData.licenceFrom,
-      licenceActiveDate: _authCubit.loggedInUserData.licenceActiveDate,
-      typeId: _authCubit.loggedInUserData.typeId.id.toString(),
-      gender: _authCubit.loggedInUserData.gender,
-    );
+    ProfileCoachRequest coachRequest;
+    if (_loggedInRole == ConstantHelper.ROLE_PELATIH || _loggedInRole == ConstantHelper.ROLE_WASIT) {
+      coachRequest = ProfileCoachRequest(
+        nik: _authCubit.loggedInUserData.nik,
+        name: _authCubit.loggedInUserData.name,
+        birthPlace: _authCubit.loggedInUserData.birthPlace,
+        birthDate: _authCubit.loggedInUserData.birthDate,
+        email: _authCubit.loggedInUserData.email,
+        address: _authCubit.loggedInUserData.address,
+        phone: _authCubit.loggedInUserData.phone,
+        foto: resizedProfileImage != null ? resizedProfileImage : null,
+        licence: _authCubit.loggedInUserData.licence,
+        licenceNumber: _authCubit.loggedInUserData.licenceNumber,
+        licenceFrom: _authCubit.loggedInUserData.licenceFrom,
+        licenceActiveDate: _authCubit.loggedInUserData.licenceActiveDate,
+        typeId: _authCubit.loggedInUserData?.typeId?.id.toString(),
+        gender: _authCubit.loggedInUserData.gender,
+      );
+    }
 
     _profileCubit.updatePictureProfile(
       role: _loggedInRole,
