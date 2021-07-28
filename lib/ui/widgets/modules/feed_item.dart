@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:perbasitlg/ui/widgets/base/space.dart';
 import 'package:intl/intl.dart';
+import 'package:perbasitlg/utils/global_method_helper.dart';
 
 class FeedItem extends StatelessWidget {
   final String imageUrl, title, desc, date, status;
@@ -37,10 +38,10 @@ class FeedItem extends StatelessWidget {
                     color: Colors.red,
                     child: CachedNetworkImage(
                       imageUrl: imageUrl,
-                      fit: BoxFit.fill,
+                      fit: BoxFit.cover,
                     ),
                   ),
-                  Container(
+                  !GlobalMethodHelper.isEmpty(status) ? Container(
                     width: ScreenUtil().setWidth(100),
                     height: ScreenUtil().setHeight(100),
                     alignment: Alignment.center,
@@ -59,7 +60,7 @@ class FeedItem extends StatelessWidget {
                         ),
                       ),
                     ),
-                  )
+                  ) : Container()
                 ],
               ),
             ),
