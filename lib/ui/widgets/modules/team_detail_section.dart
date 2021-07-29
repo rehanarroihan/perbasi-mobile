@@ -82,7 +82,7 @@ class TeamDetailSection extends StatelessWidget {
           ),
           _expndbl(
             context: context,
-            textHeader: 'Sejarah Team',
+            textHeader: 'Sejarah Club',
             body: Container(
               decoration: BoxDecoration(
                 border: Border(

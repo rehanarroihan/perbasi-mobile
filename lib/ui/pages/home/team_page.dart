@@ -55,12 +55,12 @@ class _TeamPageState extends State<TeamPage> {
           ).show(context);
         } else if (state is ExitTeamSuccessfulState) {
           Navigator.pop(context);
-          showFlutterToast('Berhasil keluar dari team');
+          showFlutterToast('Berhasil keluar dari club');
           _teamCubit.getMyTeamPage();
         } else if (state is ExitTeamFailedState) {
           Navigator.pop(context);
           AppAlertDialog(
-            title: 'Keluar Team',
+            title: 'Keluar Club',
             description: 'Gagal keluar dari team, mohon coba lagi',
             positiveButtonText: 'Oke',
             positiveButtonOnTap: () => Navigator.pop(context),
@@ -88,8 +88,8 @@ class _TeamPageState extends State<TeamPage> {
                 _teamCubit.teamPageLoading
                     ? 'Loading...'
                     : _teamCubit.userHaveTeam
-                      ? 'Team Saya'
-                      : 'List Team',
+                      ? 'Club Saya'
+                      : 'List Club',
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: ScreenUtil().setSp(14)
@@ -160,12 +160,12 @@ class _TeamPageState extends State<TeamPage> {
                 ),
                 child: Button(
                   style: AppButtonStyle.primary,
-                  text: 'Keluar Team',
+                  text: 'Keluar Club',
                   fontSize: 14,
                   padding: 12,
                   onPressed: () {
                     AppAlertDialog(
-                      title: 'Keluar Team',
+                      title: 'Keluar Club',
                       description: 'Apakah anda yakin ingin keluar dari team ?',
                       negativeButtonText: 'Tidak',
                       negativeButtonOnTap: () => Navigator.pop(context),

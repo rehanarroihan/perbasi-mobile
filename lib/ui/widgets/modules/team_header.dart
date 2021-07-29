@@ -41,7 +41,7 @@ class TeamHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(teamName),
-              Text('Team', style: TextStyle(color: AppColor.primaryColor))
+              Text('Club', style: TextStyle(color: AppColor.primaryColor))
             ],
           )
         ],

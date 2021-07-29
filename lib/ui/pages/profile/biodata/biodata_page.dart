@@ -409,7 +409,7 @@ class _BiodataPageState extends State<BiodataPage> {
           Space(height: 40),
           BoxInput(
             controller: _teamInput,
-            label: 'Team',
+            label: 'Club',
             onClick: () => _homeCubit.changeSelectedPage(2),
             suffixWidget: Row(
               mainAxisSize: MainAxisSize.min,
@@ -614,7 +614,7 @@ class _BiodataPageState extends State<BiodataPage> {
         }
         _teamInput.text = clubNames;
       } else {
-        _teamInput.text = 'Belum memiliki team';
+        _teamInput.text = 'Belum memiliki club';
       }
     }
 

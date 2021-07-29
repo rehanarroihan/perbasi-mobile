@@ -46,15 +46,15 @@ class _TeamDetailPageState extends State<TeamDetailPage> {
         } else if (state is RegisterToTeamSuccessfulState) {
           Navigator.pop(context);
           AppAlertDialog(
-            title: 'Daftar Team',
-            description: 'Berhasil mendaftar ke team ${widget.clubDetail.name}, silahkan tunggu verifikasi',
+            title: 'Daftar Club',
+            description: 'Berhasil mendaftar ke club ${widget.clubDetail.name}, silahkan tunggu verifikasi',
             positiveButtonText: 'Ok',
             positiveButtonOnTap: () => Navigator.pop(context),
           ).show(context);
         } else if (state is RegisterToTeamFailedState) {
           Navigator.pop(context);
           AppAlertDialog(
-            title: 'Daftar Team',
+            title: 'Daftar Club',
             description: state.message,
             positiveButtonText: 'Ok',
             positiveButtonOnTap: () => Navigator.pop(context),
@@ -76,7 +76,7 @@ class _TeamDetailPageState extends State<TeamDetailPage> {
                 onPressed: () => Navigator.pop(context)
               ),
               title: Text(
-                'Detail Team',
+                'Detail Club',
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: ScreenUtil().setSp(14)
@@ -101,12 +101,12 @@ class _TeamDetailPageState extends State<TeamDetailPage> {
                           ),
                           child: Button(
                             style: AppButtonStyle.secondary,
-                            text: 'Daftar Team',
+                            text: 'Daftar Club',
                             fontSize: 14,
                             padding: 12,
                             onPressed: () {
                               AppAlertDialog(
-                                title: 'Daftar Team',
+                                title: 'Daftar Club',
                                 description: 'Apakah anda yakin ingin daftar ke team ${widget.clubDetail.name} ?',
                                 negativeButtonText: 'Tidak',
                                 negativeButtonOnTap: () => Navigator.pop(context),
