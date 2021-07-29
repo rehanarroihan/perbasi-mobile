@@ -1,5 +1,5 @@
 class RegisterRequest {
-  String email, password, roleId, nik, name, birthPlace, birthDate;
+  String email, password, roleId, nik, name, birthPlace, birthDate, gender;
 
   RegisterRequest({
     this.email,
@@ -8,7 +8,8 @@ class RegisterRequest {
     this.nik,
     this.name,
     this.birthPlace,
-    this.birthDate
+    this.birthDate,
+    this.gender
   });
 
   factory RegisterRequest.fromMap(Map<String, dynamic> map) {
@@ -20,6 +21,7 @@ class RegisterRequest {
       name: map['name'] as String,
       birthPlace: map['birth_place'] as String,
       birthDate: map['birth_date'] as String,
+      gender: map['gender'] as String,
     );
   }
 
@@ -33,6 +35,7 @@ class RegisterRequest {
       'name': this.name,
       'birth_place': this.birthPlace,
       'birth_date': this.birthDate,
+      'gender': this.gender,
     } as Map<String, dynamic>;
   }
 }

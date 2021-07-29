@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 
 class ProfileCoachRequest {
-  String email, nik, name, birthPlace, birthDate, phone, address, licence, licenceNumber, licenceFrom, licenceActiveDate;
+  String email, nik, name, birthPlace, birthDate, phone, address, licence, licenceNumber, licenceFrom, licenceActiveDate, typeId, gender;
   File licenceFile, foto;
 
   ProfileCoachRequest(
@@ -14,11 +14,13 @@ class ProfileCoachRequest {
       this.birthDate,
       this.phone,
       this.address,
+      this.gender,
       this.licence,
       this.licenceNumber,
       this.licenceFrom,
       this.licenceActiveDate,
       this.licenceFile,
+      this.typeId,
       this.foto});
 
   factory ProfileCoachRequest.fromMap(Map<String, dynamic> map) {
@@ -28,11 +30,13 @@ class ProfileCoachRequest {
       name: map['name'] as String,
       birthPlace: map['birth_place'] as String,
       birthDate: map['birth_date'] as String,
+      gender: map['gender'] as String,
       phone: map['phone'] as String,
       address: map['address'] as String,
       licence: map['licence'] as String,
       licenceNumber: map['licence_number'] as String,
       licenceFrom: map['licence_from'] as String,
+      typeId: map['type_id'] as String,
       licenceActiveDate: map['licence_active_date'] as String,
       licenceFile: map['licence_file'] as File,
       foto: map['foto'] as File,
@@ -48,16 +52,18 @@ class ProfileCoachRequest {
       'birth_place': this.birthPlace,
       'birth_date': this.birthDate,
       'phone': this.phone,
+      'gender': this.gender,
       'address': this.address,
       'licence': this.licence,
       'licence_number': this.licenceNumber,
       'licence_from': this.licenceFrom,
       'licence_active_date': this.licenceActiveDate,
+      'type_id': this.typeId,
       'licence_file': await MultipartFile.fromFile(
-        this.licenceFile.path, filename: this.licenceFile.path.split('/').last
+        this.licenceFile?.path, filename: this.licenceFile?.path?.split('/')?.last
       ),
       'foto': await MultipartFile.fromFile(
-        this.licenceFile.path, filename: this.licenceFile.path.split('/').last
+        this.licenceFile?.path, filename: this.licenceFile?.path?.split('/')?.last
       ),
     } as Map<String, dynamic>;
   }

@@ -24,3 +24,15 @@ class GetCompetitionScheduleFailed extends HomeState {}
 class ChangeMainPageInit extends HomeState {}
 
 class ChangedMainPage extends HomeState {}
+
+class GetCompetitionDetailInit extends HomeState {}
+
+class GetCompetitionDetailResult extends HomeState {}
+
+class GetCompetitionDetailForScheduleListInit extends HomeState {}
+
+class GetCompetitionDetailForScheduleListResult extends HomeState {
+  final CompetitionModel result;
+
+  GetCompetitionDetailForScheduleListResult({this.result});
+}

@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:perbasitlg/models/competition_model.dart';
+import 'package:perbasitlg/ui/pages/competition/registered_teams_page.dart';
 import 'package:perbasitlg/ui/pages/competition/schedule_list_page.dart';
 import 'package:perbasitlg/ui/widgets/base/button.dart';
 import 'package:perbasitlg/ui/widgets/base/space.dart';
@@ -37,14 +38,39 @@ class CompetitionDetailPage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Container(
-              width: double.infinity,
-              height: ScreenUtil().setHeight(168),
-              color: AppColor.primaryColor,
-              child: CachedNetworkImage(
-                imageUrl: competitionDetail.foto,
-                fit: BoxFit.cover,
-              ),
+            Stack(
+              children: [
+                Container(
+                  width: double.infinity,
+                  height: ScreenUtil().setHeight(168),
+                  color: AppColor.primaryColor,
+                  child: CachedNetworkImage(
+                    imageUrl: competitionDetail.foto,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                Container(
+                  width: double.infinity,
+                  height: ScreenUtil().setHeight(168),
+                  alignment: Alignment.center,
+                  child: Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: _getBadgeColorByStatus(competitionDetail.status)
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 8),
+                    child: Text(
+                      competitionDetail.status,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: ScreenUtil().setSp(16),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                )
+              ],
             ),
             Space(height: 16),
             Container(
@@ -98,11 +124,39 @@ class CompetitionDetailPage extends StatelessWidget {
                 },
               ),
             ),
+            Space(height: 16),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(16)),
+              width: double.infinity,
+              child: Button(
+                style: AppButtonStyle.secondary,
+                text: 'List Club Terdaftar',
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (context) => RegisteredTeamsPage(
+                      competitionId: competitionDetail.id.toString()
+                    )
+                  ));
+                },
+              ),
+            ),
             Space(height: 12),
           ],
         ),
       ),
     );
+  }
+
+  Color _getBadgeColorByStatus(String status) {
+    if (status == 'Pendaftaran') {
+      return Colors.red.withOpacity(0.7);
+    } else if (status == 'Berlangsung') {
+      return Colors.green.withOpacity(0.7);
+    } else if (status == 'Selesai') {
+      return Colors.orange.withOpacity(0.7);
+    } else {
+      return Colors.purple.withOpacity(0.7);
+    }
   }
 }
 

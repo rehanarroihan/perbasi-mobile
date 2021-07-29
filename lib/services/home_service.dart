@@ -100,7 +100,29 @@ class HomeService {
     } catch (e, stackTrace) {
       return ApiReturn(
         success: false,
-        message: e?.response?.data['message'] ?? 'Something went wrong'
+        message: 'Something went wrong'
+      );
+    }
+  }
+
+  Future<ApiReturn<CompetitionModel>> getCompetitionDetail(String id) async {
+    try {
+      Response response = await _dio.get(
+        UrlConstantHelper.GET_COMPETITION_DETAIL + id,
+      );
+      if (response.statusCode == 200) {
+        return ApiReturn(
+          success: response.data['success'],
+          message: response.data['message'],
+          data: CompetitionModel.fromJson(response.data['data']),
+        );
+      }
+
+      return ApiReturn(success: false, message: response.data['message']);
+    } catch (e) {
+      return ApiReturn(
+        success: false,
+        message: 'Something went wrong'
       );
     }
   }

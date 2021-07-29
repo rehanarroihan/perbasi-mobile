@@ -6,11 +6,13 @@ class UserModel {
   Position positionId;
   bool verified;
   String qrcode;
+  String almamater;
   String coachId;
   String name;
   String birthPlace;
   String birthDate;
   String address;
+  String identityAddress;
   String phone;
   String licence;
   String licenceNumber;
@@ -18,7 +20,13 @@ class UserModel {
   String licenceActiveDate;
   String licenseFile;
   String foto;
+  String akta;
+  String selfie;
+  String ktp;
   String kk;
+  String noKK;
+  Position typeId;
+  String gender;
 
   UserModel(
       {this.id,
@@ -28,11 +36,13 @@ class UserModel {
         this.positionId,
         this.verified,
         this.qrcode,
+        this.almamater,
         this.coachId,
         this.name,
         this.birthPlace,
         this.birthDate,
         this.address,
+        this.identityAddress,
         this.phone,
         this.licence,
         this.licenceNumber,
@@ -40,7 +50,14 @@ class UserModel {
         this.licenceActiveDate,
         this.licenseFile,
         this.foto,
-        this.kk});
+        this.selfie,
+        this.akta,
+        this.ktp,
+        this.kk,
+        this.noKK,
+        this.typeId,
+        this.gender
+      });
 
   UserModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -48,13 +65,16 @@ class UserModel {
     email = json['email'];
     role = json['role'] != null ? new Role.fromJson(json['role']) : null;
     positionId = json['position_id'] != null ? new Position.fromJson(json['position_id']) : null;
+    typeId = json['type_id'] != null ? new Position.fromJson(json['type_id']) : null;
     verified = json['verified'];
     coachId = json['coach_id'];
     qrcode = json['qrcode'];
+    almamater = json['almamater'];
     name = json['name'];
     birthPlace = json['birth_place'];
     birthDate = json['birth_date'];
     address = json['address'];
+    identityAddress = json['identityAddress'];
     phone = json['phone'];
     licence = json['licence'];
     licenceNumber = json['licence_number'];
@@ -62,7 +82,12 @@ class UserModel {
     licenceActiveDate = json['licence_active_date'];
     licenseFile = json['licence_file'];
     foto = json['foto'];
+    ktp = json['ktp'];
+    akta = json['akta'];
     kk = json['kk'];
+    selfie = json['selfie'];
+    noKK = json['no_kk'];
+    gender = json['gender'];
   }
 
   Map<String, dynamic> toJson() {
@@ -79,7 +104,9 @@ class UserModel {
     data['verified'] = this.verified;
     data['coach_id'] = this.coachId;
     data['qrcode'] = this.qrcode;
+    data['almamater'] = this.almamater;
     data['name'] = this.name;
+    data['type_id'] = this.typeId;
     data['birth_place'] = this.birthPlace;
     data['birth_date'] = this.birthDate;
     data['address'] = this.address;
@@ -90,7 +117,12 @@ class UserModel {
     data['licence_active_date'] = this.licenceActiveDate;
     data['licence_file'] = this.licenseFile;
     data['foto'] = this.foto;
+    data['akta'] = this.akta;
+    data['ktp'] = this.ktp;
     data['kk'] = this.kk;
+    data['no_kk'] = this.noKK;
+    data['selfie'] = this.selfie;
+    data['gender'] = this.gender;
     return data;
   }
 }

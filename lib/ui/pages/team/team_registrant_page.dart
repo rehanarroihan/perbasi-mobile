@@ -58,7 +58,7 @@ class _TeamRegistrantPageState extends State<TeamRegistrantPage> {
             child: PlayerThumbnail(
               photoUrl: photoUrl,
               name: item.detail.name,
-              post: 'Player',
+              position: 'Player',
               birthDay: item.detail.birthDate
             ),
           );

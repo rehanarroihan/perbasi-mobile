@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:perbasitlg/cubit/auth/auth_cubit.dart';
 import 'package:perbasitlg/models/request/register_request.dart';
 import 'package:perbasitlg/ui/pages/auth/login_page.dart';
@@ -8,6 +9,7 @@ import 'package:perbasitlg/ui/widgets/modules/app_alert_dialog.dart';
 import 'package:perbasitlg/ui/widgets/base/box_input.dart';
 import 'package:perbasitlg/ui/widgets/base/button.dart';
 import 'package:perbasitlg/ui/widgets/base/space.dart';
+import 'package:perbasitlg/ui/widgets/modules/gender_options.dart';
 import 'package:perbasitlg/ui/widgets/modules/loading_dialog.dart';
 import 'package:perbasitlg/utils/app_color.dart';
 import 'package:perbasitlg/utils/global_method_helper.dart';
@@ -52,6 +54,8 @@ class _RegisterPageState extends State<RegisterPage> {
   TextEditingController _confirmPasswordInput = TextEditingController();
   TextEditingController _emailInput = TextEditingController();
 
+  Gender _selectedGender = Gender.L;
+
   @override
   void initState() {
     _authCubit = BlocProvider.of<AuthCubit>(context);
@@ -69,7 +73,8 @@ class _RegisterPageState extends State<RegisterPage> {
       birthPlace: _birthPlaceInput.text.trim(),
       name: _nameInput.text.trim(),
       password: _confirmPasswordInput.text.trim(),
-      birthDate: _birthDateForServer
+      birthDate: _birthDateForServer,
+      gender: _selectedGender == Gender.L ? 'L' : 'P'
     );
     _authCubit.registerUser(registerData);
   }
@@ -102,7 +107,7 @@ class _RegisterPageState extends State<RegisterPage> {
       child: Scaffold(
         key: _scaffoldKey,
         backgroundColor: AppColor.pageBackgroundColor,
-        bottomNavigationBar: Container(
+        bottomSheet: Container(
           padding: EdgeInsets.all(24),
           decoration: BoxDecoration(
             color: Colors.white,
@@ -137,7 +142,10 @@ class _RegisterPageState extends State<RegisterPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Space(height: 24),
-                  Icon(Icons.arrow_back_outlined),
+                  GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Icon(Icons.arrow_back_outlined)
+                  ),
                   Space(height: 24),
                   Text(
                     'Daftar',
@@ -187,6 +195,23 @@ class _RegisterPageState extends State<RegisterPage> {
                           },
                         ),
                         Space(height: 40),
+                        Text(
+                          'Jenis Kelamin',
+                          style: TextStyle(
+                            fontSize: ScreenUtil().setSp(11),
+                            color: Colors.grey.withOpacity(0.9)
+                          ),
+                        ),
+                        Space(height: 8),
+                        GenderOptions(
+                          value: _selectedGender,
+                          onChange: (Gender gend) {
+                            setState(() {
+                              _selectedGender = gend;
+                            });
+                          },
+                        ),
+                        Space(height: 32),
                         BoxInput(
                           controller: _birthDateInput,
                           label: 'Tanggal Lahir',
@@ -265,7 +290,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       ],
                     ),
                   ),
-                  Space(height: 32),
+                  Space(height: 148),
                 ],
               ),
             ),

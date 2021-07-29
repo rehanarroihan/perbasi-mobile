@@ -26,6 +26,9 @@ class HomeCubit extends Cubit<HomeState> {
   bool allScheduleListLoading = false;
   List<ScheduleModel> allSchedule = List<ScheduleModel>();
 
+  bool competitionDetailLoading = false;
+  CompetitionModel competitionDetail = CompetitionModel();
+
   void getHomePageData() async {
     this.homePageLoading = true;
     emit(GetHomePageDatasInit());
@@ -80,5 +83,24 @@ class HomeCubit extends Cubit<HomeState> {
     emit(ChangeMainPageInit());
     this.selectedPage = targetPage;
     emit(ChangedMainPage());
+  }
+
+  void getCompetitionDetail(String id) async {
+    this.competitionDetailLoading = true;
+    emit(GetCompetitionDetailInit());
+
+    ApiReturn<CompetitionModel> apiResult = await _homeService.getCompetitionDetail(id);
+    this.competitionDetail = apiResult.data;
+
+    this.competitionDetailLoading = false;
+    emit(GetCompetitionDetailResult());
+  }
+
+  void getCompetitionDetailForScheduleListPage(String id) async {
+    emit(GetCompetitionDetailForScheduleListInit());
+
+    ApiReturn<CompetitionModel> apiResult = await _homeService.getCompetitionDetail(id);
+
+    emit(GetCompetitionDetailForScheduleListResult(result: apiResult.data));
   }
 }

@@ -6,7 +6,7 @@ class DocumentModel {
   String fileType;
   String createdAt;
   String updatedAt;
-  Null createdBy;
+  String createdBy;
 
   DocumentModel(
       {this.id,
@@ -26,7 +26,11 @@ class DocumentModel {
     fileType = json['file_type'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
-    createdBy = json['created_by'];
+    try {
+      createdBy = json['created_by'];
+    } catch(e) {
+      createdBy = json['created_by'].toString();
+    }
   }
 
   Map<String, dynamic> toJson() {

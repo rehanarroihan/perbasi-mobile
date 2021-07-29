@@ -10,14 +10,16 @@ import 'package:perbasitlg/utils/url_constant_helper.dart';
 class TeamService {
   Dio _dio = App().dio;
 
-  Future<ApiReturn<ClubDetail>> getMyTeam() async {
+  Future<ApiReturn<List<ClubDetail>>> getMyTeam() async {
     try {
       Response response = await _dio.get(UrlConstantHelper.GET_MY_TEAM);
       if (response.statusCode == 200) {
         return ApiReturn(
           success: response.data['success'],
           message: response.data['message'],
-          data: ClubDetail.fromJson(response.data['data'])
+          data: (response.data['data'] as Iterable)
+              .map((e) => ClubDetail.fromJson(e))
+              .toList(),
         );
       }
 

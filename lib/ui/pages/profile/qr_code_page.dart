@@ -3,18 +3,19 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:perbasitlg/utils/app_color.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 
-class QrCodePage extends StatefulWidget {
-  final String qrCodeUrl;
+class ImageDetailPage extends StatefulWidget {
+  final String title, imageDetail;
 
-  QrCodePage({
-    @required this.qrCodeUrl,
+  ImageDetailPage({
+    @required this.title,
+    @required this.imageDetail,
   });
 
   @override
-  _QrCodePageState createState() => _QrCodePageState();
+  _ImageDetailPageState createState() => _ImageDetailPageState();
 }
 
-class _QrCodePageState extends State<QrCodePage> {
+class _ImageDetailPageState extends State<ImageDetailPage> {
   PageController _controller;
 
   @override
@@ -33,7 +34,7 @@ class _QrCodePageState extends State<QrCodePage> {
           color: Colors.black
         ),
         title: Text(
-          'QR Code',
+          widget.title,
           style: TextStyle(
             color: Colors.black,
             fontSize: ScreenUtil().setSp(14)
@@ -49,7 +50,7 @@ class _QrCodePageState extends State<QrCodePage> {
         onPageChanged: (int index) {},
         pageOptions: [
           PhotoViewGalleryPageOptions(
-            imageProvider: NetworkImage(widget.qrCodeUrl),
+            imageProvider: NetworkImage(widget.imageDetail),
           )
         ],
         loadingBuilder: (context, progress) => Center(

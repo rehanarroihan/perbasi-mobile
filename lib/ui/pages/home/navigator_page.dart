@@ -34,26 +34,36 @@ class _NavigatorPageState extends State<NavigatorPage> {
     return BlocBuilder(
       cubit: _homeCubit,
       builder: (context, state) {
-        return Scaffold(
-          body: _pages[_homeCubit.selectedPage],
-          bottomNavigationBar: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Color(0x1A000000),
-                  offset: const Offset(0, -3),
-                  blurRadius: 20,
-                ),
-              ]
-            ),
-            child: BottomNavigationBar(
-              currentIndex: _homeCubit.selectedPage,
-              type: BottomNavigationBarType.fixed,
-              showUnselectedLabels: false,
-              showSelectedLabels: false,
-              items: _getMenuItems(),
-              onTap: (int index) => _homeCubit.changeSelectedPage(index),
+        return WillPopScope(
+          onWillPop: () async {
+            if (_homeCubit.selectedPage != 0) {
+              _homeCubit.changeSelectedPage(0);
+              return false;
+            } else {
+              return true;
+            }
+          },
+          child: Scaffold(
+            body: _pages[_homeCubit.selectedPage],
+            bottomNavigationBar: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Color(0x1A000000),
+                    offset: const Offset(0, -3),
+                    blurRadius: 20,
+                  ),
+                ]
+              ),
+              child: BottomNavigationBar(
+                currentIndex: _homeCubit.selectedPage,
+                type: BottomNavigationBarType.fixed,
+                showUnselectedLabels: true,
+                showSelectedLabels: true,
+                items: _getMenuItems(),
+                onTap: (int index) => _homeCubit.changeSelectedPage(index),
+              ),
             ),
           ),
         );
@@ -82,19 +92,19 @@ class _NavigatorPageState extends State<NavigatorPage> {
     List<BottomNavigationBarItem> mn = [
       BottomNavigationBarItem(
         icon: Icon(Icons.home),
-        label: 'Home',
+        label: 'Beranda',
       ),
       BottomNavigationBarItem(
         icon: Icon(Icons.calendar_today_outlined),
-        label:'Jadwal Kompetisi',
+        label:'Kompetisi',
       ),
       BottomNavigationBarItem(
         icon: Icon(Icons.people_rounded),
-        label: 'Team'
+        label: 'Club'
       ),
       BottomNavigationBarItem(
         icon: Icon(Icons.person_pin),
-        label: 'Yea'
+        label: 'Profile'
       )
     ];
 

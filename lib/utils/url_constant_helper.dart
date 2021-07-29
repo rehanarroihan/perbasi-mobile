@@ -24,6 +24,7 @@ class UrlConstantHelper {
 
   static const String POST_CHANGE_REFEREE_PROFILE = "profile/referee";
 
+  static const String GET_COACH_TYPE = "master/coach_types";
   static const String GET_PLAYER_POSITION = "master/position_players";
 
   static const String POST_SCAN_QR_CODE = "scan";

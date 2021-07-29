@@ -2,8 +2,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:perbasitlg/models/club_detail.dart';
+import 'package:perbasitlg/ui/pages/team/player_detail_page.dart';
+import 'package:perbasitlg/ui/pages/team/player_list_page.dart';
+import 'package:perbasitlg/ui/pages/team/registrant_detail_page.dart';
 import 'package:perbasitlg/ui/widgets/base/space.dart';
+import 'package:perbasitlg/ui/widgets/modules/gender_options.dart';
 import 'package:perbasitlg/ui/widgets/modules/player_thumbnail.dart';
 import 'package:perbasitlg/ui/widgets/modules/team_header.dart';
 import 'package:perbasitlg/utils/global_method_helper.dart';
@@ -24,8 +29,8 @@ class TeamDetailSection extends StatelessWidget {
               boxShadow: [
                 BoxShadow(
                   color: Color(0x1A000000),
-                  offset: const Offset(0, 2),
-                  blurRadius: 24,
+                  offset: const Offset(0, 0),
+                  blurRadius: 4,
                 ),
               ],
               color: Colors.white
@@ -118,35 +123,90 @@ class TeamDetailSection extends StatelessWidget {
                   ),
                 )
               ),
-              child: clubDetail.teamPlayer.length > 0 ? GridView.count(
-                crossAxisCount: 2,
-                crossAxisSpacing: 14,
-                childAspectRatio: 9/14,
-                physics: const NeverScrollableScrollPhysics(),
-                padding: EdgeInsets.symmetric(
-                  horizontal: ScreenUtil().setWidth(14),
-                  vertical: ScreenUtil().setHeight(24)
-                ),
-                shrinkWrap: true,
-                children: clubDetail.teamPlayer.map<Widget>((TeamPlayer item) {
-                  String photoUrl = '';
-                  if (item.document.length > 0) {
-                    photoUrl = UrlConstantHelper.IMAGE_BASE_URL + item.document[0].file;
-                  }
-
-                  return PlayerThumbnail(
-                    photoUrl: photoUrl,
-                    name: item.detail.name,
-                    post: 'Player',
-                    birthDay: item.detail.birthDate
-                  );
-                }).toList(),
-              ) :
-              Center(
-                child: Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Text('Tidak ada pemain')
-                )
+              child: Column(
+                children: [
+                  Space(height: 12),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) => PlayerListPage(
+                          gender: Gender.L,
+                          players: clubDetail.teamPlayer.where((p) => p.detail.gender == 'L')?.toList(),
+                        )
+                      ));
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(vertical: 20, horizontal: 18),
+                      margin: EdgeInsets.symmetric(horizontal: 12),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0x0D000000),
+                            offset: const Offset(0, 0),
+                            blurRadius: 4,
+                          ),
+                        ],
+                        color: Colors.white
+                      ),
+                      child: Row(
+                        children: [
+                          SvgPicture.asset('assets/icons/male-round.svg'),
+                          Space(width: 12),
+                          Text(
+                            'Pemain Pria',
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w500
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Space(height: 12),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) => PlayerListPage(
+                          gender: Gender.P,
+                          players: clubDetail.teamPlayer.where((p) => p.detail.gender == 'P')?.toList(),
+                        )
+                      ));
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(vertical: 20, horizontal: 18),
+                      margin: EdgeInsets.symmetric(horizontal: 12),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0x0D000000),
+                            offset: const Offset(0, 0),
+                            blurRadius: 4,
+                          ),
+                        ],
+                        color: Colors.white
+                      ),
+                      child: Row(
+                        children: [
+                          SvgPicture.asset('assets/icons/female-round.svg'),
+                          Space(width: 12),
+                          Text(
+                            'Pemain Wanita',
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w500
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Space(height: 12),
+                ],
               ),
             )
           ),

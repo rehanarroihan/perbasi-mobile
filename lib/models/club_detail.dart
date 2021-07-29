@@ -126,7 +126,7 @@ class TeamPlayer {
   String status;
   String createdAt;
   String updatedAt;
-  Null createdBy;
+  String createdBy;
   Detail detail;
   List<DocumentModel> document;
 
@@ -250,6 +250,9 @@ class Detail {
   String updatedAt;
   String createdBy;
   String status;
+  String nik;
+  String gender;
+  String email;
 
   Detail(
       {this.id,
@@ -257,12 +260,15 @@ class Detail {
         this.positionId,
         this.name,
         this.birthPlace,
+        this.nik,
+        this.email,
         this.birthDate,
         this.address,
         this.phone,
         this.createdAt,
         this.updatedAt,
         this.createdBy,
+        this.gender,
         this.status});
 
   Detail.fromJson(Map<String, dynamic> json) {
@@ -273,10 +279,13 @@ class Detail {
     birthPlace = json['birth_place'];
     birthDate = json['birth_date'];
     address = json['address'];
+    nik = json['nik'];
+    email = json['email'];
     phone = json['phone'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     createdBy = json['created_by'];
+    gender = json['gender'];
     status = json['status'];
   }
 
@@ -290,6 +299,9 @@ class Detail {
     data['birth_date'] = this.birthDate;
     data['address'] = this.address;
     data['phone'] = this.phone;
+    data['nik'] = this.nik;
+    data['email'] = this.email;
+    data['gender'] = this.gender;
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
     data['created_by'] = this.createdBy;

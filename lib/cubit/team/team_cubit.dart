@@ -17,8 +17,7 @@ class TeamCubit extends Cubit<TeamState> {
   bool teamPageLoading = false;
 
   bool userHaveTeam = false;
-  ClubDetail myClubDetail = ClubDetail();
-  bool userCanVerif = false;
+  List<ClubDetail> myClubList = List<ClubDetail>();
   List<ClubModel> teamList = List<ClubModel>();
 
   bool teamDetailPageLoading = false;
@@ -27,17 +26,14 @@ class TeamCubit extends Cubit<TeamState> {
   void getMyTeamPage() async {
     this.teamPageLoading = true;
     this.userHaveTeam = false;
-    this.userCanVerif = false;
     emit(GetMyTeamPageInit());
 
-    ApiReturn<ClubDetail> apiResult = await _teamService.getMyTeam();
+    ApiReturn<List<ClubDetail>> apiResult = await _teamService.getMyTeam();
     this.teamPageLoading = false;
-    if (apiResult.success) {
+    if (apiResult.success && apiResult.data.isNotEmpty) {
       this.userHaveTeam = true;
-      this.myClubDetail = apiResult.data;
-      if (this.myClubDetail.canVerification) {
-        this.userCanVerif = true;
-      }
+      this.myClubList = apiResult.data;
+
       emit(GetMyTeamPageSuccessfulState());
     } else {
       ApiReturn<List<ClubModel>> apiResult = await _teamService.getTeamList();

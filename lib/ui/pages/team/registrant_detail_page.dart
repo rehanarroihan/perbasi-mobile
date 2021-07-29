@@ -6,6 +6,7 @@ import 'package:perbasitlg/cubit/team/team_cubit.dart';
 import 'package:perbasitlg/models/club_detail.dart';
 import 'package:perbasitlg/models/document_model.dart';
 import 'package:perbasitlg/models/request/verify_player_request.dart';
+import 'package:perbasitlg/ui/pages/profile/qr_code_page.dart';
 import 'package:perbasitlg/ui/widgets/base/box_input.dart';
 import 'package:perbasitlg/ui/widgets/base/button.dart';
 import 'package:perbasitlg/ui/widgets/base/space.dart';
@@ -49,16 +50,15 @@ class _RegistrantDetailPageState extends State<RegistrantDetailPage> {
   void verifyPlayer(String status) {
     _actionType = status;
     _teamCubit.verifyPlayer(VerifyPlayerRequest(
-      teamId: widget.item.teamId,
-      playerId: widget.item.playerId,
+      registerId: widget.item.id.toString(),
       status: status
     ));
   }
 
   @override
   Widget build(BuildContext context) {
-    _nikInput.text = '';
-    _emailInput.text = '';
+    _nikInput.text = widget.item.detail.nik ?? '';
+    _emailInput.text = widget.item.detail.email ?? '';
     _birthDetailInput.text = widget.item.detail.birthPlace + ', '
         + DateFormat('dd MMMM yyyy').format(DateTime.parse(widget.item.detail.birthDate));
     if (widget.item.document.length > 0) {
@@ -169,12 +169,13 @@ class _RegistrantDetailPageState extends State<RegistrantDetailPage> {
                     BoxInput(
                       controller: _documentInput,
                       label: 'Dokumen',
-                      onClick: GlobalMethodHelper.isEmpty(_kkFileLink) ? null : () async {
-                        if (await canLaunch(_kkFileLink)) {
-                          await launch(_kkFileLink);
-                        } else {
-                          throw 'Could not launch url';
-                        }
+                      onClick: GlobalMethodHelper.isEmpty(_kkFileLink) ? null : () {
+                        Navigator.push(context, MaterialPageRoute(
+                          builder: (context) => ImageDetailPage(
+                            title: 'Dokumen',
+                            imageDetail: _kkFileLink,
+                          )
+                        ));
                       },
                       suffixWidget: Row(
                         mainAxisSize: MainAxisSize.min,

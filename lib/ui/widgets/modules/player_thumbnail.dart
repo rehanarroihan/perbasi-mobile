@@ -5,9 +5,9 @@ import 'package:perbasitlg/ui/widgets/base/space.dart';
 import 'package:intl/intl.dart';
 
 class PlayerThumbnail extends StatelessWidget {
-  final String photoUrl, name, birthDay, post;
+  final String photoUrl, name, birthDay, position;
 
-  PlayerThumbnail({this.photoUrl, this.name, this.birthDay, this.post});
+  PlayerThumbnail({this.photoUrl, this.name, this.birthDay, this.position});
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +37,7 @@ class PlayerThumbnail extends StatelessWidget {
               ),
             ),
           ),
-          Text('Posisi: ' + post),
+          Text('Posisi: ' + position),
           Text('Umur: ' + _calculateAge(DateTime.parse(birthDay)).toString()),
         ],
       ),
