@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:perbasitlg/models/club_detail.dart';
+import 'package:perbasitlg/models/document_model.dart';
 import 'package:perbasitlg/ui/pages/team/registrant_detail_page.dart';
 import 'package:perbasitlg/ui/widgets/modules/player_thumbnail.dart';
 import 'package:perbasitlg/utils/url_constant_helper.dart';
@@ -46,9 +47,11 @@ class _TeamRegistrantPageState extends State<TeamRegistrantPage> {
         ),
         shrinkWrap: true,
         children: widget.registrantList.map<Widget>((PlayerVerification item) {
+          List<DocumentModel> dm = item.document.where((element) => element.documentType == 'foto').toList();
           String photoUrl = '';
-          if (item.document.length > 0) {
-            photoUrl = UrlConstantHelper.IMAGE_BASE_URL + item.document[0].file;
+
+          if (dm.length > 0) {
+            photoUrl = UrlConstantHelper.IMAGE_BASE_URL + dm[0].file;
           }
 
           return GestureDetector(

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:perbasitlg/app.dart';
 import 'package:perbasitlg/cubit/auth/auth_cubit.dart';
+import 'package:perbasitlg/cubit/team/team_cubit.dart';
 import 'package:perbasitlg/ui/pages/auth/login_page.dart';
 import 'package:perbasitlg/ui/pages/home/navigator_page.dart';
 import 'package:perbasitlg/utils/constant_helper.dart';
@@ -14,10 +15,13 @@ class SplashPage extends StatefulWidget {
 
 class _SplashPageState extends State<SplashPage> {
   AuthCubit _authCubit;
+  TeamCubit _teamCubit;
 
   @override
   void initState() {
     _authCubit = BlocProvider.of<AuthCubit>(context);
+    _teamCubit = BlocProvider.of<TeamCubit>(context);
+
     Future.delayed(Duration(milliseconds: 1500)).then((_) async {
       bool isLoggedIn = App().prefs.getBool(ConstantHelper.PREFS_IS_USER_LOGGED_IN) ?? false;
       if (isLoggedIn) {
@@ -41,6 +45,7 @@ class _SplashPageState extends State<SplashPage> {
       cubit: _authCubit,
       listener: (context, state) {
         if (state is GetUserDataSuccessfulState) {
+          _teamCubit.getMyTeamPage();
           Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
             builder: (context) => NavigatorPage()
           ), (Route<dynamic> route) => false);

@@ -40,6 +40,7 @@ class TeamDetailSection extends StatelessWidget {
                 TeamHeader(
                   logoUrl: UrlConstantHelper.IMAGE_BASE_URL + clubDetail.detailTeam.logo,
                   teamName: clubDetail.detailTeam.name,
+                  teamType: clubDetail.detailTeam.type,
                 ),
                 Row(
                   children: [

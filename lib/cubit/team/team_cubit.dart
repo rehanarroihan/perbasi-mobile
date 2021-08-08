@@ -22,24 +22,44 @@ class TeamCubit extends Cubit<TeamState> {
 
   bool teamDetailPageLoading = false;
   ClubDetail clubDetail = ClubDetail();
+  MyTeam myTeam = MyTeam();
+
+  // void getMyTeamPage() async {
+  //   this.teamPageLoading = true;
+  //   this.userHaveTeam = false;
+  //   emit(GetMyTeamPageInit());
+  //
+  //   ApiReturn<List<ClubDetail>> apiResult = await _teamService.getMyTeam();
+  //   this.teamPageLoading = false;
+  //   if (apiResult.success && apiResult.data.isNotEmpty) {
+  //     this.userHaveTeam = true;
+  //     this.myClubList = apiResult.data;
+  //
+  //     emit(GetMyTeamPageSuccessfulState());
+  //   } else {
+  //     ApiReturn<List<ClubModel>> apiResult = await _teamService.getTeamList();
+  //     if (apiResult.success) {
+  //       this.teamList = apiResult.data;
+  //     }
+  //     emit(GetMyTeamPageFailedState());
+  //   }
+  // }
 
   void getMyTeamPage() async {
     this.teamPageLoading = true;
     this.userHaveTeam = false;
     emit(GetMyTeamPageInit());
 
-    ApiReturn<List<ClubDetail>> apiResult = await _teamService.getMyTeam();
+    ApiReturn<MyTeam> apiResult = await _teamService.getMyTeam();
+    ApiReturn<List<ClubModel>> apiResultList = await _teamService.getTeamList();
     this.teamPageLoading = false;
-    if (apiResult.success && apiResult.data.isNotEmpty) {
+    if (apiResult.success && apiResultList.success) {
       this.userHaveTeam = true;
-      this.myClubList = apiResult.data;
-
+      this.myTeam = apiResult.data;
+      this.myClubList = apiResult.data.teams;
+      this.teamList = apiResultList.data;
       emit(GetMyTeamPageSuccessfulState());
     } else {
-      ApiReturn<List<ClubModel>> apiResult = await _teamService.getTeamList();
-      if (apiResult.success) {
-        this.teamList = apiResult.data;
-      }
       emit(GetMyTeamPageFailedState());
     }
   }
@@ -65,11 +85,12 @@ class TeamCubit extends Cubit<TeamState> {
     if (apiResult.success) {
       emit(RegisterToTeamSuccessfulState());
     } else {
-      if (apiResult.message.toLowerCase() == 'Kamu sudah mendaftar diteam ini'.toLowerCase()) {
-        emit(RegisterToTeamFailedState(message: 'Anda sudah mendaftar ke team ini'));
-      } else {
-        emit(RegisterToTeamFailedState(message: 'Gagal mendaftar ke team ini'));
-      }
+      // if (apiResult.message.toLowerCase() == 'Kamu sudah mendaftar diteam ini'.toLowerCase()) {
+      //   emit(RegisterToTeamFailedState(message: 'Anda sudah mendaftar ke team ini'));
+      // } else {
+      //   emit(RegisterToTeamFailedState(message: 'Gagal mendaftar ke team ini'));
+      // }
+      emit(RegisterToTeamFailedState(message: apiResult.message));
     }
   }
 

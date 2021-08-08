@@ -43,11 +43,11 @@ class NewsDetailPage extends StatelessWidget {
           children: [
             Container(
               width: double.infinity,
-              height: ScreenUtil().setHeight(168),
+              // height: ScreenUtil().setHeight(168),
               color: AppColor.primaryColor,
               child: CachedNetworkImage(
                 imageUrl: imageUrl,
-                fit: BoxFit.cover,
+                fit: BoxFit.fill,
               ),
             ),
             Space(height: 16),

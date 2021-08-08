@@ -66,6 +66,7 @@ class _RegisteredTeamsPageState extends State<RegisteredTeamsPage> {
                   return TeamHeader(
                     teamName: item?.team?.name,
                     logoUrl: item?.team?.logo,
+                    teamType: item?.team?.type,
                   );
                 },
               ) : Container(),

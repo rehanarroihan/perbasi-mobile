@@ -39,33 +39,37 @@ class CompetitionDetailPage extends StatelessWidget {
         child: Column(
           children: [
             Stack(
+              alignment: Alignment.center,
               children: [
                 Container(
                   width: double.infinity,
-                  height: ScreenUtil().setHeight(168),
+                  // height: ScreenUtil().setHeight(168),
                   color: AppColor.primaryColor,
                   child: CachedNetworkImage(
                     imageUrl: competitionDetail.foto,
-                    fit: BoxFit.cover,
+                    fit: BoxFit.fill,
                   ),
                 ),
-                Container(
-                  width: double.infinity,
-                  height: ScreenUtil().setHeight(168),
+                Align(
                   alignment: Alignment.center,
                   child: Container(
                     width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: _getBadgeColorByStatus(competitionDetail.status)
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: 8),
-                    child: Text(
-                      competitionDetail.status,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: ScreenUtil().setSp(16),
-                        fontWeight: FontWeight.w500,
+                    // height: ScreenUtil().setHeight(168),
+                    alignment: Alignment.center,
+                    child: Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: _getBadgeColorByStatus(competitionDetail.status)
+                      ),
+                      padding: EdgeInsets.symmetric(vertical: 8),
+                      child: Text(
+                        competitionDetail.status ?? "",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: ScreenUtil().setSp(16),
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   ),

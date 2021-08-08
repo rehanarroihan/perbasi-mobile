@@ -266,7 +266,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> {
             imageUrl: UrlConstantHelper.IMAGE_BASE_URL + dm[0].file,
           ),
         ),
-      );;
+      );
     }
 
     return ClipRRect(

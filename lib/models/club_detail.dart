@@ -1,6 +1,39 @@
 import 'package:perbasitlg/models/club_model.dart';
 import 'package:perbasitlg/models/document_model.dart';
 
+class MyTeam {
+  bool hasClub;
+  bool hasAlmamater;
+  List<ClubDetail> teams;
+
+  MyTeam(
+      {this.hasClub,
+        this.hasAlmamater,
+        // this.teams
+    });
+
+  MyTeam.fromJson(Map<String, dynamic> json) {
+    hasClub = json['hasClub'];
+    hasAlmamater = json['hasAlmamater'];
+    if (json['teams'] != null) {
+      teams = new List<ClubDetail>();
+      json['teams'].forEach((v) {
+        teams.add(new ClubDetail.fromJson(v));
+      });
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['hasClub'] = this.hasClub;
+    data['hasAlmamater'] = this.hasAlmamater;
+    if (this.teams != null) {
+      data['teams'] = this.teams.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
 class ClubDetail {
   ClubModel detailTeam;
   List<TeamPlayer> teamPlayer;

@@ -81,10 +81,10 @@ class _RegistrantDetailPageState extends State<RegistrantDetailPage> {
           ).show(context);
         } else if (state is PlayerVerificationSuccessfulState) {
           showFlutterToast('Berhasil ${_actionType == 'accepted' ? 'menerima' : 'menolak'} pendaftar');
-          Navigator.pop(context);
-          Navigator.pop(context);
-          Navigator.pop(context);
           _teamCubit.getMyTeamPage();
+          Navigator.pop(context);
+          Navigator.pop(context);
+          Navigator.pop(context,true);
         } else if (state is PlayerVerificationFailedState) {
           Navigator.pop(context);
           showFlutterToast('Gagal ${_actionType == 'accepted' ? 'menerima' : 'menolak'} pendaftar, mohon coba lagi');

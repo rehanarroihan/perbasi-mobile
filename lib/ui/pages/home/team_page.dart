@@ -87,9 +87,7 @@ class _TeamPageState extends State<TeamPage> {
               title: Text(
                 _teamCubit.teamPageLoading
                     ? 'Loading...'
-                    : _teamCubit.userHaveTeam
-                      ? 'Club Saya'
-                      : 'List Club',
+                    : 'List Club',
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: ScreenUtil().setSp(14)
@@ -125,72 +123,73 @@ class _TeamPageState extends State<TeamPage> {
   }
 
   Widget _buildPage() {
-    if (_teamCubit.userHaveTeam) {
-      if (_selectedMyClub == null) {
-        return ListView.builder(
-          shrinkWrap: true,
-          itemCount: _teamCubit.myClubList.length,
-          itemBuilder: (context, index) {
-            ClubDetail item = _teamCubit.myClubList[index];
-            return GestureDetector(
-              onTap: () {
-                setState(() {
-                  _selectedMyClub = item;
-                });
-              },
-              child: TeamHeader(
-                teamName: item.detailTeam.name,
-                logoUrl: UrlConstantHelper.IMAGE_BASE_URL + item.detailTeam.logo,
-              ),
-            );
-          },
-        );
-      } else {
-        return SingleChildScrollView(
-          child: Column(
-            children: [
-              TeamDetailSection(_selectedMyClub),
-              Space(height: 12),
-              _authCubit.loggedInUserData.role.name == ConstantHelper.ROLE_PEMAIN ?
-              Container(
-                width: double.infinity,
-                margin: EdgeInsets.only(top: 24),
-                padding: EdgeInsets.symmetric(
-                  horizontal: ScreenUtil().setWidth(46)
-                ),
-                child: Button(
-                  style: AppButtonStyle.primary,
-                  text: 'Keluar Club',
-                  fontSize: 14,
-                  padding: 12,
-                  onPressed: () {
-                    AppAlertDialog(
-                      title: 'Keluar Club',
-                      description: 'Apakah anda yakin ingin keluar dari team ?',
-                      negativeButtonText: 'Tidak',
-                      negativeButtonOnTap: () => Navigator.pop(context),
-                      positiveButtonText: 'Ya',
-                      positiveButtonOnTap: () {
-                        TeamPlayer tp = _selectedMyClub.teamPlayer.where((ply) {
-                          return ply.detail.userId == _authCubit.loggedInUserData.id.toString();
-                        }).toList().first;
-
-                        _teamCubit.exitFromTeam(ExitClubRequest(
-                          playerId: tp.playerId,
-                          teamId: _selectedMyClub.detailTeam.id.toString()
-                        ));
-                      },
-                    ).show(context);
-                  },
-                ),
-              ) :
-              Container(),
-              Space(height: 32),
-            ],
-          ),
-        );
-      }
-    } else {
+    // if (_teamCubit.userHaveTeam) {
+    //   if (_selectedMyClub == null) {
+    //     return ListView.builder(
+    //       shrinkWrap: true,
+    //       itemCount: _teamCubit.myClubList.length,
+    //       itemBuilder: (context, index) {
+    //         ClubDetail item = _teamCubit.myClubList[index];
+    //         return GestureDetector(
+    //           onTap: () {
+    //             setState(() {
+    //               _selectedMyClub = item;
+    //             });
+    //           },
+    //           child: TeamHeader(
+    //             teamName: item.detailTeam.name,
+    //             logoUrl: UrlConstantHelper.IMAGE_BASE_URL + item.detailTeam.logo,
+    //             teamType: item.detailTeam.type,
+    //           ),
+    //         );
+    //       },
+    //     );
+    //   } else {
+    //     return SingleChildScrollView(
+    //       child: Column(
+    //         children: [
+    //           TeamDetailSection(_selectedMyClub),
+    //           Space(height: 12),
+    //           _authCubit.loggedInUserData.role.name == ConstantHelper.ROLE_PEMAIN ?
+    //           Container(
+    //             width: double.infinity,
+    //             margin: EdgeInsets.only(top: 24),
+    //             padding: EdgeInsets.symmetric(
+    //               horizontal: ScreenUtil().setWidth(46)
+    //             ),
+    //             child: Button(
+    //               style: AppButtonStyle.primary,
+    //               text: 'Keluar Club',
+    //               fontSize: 14,
+    //               padding: 12,
+    //               onPressed: () {
+    //                 AppAlertDialog(
+    //                   title: 'Keluar Club',
+    //                   description: 'Apakah anda yakin ingin keluar dari team ?',
+    //                   negativeButtonText: 'Tidak',
+    //                   negativeButtonOnTap: () => Navigator.pop(context),
+    //                   positiveButtonText: 'Ya',
+    //                   positiveButtonOnTap: () {
+    //                     TeamPlayer tp = _selectedMyClub.teamPlayer.where((ply) {
+    //                       return ply.detail.userId == _authCubit.loggedInUserData.id.toString();
+    //                     }).toList().first;
+    //
+    //                     _teamCubit.exitFromTeam(ExitClubRequest(
+    //                       playerId: tp.playerId,
+    //                       teamId: _selectedMyClub.detailTeam.id.toString()
+    //                     ));
+    //                   },
+    //                 ).show(context);
+    //               },
+    //             ),
+    //           ) :
+    //           Container(),
+    //           Space(height: 32),
+    //         ],
+    //       ),
+    //     );
+    //   }
+    // } else {
       return ListView.builder(
         shrinkWrap: true,
         itemCount: _teamCubit.teamList.length,
@@ -203,10 +202,11 @@ class _TeamPageState extends State<TeamPage> {
             child: TeamHeader(
               teamName: item.name,
               logoUrl: UrlConstantHelper.IMAGE_BASE_URL + item.logo,
+              teamType: item.type,
             ),
           );
         },
       );
-    }
+    // }
   }
 }

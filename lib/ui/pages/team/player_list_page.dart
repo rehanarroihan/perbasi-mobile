@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:perbasitlg/models/club_detail.dart';
+import 'package:perbasitlg/models/document_model.dart';
 import 'package:perbasitlg/ui/pages/team/player_detail_page.dart';
 import 'package:perbasitlg/ui/widgets/modules/gender_options.dart';
 import 'package:perbasitlg/ui/widgets/modules/player_thumbnail.dart';
@@ -45,16 +46,18 @@ class PlayerListPage extends StatelessWidget {
           crossAxisCount: 2,
           crossAxisSpacing: 14,
           childAspectRatio: 9/14,
-          physics: const NeverScrollableScrollPhysics(),
+          // physics: const NeverScrollableScrollPhysics(),
           padding: EdgeInsets.symmetric(
             horizontal: ScreenUtil().setWidth(14),
             vertical: ScreenUtil().setHeight(24)
           ),
           shrinkWrap: true,
           children: players.map<Widget>((TeamPlayer item) {
+            List<DocumentModel> dm = item.document.where((element) => element.documentType == 'foto').toList();
             String photoUrl = '';
-            if (item.document.length > 0) {
-              photoUrl = UrlConstantHelper.IMAGE_BASE_URL + item.document[0].file;
+
+            if (dm.length > 0) {
+              photoUrl = UrlConstantHelper.IMAGE_BASE_URL + dm[0].file;
             }
 
             return GestureDetector(

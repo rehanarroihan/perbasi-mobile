@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -323,9 +324,14 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SvgPicture.asset('assets/icons/qrcode.svg'),
+                  CachedNetworkImage(
+                    imageUrl: _authCubit.loggedInUserData.qrcode,
+                    fit: BoxFit.cover,
+                    height: 74,
+                    width: 74,
+                  ),
                   Space(height: 4),
-                  Text('QR Code')
+                  // Text('QR Code')
                 ],
               )
             ),

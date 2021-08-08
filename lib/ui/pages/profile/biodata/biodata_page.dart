@@ -7,10 +7,12 @@ import 'package:perbasitlg/cubit/profile/profile_cubit.dart';
 import 'package:perbasitlg/cubit/team/team_cubit.dart';
 import 'package:perbasitlg/models/request/profile_coach_request.dart';
 import 'package:perbasitlg/models/request/profile_player_request.dart';
+import 'package:perbasitlg/ui/pages/profile/my_club_page.dart';
 import 'package:perbasitlg/ui/widgets/base/box_input.dart';
 import 'package:perbasitlg/ui/widgets/base/button.dart';
 import 'package:perbasitlg/ui/widgets/base/dropdown_input.dart';
 import 'package:perbasitlg/ui/widgets/base/space.dart';
+import 'package:perbasitlg/ui/widgets/modules/app_alert_dialog.dart';
 import 'package:perbasitlg/ui/widgets/modules/gender_options.dart';
 import 'package:perbasitlg/ui/widgets/modules/loading_dialog.dart';
 import 'package:perbasitlg/ui/widgets/modules/upload_progress_dialog.dart';
@@ -410,7 +412,21 @@ class _BiodataPageState extends State<BiodataPage> {
           BoxInput(
             controller: _teamInput,
             label: 'Club',
-            onClick: () => _homeCubit.changeSelectedPage(2),
+            // onClick: () => _homeCubit.changeSelectedPage(2),
+            onClick: () {
+              if (!_teamCubit.userHaveTeam) {
+                AppAlertDialog(
+                  title: 'Perhatian',
+                  description: 'Anda belum memiliki club, silahkan daftar di menu club',
+                  positiveButtonText: 'Oke',
+                  positiveButtonOnTap: () => Navigator.pop(context),
+                ).show(context);
+              } else {
+                Navigator.push(context, MaterialPageRoute(
+                    builder: (context) => MyClubPage()
+                ));
+              }
+            },
             suffixWidget: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -418,7 +434,21 @@ class _BiodataPageState extends State<BiodataPage> {
                   width: ScreenUtil().setWidth(72),
                   height: ScreenUtil().setHeight(32),
                   child: Button(
-                    onPressed: () => _homeCubit.changeSelectedPage(2),
+                    onPressed: () {
+                      if (!_teamCubit.userHaveTeam) {
+                        AppAlertDialog(
+                          title: 'Perhatian',
+                          description: 'Anda belum memiliki club, silahkan daftar di menu club',
+                          positiveButtonText: 'Oke',
+                          positiveButtonOnTap: () => Navigator.pop(context),
+                        ).show(context);
+                      } else {
+                        Navigator.push(context, MaterialPageRoute(
+                            builder: (context) => MyClubPage()
+                        ));
+                      }
+                    },
+                    // onPressed: () => _homeCubit.changeSelectedPage(2),
                     fontSize: 10,
                     text: 'Lihat Club',
                     padding: 0,
@@ -527,6 +557,57 @@ class _BiodataPageState extends State<BiodataPage> {
               }
             },
           ),
+          Space(height: 40),
+          _loggedInRole == ConstantHelper.ROLE_PELATIH ? BoxInput(
+            controller: _teamInput,
+            label: 'Club',
+            // onClick: () => _homeCubit.changeSelectedPage(2),
+            onClick: () {
+              if (!_teamCubit.userHaveTeam) {
+                AppAlertDialog(
+                  title: 'Perhatian',
+                  description: 'Anda belum memiliki club, silahkan daftar di menu club',
+                  positiveButtonText: 'Oke',
+                  positiveButtonOnTap: () => Navigator.pop(context),
+                ).show(context);
+              } else {
+                Navigator.push(context, MaterialPageRoute(
+                    builder: (context) => MyClubPage()
+                ));
+              }
+            },
+            suffixWidget: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: ScreenUtil().setWidth(72),
+                  height: ScreenUtil().setHeight(32),
+                  child: Button(
+                    onPressed: () {
+                      if (!_teamCubit.userHaveTeam) {
+                        AppAlertDialog(
+                          title: 'Perhatian',
+                          description: 'Anda belum memiliki club, silahkan daftar di menu club',
+                          positiveButtonText: 'Oke',
+                          positiveButtonOnTap: () => Navigator.pop(context),
+                        ).show(context);
+                      } else {
+                        Navigator.push(context, MaterialPageRoute(
+                            builder: (context) => MyClubPage()
+                        ));
+                      }
+                    },
+                    // onPressed: () => _homeCubit.changeSelectedPage(2),
+                    fontSize: 10,
+                    text: 'Lihat Club',
+                    padding: 0,
+                    style: AppButtonStyle.primary,
+                    fontWeight: FontWeight.w300,
+                  ),
+                ),
+              ],
+            ),
+          ) : Container()
         ],
       ) :
       Container(),
@@ -592,6 +673,20 @@ class _BiodataPageState extends State<BiodataPage> {
       }
       _selectedLicenseName = _authCubit.loggedInUserData.licence;
       _selectedCoachTypeId = _authCubit.loggedInUserData.typeId.id.toString();
+
+      if (_teamCubit.userHaveTeam) {
+        String clubNames = '';
+        for (int i = 0; i<_teamCubit.myClubList.length; i++) {
+          if (i == 0) {
+            clubNames += _teamCubit.myClubList[0].detailTeam.name;
+          } else {
+            clubNames += ', ' + _teamCubit.myClubList[i].detailTeam.name;
+          }
+        }
+        _teamInput.text = clubNames;
+      } else {
+        _teamInput.text = 'Belum memiliki club';
+      }
     }
 
     if (_loggedInRole == ConstantHelper.ROLE_PEMAIN) {
@@ -609,7 +704,7 @@ class _BiodataPageState extends State<BiodataPage> {
           if (i == 0) {
             clubNames += _teamCubit.myClubList[0].detailTeam.name;
           } else {
-            clubNames += ', ' + _teamCubit.myClubList[0].detailTeam.name;
+            clubNames += ', ' + _teamCubit.myClubList[i].detailTeam.name;
           }
         }
         _teamInput.text = clubNames;

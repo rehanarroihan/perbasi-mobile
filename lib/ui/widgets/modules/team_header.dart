@@ -4,9 +4,9 @@ import 'package:perbasitlg/ui/widgets/base/space.dart';
 import 'package:perbasitlg/utils/app_color.dart';
 
 class TeamHeader extends StatelessWidget {
-  final String teamName, logoUrl;
+  final String teamName, logoUrl, teamType;
 
-  TeamHeader({this.teamName, this.logoUrl});
+  TeamHeader({this.teamName, this.logoUrl, this.teamType});
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +41,7 @@ class TeamHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(teamName),
-              Text('Club', style: TextStyle(color: AppColor.primaryColor))
+              Text(teamType, style: TextStyle(color: AppColor.primaryColor))
             ],
           )
         ],

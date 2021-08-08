@@ -6,6 +6,7 @@ class UserModel {
   Position positionId;
   bool verified;
   String qrcode;
+  String player_id;
   String almamater;
   String coachId;
   String name;
@@ -36,6 +37,7 @@ class UserModel {
         this.positionId,
         this.verified,
         this.qrcode,
+        this.player_id,
         this.almamater,
         this.coachId,
         this.name,
@@ -69,6 +71,7 @@ class UserModel {
     verified = json['verified'];
     coachId = json['coach_id'];
     qrcode = json['qrcode'];
+    player_id = json['player_id'];
     almamater = json['almamater'];
     name = json['name'];
     birthPlace = json['birth_place'];
@@ -104,6 +107,7 @@ class UserModel {
     data['verified'] = this.verified;
     data['coach_id'] = this.coachId;
     data['qrcode'] = this.qrcode;
+    data['player_id'] = this.player_id;
     data['almamater'] = this.almamater;
     data['name'] = this.name;
     data['type_id'] = this.typeId;
