@@ -7,6 +7,7 @@ import 'package:perbasitlg/cubit/profile/profile_cubit.dart';
 import 'package:perbasitlg/cubit/team/team_cubit.dart';
 import 'package:perbasitlg/models/request/profile_coach_request.dart';
 import 'package:perbasitlg/models/request/profile_player_request.dart';
+import 'package:perbasitlg/ui/pages/profile/change_password_page.dart';
 import 'package:perbasitlg/ui/pages/profile/my_club_page.dart';
 import 'package:perbasitlg/ui/widgets/base/box_input.dart';
 import 'package:perbasitlg/ui/widgets/base/button.dart';
@@ -16,6 +17,7 @@ import 'package:perbasitlg/ui/widgets/modules/app_alert_dialog.dart';
 import 'package:perbasitlg/ui/widgets/modules/gender_options.dart';
 import 'package:perbasitlg/ui/widgets/modules/loading_dialog.dart';
 import 'package:perbasitlg/ui/widgets/modules/upload_progress_dialog.dart';
+import 'package:perbasitlg/utils/app_color.dart';
 import 'package:perbasitlg/utils/constant_helper.dart';
 import 'package:perbasitlg/utils/global_method_helper.dart';
 import 'package:intl/intl.dart';
@@ -183,6 +185,7 @@ class _BiodataPageState extends State<BiodataPage> {
                 ],
               ),
             ),
+            _changePassword(),
             _callToActionButtons()
           ],
         ),
@@ -757,4 +760,30 @@ class _BiodataPageState extends State<BiodataPage> {
       ),
     );
   }
+
+
+  Widget _changePassword() {
+    return GestureDetector(
+      onTap: ()  {
+        Navigator.push(context, MaterialPageRoute(
+            builder: (context) => ChangePasswordPage()
+        ));
+      },
+      child: Container(
+          padding: EdgeInsets.fromLTRB(
+              ScreenUtil().setWidth(30),
+              ScreenUtil().setHeight(10),
+              ScreenUtil().setWidth(30),
+              0
+          ),
+          alignment: Alignment.centerLeft,
+          child: Text("Ubah Password?", style: TextStyle(
+              color: AppColor.primaryColor,
+              fontSize: ScreenUtil().setSp(12),
+              decoration: TextDecoration.underline
+          ),)
+      ),
+    );
+  }
+
 }

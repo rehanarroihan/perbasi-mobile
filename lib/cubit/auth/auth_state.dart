@@ -30,3 +30,17 @@ class GetUserDataInitialState extends AuthState {}
 class GetUserDataSuccessfulState extends AuthState {}
 
 class GetUserDataFailedState extends AuthState {}
+
+class ChangePasswordInitialState extends AuthState {}
+
+class ChangePasswordSuccessfulState extends AuthState {
+  final String message;
+
+  ChangePasswordSuccessfulState(this.message);
+}
+
+class ChangePasswordFailedState extends AuthState {
+  final String message;
+
+  ChangePasswordFailedState(this.message);
+}

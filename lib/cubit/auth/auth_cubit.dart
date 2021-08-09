@@ -5,6 +5,7 @@ import 'package:perbasitlg/models/api_return.dart';
 import 'package:perbasitlg/models/coach_type_model.dart';
 import 'package:perbasitlg/models/login_model.dart';
 import 'package:perbasitlg/models/player_position_model.dart';
+import 'package:perbasitlg/models/request/change_password_request.dart';
 import 'package:perbasitlg/models/request/login_request.dart';
 import 'package:perbasitlg/models/request/register_request.dart';
 import 'package:perbasitlg/models/user_model.dart';
@@ -66,4 +67,16 @@ class AuthCubit extends Cubit<AuthState> {
       emit(GetUserDataFailedState());
     }
   }
+
+  void postChangePassword(ChangePasswordRequest data) async {
+    emit(ChangePasswordInitialState());
+
+    ApiReturn apiResult = await _authService.userChangePassword(data);
+    if (apiResult.success) {
+      emit(ChangePasswordSuccessfulState(apiResult.message));
+    } else {
+      emit(ChangePasswordFailedState(apiResult.message));
+    }
+  }
+
 }

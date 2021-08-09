@@ -49,22 +49,22 @@ class App {
       'Authorization': 'Bearer ${prefs.get(ConstantHelper.PREFS_TOKEN_KEY)}'
     };
 
-    dio.interceptors.add(InterceptorsWrapper(onError: (DioError e) async {
-      Map<dynamic, dynamic> data = e.response.data;
-      if (e.response.statusCode != null) {
-        if (e.response.statusCode == 400) {
-        }
-        // INFO : Kicking out user to login page when !authenticated
-        if (e.response.statusCode == 401) {
-          String message = data['message'];
-          if (!GlobalMethodHelper.isEmpty(message)) {
-            if (message == 'Unauthorized') {
-              showFlutterToast('Session expired, please re-login');
-            }
-          }
-        }
-      }
-      return e;
-    }));
+    // dio.interceptors.add(InterceptorsWrapper(onError: (DioError e) async {
+    //   Map<dynamic, dynamic> data = e.response.data;
+    //   if (e.response.statusCode != null) {
+    //     if (e.response.statusCode == 400) {
+    //     }
+    //     // INFO : Kicking out user to login page when !authenticated
+    //     if (e.response.statusCode == 401) {
+    //       String message = data['message'];
+    //       if (!GlobalMethodHelper.isEmpty(message)) {
+    //         if (message == 'Unauthorized') {
+    //           showFlutterToast('Session expired, please re-login');
+    //         }
+    //       }
+    //     }
+    //   }
+    //   return e;
+    // }));
   }
 }
