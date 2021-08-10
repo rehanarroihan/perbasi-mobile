@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/screenutil.dart';
 import 'package:perbasitlg/cubit/auth/auth_cubit.dart';
 import 'package:perbasitlg/models/request/change_password_request.dart';
 import 'package:perbasitlg/ui/widgets/base/box_input.dart';
@@ -84,7 +85,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                     onPressed: () {
                       Navigator.pop(context);
                     }),
-                title: Text("Ubah Password", style: TextStyle(color: Colors.black),),
+                title: Text("Ubah Password", style: TextStyle(color: Colors.black, fontSize: ScreenUtil().setSp(14)),),
               ),
               body: SingleChildScrollView(
                 child: Padding(

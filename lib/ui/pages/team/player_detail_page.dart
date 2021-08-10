@@ -39,7 +39,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> {
   TextEditingController _emailInput = TextEditingController();
   TextEditingController _documentInput = TextEditingController();
 
-  String _kkFileLink = '';
+  String _ktpFileLink = '';
 
   String _actionType = '';
 
@@ -67,10 +67,10 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> {
         + DateFormat('dd MMMM yyyy').format(DateTime.parse(widget.item.detail.birthDate));
     if (widget.item.document.length > 0) {
       List<DocumentModel> isKKDocExist = widget.item.document
-          .where((dc) => dc.documentType == 'kk').toList();
+          .where((dc) => dc.documentType == 'ktp').toList();
       if (isKKDocExist.length > 0) {
-        _documentInput.text = 'Documen KK';
-        _kkFileLink = UrlConstantHelper.IMAGE_BASE_URL + isKKDocExist[0].file;
+        _documentInput.text = 'Document KTP';
+        _ktpFileLink = UrlConstantHelper.IMAGE_BASE_URL + isKKDocExist[0].file;
       }
     }
 
@@ -103,7 +103,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> {
                 color: Colors.black
               ),
               title: Text(
-                'Detail Pemain Pendaftar',
+                'Detail Pemain',
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: ScreenUtil().setSp(14)
@@ -172,11 +172,11 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> {
                     BoxInput(
                       controller: _documentInput,
                       label: 'Dokumen',
-                      onClick: GlobalMethodHelper.isEmpty(_kkFileLink) ? null : () {
+                      onClick: GlobalMethodHelper.isEmpty(_ktpFileLink) ? null : () {
                         Navigator.push(context, MaterialPageRoute(
                           builder: (context) => ImageDetailPage(
                             title: 'Dokumen',
-                            imageDetail: _kkFileLink,
+                            imageDetail: _ktpFileLink,
                           )
                         ));
                       },

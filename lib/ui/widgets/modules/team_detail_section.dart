@@ -44,9 +44,9 @@ class TeamDetailSection extends StatelessWidget {
                 ),
                 Row(
                   children: [
-                    _stats(title: 'Played', value: 0.toString()),
-                    _stats(title: 'Win', value: 0.toString()),
-                    _stats(title: 'Loses', value: 0.toString()),
+                    _stats(title: 'Played', value: clubDetail.historyCompetition.played.toString()),
+                    _stats(title: 'Win', value: clubDetail.historyCompetition.win.toString()),
+                    _stats(title: 'Loses', value: clubDetail.historyCompetition.lose.toString()),
                   ],
                 ),
               ],

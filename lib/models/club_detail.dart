@@ -36,6 +36,7 @@ class MyTeam {
 
 class ClubDetail {
   ClubModel detailTeam;
+  HistoryCompetition historyCompetition;
   List<TeamPlayer> teamPlayer;
   List<TeamCoach> teamCoach;
   bool canVerification;
@@ -43,6 +44,7 @@ class ClubDetail {
 
   ClubDetail(
       {this.detailTeam,
+        this.historyCompetition,
         this.teamPlayer,
         this.teamCoach,
         this.canVerification,
@@ -51,6 +53,9 @@ class ClubDetail {
   ClubDetail.fromJson(Map<String, dynamic> json) {
     detailTeam = json['detailTeam'] != null
         ? new ClubModel.fromJson(json['detailTeam'])
+        : null;
+    historyCompetition = json['historyCompetition'] != null
+        ? new HistoryCompetition.fromJson(json['historyCompetition'])
         : null;
     if (json['teamPlayer'] != null) {
       teamPlayer = new List<TeamPlayer>();
@@ -78,6 +83,9 @@ class ClubDetail {
     if (this.detailTeam != null) {
       data['detailTeam'] = this.detailTeam.toJson();
     }
+    if (this.historyCompetition != null) {
+      data['historyCompetition'] = this.historyCompetition.toJson();
+    }
     if (this.teamPlayer != null) {
       data['teamPlayer'] = this.teamPlayer.map((v) => v.toJson()).toList();
     }
@@ -89,6 +97,32 @@ class ClubDetail {
       data['playerVerification'] =
           this.playerVerification.map((v) => v.toJson()).toList();
     }
+    return data;
+  }
+}
+
+class HistoryCompetition {
+  int played;
+  int win;
+  int lose;
+
+  HistoryCompetition(
+      {this.played,
+        this.win,
+        this.lose,
+      });
+
+  HistoryCompetition.fromJson(Map<String, dynamic> json) {
+    played = json['played'];
+    win = json['win'];
+    lose = json['lose'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['played'] = this.played;
+    data['win'] = this.win;
+    data['lose'] = this.lose;
     return data;
   }
 }
