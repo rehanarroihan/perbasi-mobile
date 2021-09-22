@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "159361324838",
+    "project_id": "perbasi-tulungagung",
+    "storage_bucket": "perbasi-tulungagung.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:159361324838:android:355d6b65eaaa368f5fd3e7",
+        "android_client_info": {
+          "package_name": "com.rix.perbasitulungagung"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "159361324838-qgpkg6h350nsatt7129i6ri5j3j72aiv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB2OLnhVW_KGQ6A9YZN-Gnqv0UPPvJ_NYQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "159361324838-qgpkg6h350nsatt7129i6ri5j3j72aiv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

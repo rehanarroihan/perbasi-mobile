@@ -371,7 +371,7 @@ class _DocumentPageState extends State<DocumentPage> {
         email: _authCubit.loggedInUserData.email,
         address: _authCubit.loggedInUserData.address,
         phone: _authCubit.loggedInUserData.phone,
-        positionId: _authCubit.loggedInUserData.positionId?.id.toString(),
+        positionId: _authCubit.loggedInUserData.positionId?.id != null ? _authCubit.loggedInUserData.positionId?.id.toString() : "1",
         gender: _authCubit.loggedInUserData.gender,
         almaMater: _authCubit.loggedInUserData.almamater,
         identityAddress: _authCubit.loggedInUserData.identityAddress,

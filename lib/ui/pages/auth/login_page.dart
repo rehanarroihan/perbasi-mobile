@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -29,6 +30,8 @@ class _LoginPageState extends State<LoginPage> {
 
   TextEditingController _emailInput = TextEditingController();
   TextEditingController _passwordInput = TextEditingController();
+  String tokenDeviceId = '';
+  FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   @override
   void initState() {
@@ -46,6 +49,19 @@ class _LoginPageState extends State<LoginPage> {
       });
     }
 
+    _firebaseMessaging.getToken().then((token) => setState(() {
+      this.tokenDeviceId = token;
+    }));
+    _firebaseMessaging.configure(
+      onMessage: (Map<String, dynamic> message) async {},
+      onLaunch: (Map<String, dynamic> message) async {},
+      onResume: (Map<String, dynamic> message) async {},
+    );
+    _firebaseMessaging.requestNotificationPermissions(
+        const IosNotificationSettings(sound: true, badge: true, alert: true));
+    _firebaseMessaging.onIosSettingsRegistered
+        .listen((IosNotificationSettings settings) {});
+
     super.initState();
   }
 
@@ -62,6 +78,7 @@ class _LoginPageState extends State<LoginPage> {
         } else if (state is LoginSuccessfulState) {
           Navigator.pop(context);
           _homeCubit.changeSelectedPage(0);
+          _authCubit.postToken(tokenDeviceId);
           Navigator.pushReplacement(context, MaterialPageRoute(
             builder: (context) => SplashPage()
           ));

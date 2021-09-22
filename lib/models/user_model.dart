@@ -19,6 +19,7 @@ class UserModel {
   String licenceNumber;
   String licenceFrom;
   String licenceActiveDate;
+  String licence_active_at;
   String licenseFile;
   String foto;
   String akta;
@@ -50,6 +51,7 @@ class UserModel {
         this.licenceNumber,
         this.licenceFrom,
         this.licenceActiveDate,
+        this.licence_active_at,
         this.licenseFile,
         this.foto,
         this.selfie,
@@ -83,6 +85,7 @@ class UserModel {
     licenceNumber = json['licence_number'];
     licenceFrom = json['licence_from'];
     licenceActiveDate = json['licence_active_date'];
+    licence_active_at = json['licence_active_at'];
     licenseFile = json['licence_file'];
     foto = json['foto'];
     ktp = json['ktp'];
@@ -119,6 +122,7 @@ class UserModel {
     data['licence_number'] = this.licenceNumber;
     data['licence_from'] = this.licenceFrom;
     data['licence_active_date'] = this.licenceActiveDate;
+    data['licence_active_at'] = this.licence_active_at;
     data['licence_file'] = this.licenseFile;
     data['foto'] = this.foto;
     data['akta'] = this.akta;

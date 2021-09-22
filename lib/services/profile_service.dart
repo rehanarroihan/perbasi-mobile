@@ -128,6 +128,7 @@ class ProfileService {
       request.fields['licence_number'] = data.licenceNumber;
       request.fields['licence_from'] = data.licenceFrom;
       request.fields['licence_active_date'] = data.licenceActiveDate;
+      request.fields['licence_active_at'] = data.licence_active_at;
       if (role == ConstantHelper.ROLE_PELATIH) {
         request.fields['type_id'] = data.typeId;
       }
@@ -188,12 +189,12 @@ class ProfileService {
 
       return ApiReturn(
         success: false,
-        message: 'Gagal mengirim code, silahkan coba lagi',
+        message: 'QR tidak terdaftar pada sistem',
       );
     } catch (e) {
       return ApiReturn(
         success: false,
-        message: 'Gagal mengirim code, silahkan coba lagi',
+        message: 'QR tidak terdaftar pada sistem',
       );
     }
   }

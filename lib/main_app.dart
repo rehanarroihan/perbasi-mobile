@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:overlay_support/overlay_support.dart';
 import 'package:perbasitlg/app.dart';
 import 'package:perbasitlg/cubit/auth/auth_cubit.dart';
 import 'package:perbasitlg/cubit/home/home_cubit.dart';
@@ -23,14 +24,16 @@ class MainApp extends StatelessWidget {
         BlocProvider<TeamCubit>(create: (context) => teamCubit),
         BlocProvider<ProfileCubit>(create: (context) => profileCubit),
       ],
-      child: MaterialApp(
-        title: App().appTitle,
-        theme: ThemeData(
-          primarySwatch: Colors.deepOrange,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-          fontFamily: ConstantHelper.MAIN_FONT_NAME
+      child: OverlaySupport(
+        child: MaterialApp(
+          title: App().appTitle,
+          theme: ThemeData(
+            primarySwatch: Colors.deepOrange,
+            visualDensity: VisualDensity.adaptivePlatformDensity,
+            fontFamily: ConstantHelper.MAIN_FONT_NAME
+          ),
+          home: SplashPage(),
         ),
-        home: SplashPage(),
       )
     );
   }

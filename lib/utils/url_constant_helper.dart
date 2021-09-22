@@ -32,4 +32,6 @@ class UrlConstantHelper {
   static const String IMAGE_BASE_URL = 'http://perbasitulungagung.com/adm/';
 
   static const String POST_CHANGE_PASSWORD = "password";
+
+  static const String POST_TOKEN = "token";
 }

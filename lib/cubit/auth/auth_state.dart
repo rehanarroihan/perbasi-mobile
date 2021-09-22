@@ -44,3 +44,20 @@ class ChangePasswordFailedState extends AuthState {
 
   ChangePasswordFailedState(this.message);
 }
+
+class PostTokenInitialState extends AuthState {}
+
+class PostTokenSuccessfulState extends AuthState {}
+
+class PostTokenFailedState extends AuthState {}
+
+
+class DeleteTokenInitialState extends AuthState {}
+
+class DeleteTokenSuccessfulState extends AuthState {}
+
+class DeleteTokenFailedState extends AuthState {}
+
+
+
+

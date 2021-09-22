@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -44,6 +45,9 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
   TabController _tabController;
   int selectedTab = 0;
 
+  String tokenDeviceId = '';
+  FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+
   @override
   void initState() {
     _authCubit = BlocProvider.of<AuthCubit>(context);
@@ -52,6 +56,20 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
     _loggedInRole = _authCubit.loggedInUserData.role.name;
 
     _tabController = TabController(vsync: this, length: 2);
+
+
+    _firebaseMessaging.getToken().then((token) => setState(() {
+      this.tokenDeviceId = token;
+    }));
+    _firebaseMessaging.configure(
+      onMessage: (Map<String, dynamic> message) async {},
+      onLaunch: (Map<String, dynamic> message) async {},
+      onResume: (Map<String, dynamic> message) async {},
+    );
+    _firebaseMessaging.requestNotificationPermissions(
+        const IosNotificationSettings(sound: true, badge: true, alert: true));
+    _firebaseMessaging.onIosSettingsRegistered
+        .listen((IosNotificationSettings settings) {});
 
     super.initState();
   }
@@ -95,7 +113,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                 ),
               ),
               actions: [
-                Container(
+                _authCubit.loggedInUserData.role.name == ConstantHelper.ROLE_PEMAIN ? Container(
                   padding: EdgeInsets.only(top: 12, bottom: 12, right: 8),
                   child: FlatButton(
                     onPressed: () => Navigator.push(context, MaterialPageRoute(
@@ -124,7 +142,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                       ],
                     ),
                   )
-                ),
+                ) : Container(),
                 Container(
                   padding: EdgeInsets.only(top: 12, bottom: 12, right: 8),
                   child: FlatButton(
@@ -136,6 +154,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                         negativeButtonOnTap: () => Navigator.pop(context),
                         positiveButtonText: 'Ya',
                         positiveButtonOnTap: () {
+                          _authCubit.deleteToken(tokenDeviceId);
                           App().prefs.setBool(ConstantHelper.PREFS_IS_USER_LOGGED_IN, false);
                           Navigator.pushReplacement(context, MaterialPageRoute(
                             builder: (context) => SplashPage()
@@ -303,38 +322,42 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
               ],
             ),
           ),
+          // Expanded(
+          //   flex: 1,
+          //   child: FlatButton(
+          //     padding: EdgeInsets.fromLTRB(8, 20, 8, 12),
+          //     onPressed: () {
+          //       Navigator.push(context, MaterialPageRoute(
+          //         builder: (context) => ImageDetailPage(
+          //           title: 'QR Code',
+          //           imageDetail: _authCubit.loggedInUserData.qrcode,
+          //         )
+          //       ));
+          //     },
+          //     shape: RoundedRectangleBorder(
+          //       borderRadius: BorderRadius.circular(6)
+          //     ),
+          //     color: AppColor.lightGrey.withOpacity(0.0),
+          //     child: Column(
+          //       mainAxisSize: MainAxisSize.max,
+          //       mainAxisAlignment: MainAxisAlignment.center,
+          //       crossAxisAlignment: CrossAxisAlignment.center,
+          //       children: [
+          //         CachedNetworkImage(
+          //           imageUrl: _authCubit.loggedInUserData.qrcode,
+          //           fit: BoxFit.cover,
+          //           height: 74,
+          //           width: 74,
+          //         ),
+          //         Space(height: 4),
+          //         // Text('QR Code')
+          //       ],
+          //     )
+          //   ),
+          // ),
           Expanded(
             flex: 1,
-            child: FlatButton(
-              padding: EdgeInsets.fromLTRB(8, 20, 8, 12),
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(
-                  builder: (context) => ImageDetailPage(
-                    title: 'QR Code',
-                    imageDetail: _authCubit.loggedInUserData.qrcode,
-                  )
-                ));
-              },
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(6)
-              ),
-              color: AppColor.lightGrey.withOpacity(0.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  CachedNetworkImage(
-                    imageUrl: _authCubit.loggedInUserData.qrcode,
-                    fit: BoxFit.cover,
-                    height: 74,
-                    width: 74,
-                  ),
-                  Space(height: 4),
-                  // Text('QR Code')
-                ],
-              )
-            ),
+            child: Container(),
           ),
         ],
       ),

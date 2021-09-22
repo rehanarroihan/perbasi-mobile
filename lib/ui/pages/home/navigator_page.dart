@@ -1,5 +1,9 @@
+import 'dart:io';
+
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:overlay_support/overlay_support.dart';
 import 'package:perbasitlg/cubit/auth/auth_cubit.dart';
 import 'package:perbasitlg/cubit/home/home_cubit.dart';
 import 'package:perbasitlg/ui/pages/competition/all_competition_schedule_page.dart';
@@ -19,12 +23,81 @@ class _NavigatorPageState extends State<NavigatorPage> {
 
   List<Widget> _pages;
 
+  String _homeScreenText = "Waiting for token...";
+  String _messageText = "Waiting for message...";
+
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+
   @override
   void initState() {
     _homeCubit = BlocProvider.of<HomeCubit>(context);
     _authCubit = BlocProvider.of<AuthCubit>(context);
 
     _pages = _getPages();
+
+    _firebaseMessaging.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        print("onMessage: $message");
+        showOverlayNotification((context) {
+          return Card(
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            child: SafeArea(
+              child: ListTile(
+                leading: SizedBox.fromSize(
+                    size: const Size(40, 40),
+                    child: ClipOval(
+                        child: Container(
+                          decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: (AssetImage("assets/logos/logo_main.png")),
+                                fit: BoxFit.fill,
+                              )),
+                        ))),
+                title: Platform.isIOS
+                    ? Text(message['aps']['alert']['title'])
+                    : Text(message['notification']['title']),
+                subtitle: Platform.isIOS
+                    ? Text(message['aps']['alert']['body'])
+                    : Text(message['notification']['body']),
+                trailing: IconButton(
+                    icon: Icon(Icons.close),
+                    onPressed: () {
+                      OverlaySupportEntry.of(context).dismiss();
+                    }),
+              ),
+            ),
+          );
+        }, duration: Duration(milliseconds: 4000));
+
+        print(message['notification']['title']);
+      },
+      onLaunch: (Map<String, dynamic> message) async {
+        setState(() {
+          _messageText = "Push Messaging message: $message";
+        });
+        print("onLaunch: $message");
+      },
+      onResume: (Map<String, dynamic> message) async {
+        setState(() {
+          _messageText = "Push Messaging message: $message";
+        });
+        print("onResume: $message");
+      },
+    );
+    _firebaseMessaging.requestNotificationPermissions(
+        const IosNotificationSettings(sound: true, badge: true, alert: true));
+    _firebaseMessaging.onIosSettingsRegistered
+        .listen((IosNotificationSettings settings) {
+      print("Settings registered: $settings");
+    });
+    _firebaseMessaging.getToken().then((String token) async {
+      _homeScreenText = "Push Messaging token: $token";
+      print(_homeScreenText);
+    });
+    _firebaseMessaging.onTokenRefresh.listen((newToken) {
+      _homeScreenText = "Push Messaging token: $newToken";
+      print(_homeScreenText);
+    });
 
     super.initState();
   }

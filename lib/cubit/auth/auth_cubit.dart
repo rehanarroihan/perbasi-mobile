@@ -79,4 +79,26 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
+  void postToken(String token) async {
+    emit(PostTokenInitialState());
+
+    ApiReturn apiResult = await _authService.postTokenFirebase(token);
+    if (apiResult.success) {
+      emit(PostTokenSuccessfulState());
+    } else {
+      emit(PostTokenFailedState());
+    }
+  }
+
+  void deleteToken(String token) async {
+    emit(DeleteTokenInitialState());
+
+    ApiReturn apiResult = await _authService.deleteTokenFirebase(token);
+    if (apiResult.success) {
+      emit(DeleteTokenSuccessfulState());
+    } else {
+      emit(DeleteTokenFailedState());
+    }
+  }
+
 }

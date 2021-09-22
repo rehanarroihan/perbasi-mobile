@@ -142,5 +142,45 @@ class AuthService {
     }
   }
 
+  Future<ApiReturn> postTokenFirebase(String token) async {
+    try {
+      Response response = await _dio.post(
+          UrlConstantHelper.POST_TOKEN,
+          data: { 'token': token });
+      if (response.statusCode == 200) {
+        return ApiReturn(
+          success: response.data['success'],
+          message: response.data['message'],
+        );
+      }
+
+      return ApiReturn(success: false, message: response.data['message']);
+    } catch (e, stackTrace) {
+      return ApiReturn(
+          success: false,
+          message: e?.response?.data['message'] ?? 'Something went wrong'
+      );
+    }
+  }
+
+  Future<ApiReturn> deleteTokenFirebase(String token) async {
+    try {
+      Response response = await _dio.delete(
+          UrlConstantHelper.POST_TOKEN  + "/" + token);
+      if (response.statusCode == 200) {
+        return ApiReturn(
+          success: response.data['success'],
+          message: response.data['message'],
+        );
+      }
+
+      return ApiReturn(success: false, message: response.data['message']);
+    } catch (e, stackTrace) {
+      return ApiReturn(
+          success: false,
+          message: e?.response?.data['message'] ?? 'Something went wrong'
+      );
+    }
+  }
 
 }

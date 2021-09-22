@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 
 class ProfileCoachRequest {
-  String email, nik, name, birthPlace, birthDate, phone, address, licence, licenceNumber, licenceFrom, licenceActiveDate, typeId, gender;
+  String email, nik, name, birthPlace, birthDate, phone, address, licence, licenceNumber, licenceFrom, licenceActiveDate, licence_active_at, typeId, gender;
   File licenceFile, foto;
 
   ProfileCoachRequest(
@@ -19,6 +19,7 @@ class ProfileCoachRequest {
       this.licenceNumber,
       this.licenceFrom,
       this.licenceActiveDate,
+      this.licence_active_at,
       this.licenceFile,
       this.typeId,
       this.foto});
@@ -38,6 +39,7 @@ class ProfileCoachRequest {
       licenceFrom: map['licence_from'] as String,
       typeId: map['type_id'] as String,
       licenceActiveDate: map['licence_active_date'] as String,
+      licence_active_at: map['licence_active_at'] as String,
       licenceFile: map['licence_file'] as File,
       foto: map['foto'] as File,
     );
@@ -58,6 +60,7 @@ class ProfileCoachRequest {
       'licence_number': this.licenceNumber,
       'licence_from': this.licenceFrom,
       'licence_active_date': this.licenceActiveDate,
+      'licence_active_at': this.licence_active_at,
       'type_id': this.typeId,
       'licence_file': await MultipartFile.fromFile(
         this.licenceFile?.path, filename: this.licenceFile?.path?.split('/')?.last

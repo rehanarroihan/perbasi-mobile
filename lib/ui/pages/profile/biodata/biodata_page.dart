@@ -63,8 +63,10 @@ class _BiodataPageState extends State<BiodataPage> {
   TextEditingController _licenseNumberInput = TextEditingController();
   TextEditingController _licensePublisherInput = TextEditingController();
   TextEditingController _licenseDateInput = TextEditingController();
+  TextEditingController _licenseActiveAt = TextEditingController();
   String _licenseDateForServer = '';
-  int _selectedPositionId;
+  String _licenseDateActiveAtForServer = '';
+  int _selectedPositionId = 1;
   String _selectedLicenseName;
   String _selectedCoachTypeId;
 
@@ -76,6 +78,10 @@ class _BiodataPageState extends State<BiodataPage> {
 
     if (GlobalMethodHelper.isEmpty(_licenseDateForServer)) {
       _licenseDateForServer = _authCubit.loggedInUserData.licenceActiveDate;
+    }
+
+    if (GlobalMethodHelper.isEmpty(_licenseDateActiveAtForServer)) {
+      _licenseDateActiveAtForServer = _authCubit.loggedInUserData.licence_active_at;
     }
 
     if (_loggedInRole == ConstantHelper.ROLE_PEMAIN) {
@@ -124,6 +130,7 @@ class _BiodataPageState extends State<BiodataPage> {
         licenceNumber: _licenseNumberInput.text.trim(),
         licenceFrom: _licensePublisherInput.text.trim(),
         licenceActiveDate: _licenseDateForServer,
+        licence_active_at: _licenseDateActiveAtForServer,
         typeId: _selectedCoachTypeId,
         gender: _selectedGender == Gender.L ? 'L' : 'P'
       );
@@ -526,10 +533,10 @@ class _BiodataPageState extends State<BiodataPage> {
           Space(height: 40),
           BoxInput(
             controller: _licenseDateInput,
-            label: 'Tanggal Lisensi',
+            label: 'Tanggal Lisensi Terbit',
             validator: (String val) {
               if (GlobalMethodHelper.isEmpty(val)) {
-                return 'tanggal lisensi harus valid';
+                return 'tanggal lisensi terbit harus valid';
               }
             },
             onClick: () async {
@@ -553,6 +560,43 @@ class _BiodataPageState extends State<BiodataPage> {
 
                 // formatting datetime to show to the screen
                 _licenseDateInput.text = DateFormat('dd MMMM yyyy').format(fullResult);
+
+                setState(() {});
+              } else {
+                return;
+              }
+            },
+          ),
+          Space(height: 40),
+          BoxInput(
+            controller: _licenseActiveAt,
+            label: 'Tanggal Lisensi Berakhir',
+            validator: (String val) {
+              if (GlobalMethodHelper.isEmpty(val)) {
+                return 'tanggal lisens berakhir harus valid';
+              }
+            },
+            onClick: () async {
+              final DateTime pickedDate = await showDatePicker(
+                context: context,
+                initialDate: DateTime.now(),
+                firstDate: DateTime(1900),
+                lastDate: DateTime(DateTime.now().year, 12, 31),
+              );
+              if (pickedDate != null) {
+                final DateTime fullResult = DateTime(
+                  pickedDate.year,
+                  pickedDate.month,
+                  pickedDate.day,
+                  pickedDate.hour,
+                  pickedDate.minute,
+                );
+
+                // formatting datetime for request data needs
+                _licenseDateActiveAtForServer = DateFormat('yyyy-MM-dd').format(fullResult);
+
+                // formatting datetime to show to the screen
+                _licenseActiveAt.text = DateFormat('dd MMMM yyyy').format(fullResult);
 
                 setState(() {});
               } else {
@@ -674,6 +718,11 @@ class _BiodataPageState extends State<BiodataPage> {
             DateTime.parse(_authCubit.loggedInUserData.licenceActiveDate)
         );
       }
+      if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.licence_active_at)) {
+        _licenseActiveAt.text = DateFormat('dd MMMM yyyy').format(
+            DateTime.parse(_authCubit.loggedInUserData.licence_active_at)
+        );
+      }
       _selectedLicenseName = _authCubit.loggedInUserData.licence;
       _selectedCoachTypeId = _authCubit.loggedInUserData.typeId.id.toString();
 
@@ -723,6 +772,11 @@ class _BiodataPageState extends State<BiodataPage> {
       if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.licenceActiveDate)) {
         _licenseDateInput.text = DateFormat('dd MMMM yyyy').format(
             DateTime.parse(_authCubit.loggedInUserData.licenceActiveDate)
+        );
+      }
+      if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.licence_active_at)) {
+        _licenseActiveAt.text = DateFormat('dd MMMM yyyy').format(
+            DateTime.parse(_authCubit.loggedInUserData.licence_active_at)
         );
       }
       _selectedLicenseName = _authCubit.loggedInUserData.licence;
