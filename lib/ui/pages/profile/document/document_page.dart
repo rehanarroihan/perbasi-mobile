@@ -49,6 +49,8 @@ class _DocumentPageState extends State<DocumentPage> {
   File _licensePhoto;
   TextEditingController _licensePhotoInput = TextEditingController();
 
+  bool _isLicense;
+
   @override
   void initState() {
     _authCubit = BlocProvider.of<AuthCubit>(context);
@@ -129,8 +131,8 @@ class _DocumentPageState extends State<DocumentPage> {
                   if (!GlobalMethodHelper.isEmpty(filePath)) {
                     _ktp = File(filePath);
 
-                    if (_ktp.lengthSync() > 5120000) {
-                      showFlutterToast('Maximum photo size is 5 MB');
+                    if (_ktp.lengthSync() > 1024000) {
+                      showFlutterToast('Maximum photo size is 1 MB');
                       return;
                     }
 
@@ -161,8 +163,8 @@ class _DocumentPageState extends State<DocumentPage> {
                   if (!GlobalMethodHelper.isEmpty(filePath)) {
                     _kk = File(filePath);
 
-                    if (_kk.lengthSync() > 5120000) {
-                      showFlutterToast('Maximum photo size is 5 MB');
+                    if (_kk.lengthSync() > 1024000) {
+                      showFlutterToast('Maximum photo size is 1 MB');
                       return;
                     }
 
@@ -188,8 +190,8 @@ class _DocumentPageState extends State<DocumentPage> {
                   if (!GlobalMethodHelper.isEmpty(filePath)) {
                     _birthCert = File(filePath);
 
-                    if (_birthCert.lengthSync() > 5120000) {
-                      showFlutterToast('Maximum photo size is 5 MB');
+                    if (_birthCert.lengthSync() > 1024000) {
+                      showFlutterToast('Maximum photo size is 1 MB');
                       return;
                     }
 
@@ -220,8 +222,8 @@ class _DocumentPageState extends State<DocumentPage> {
                   if (!GlobalMethodHelper.isEmpty(filePath)) {
                     _selfie = File(filePath);
 
-                    if (_selfie.lengthSync() > 5120000) {
-                      showFlutterToast('Maximum photo size is 5 MB');
+                    if (_selfie.lengthSync() > 1024000) {
+                      showFlutterToast('Maximum photo size is 1 MB');
                       return;
                     }
 
@@ -242,7 +244,7 @@ class _DocumentPageState extends State<DocumentPage> {
               ),
             ],
           ) :
-          _loggedInRole == ConstantHelper.ROLE_PELATIH || _loggedInRole == ConstantHelper.ROLE_WASIT ? Column(
+           _loggedInRole == ConstantHelper.ROLE_WASIT ? Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               UploadForm(
@@ -256,8 +258,8 @@ class _DocumentPageState extends State<DocumentPage> {
                   if (!GlobalMethodHelper.isEmpty(filePath)) {
                     _licensePhoto = File(filePath);
 
-                    if (_licensePhoto.lengthSync() > 5120000) {
-                      showFlutterToast('Maximum photo size is 5 MB');
+                    if (_licensePhoto.lengthSync() > 1024000) {
+                      showFlutterToast('Maximum photo size is 1 MB');
                       return;
                     }
 
@@ -277,8 +279,79 @@ class _DocumentPageState extends State<DocumentPage> {
                 },
               ),
             ],
-          ) :
-          Container(),
+          ) : _loggedInRole == ConstantHelper.ROLE_PELATIH  ? Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Visibility(
+                visible: _isLicense,
+                child: UploadForm(
+                  input: _licensePhotoInput,
+                  label: 'Foto Lisensi',
+                  imageUrl: _authCubit.loggedInUserData.licenseFile,
+                  isPreviewThumbnail: _isLicensePictPreview,
+                  image: _licensePhoto,
+                  onPickImage: () async {
+                    String filePath = await getImagePathFromGallery();
+                    if (!GlobalMethodHelper.isEmpty(filePath)) {
+                      _licensePhoto = File(filePath);
+
+                      if (_licensePhoto.lengthSync() > 1024000) {
+                        showFlutterToast('Maximum photo size is 1 MB');
+                        return;
+                      }
+
+                      _licensePhotoInput.text = 'File sudah dipilih';
+                      _isLicensePictPreview = true;
+
+                      _updateProfile();
+                      _licensePhotoInput.text = 'Uploading...';
+
+                      setState(() {});
+                    }
+                  },
+                  validator: (String args) {
+                    if (_licensePhotoInput == null) {
+                      return 'foto lisensi harus di pilih';
+                    }
+                  },
+                ),
+              ),
+              Visibility(
+                visible: _isLicense,
+                  child: Space(height: 40)),
+              UploadForm(
+                  input: _ktpInput,
+                  label: 'Upload KTP',
+                  imageUrl: _authCubit.loggedInUserData.ktp,
+                  isPreviewThumbnail: _isKTPPictPreview,
+                  image: _ktp,
+                  validator: (String args) {
+                    if (_ktpInput == null) {
+                      return 'file ktp harus di pilih';
+                    }
+                  },
+                  onPickImage: () async {
+                    String filePath = await getImagePathFromGallery();
+                    if (!GlobalMethodHelper.isEmpty(filePath)) {
+                      _ktp = File(filePath);
+
+                      if (_ktp.lengthSync() > 1024000) {
+                        showFlutterToast('Maximum photo size is 1 MB');
+                        return;
+                      }
+
+                      _isKTPPictPreview = true;
+                      _ktpInput.text = 'File sudah dipilih';
+
+                      _updateProfile();
+                      _ktpInput.text = 'Uploading...';
+
+                      setState(() {});
+                    }
+                  }
+              ),
+            ],
+          ) : Container(),
         ),
       ),
     );
@@ -289,11 +362,27 @@ class _DocumentPageState extends State<DocumentPage> {
       _kkInput.text = 'KK sudah di upload';
     }
 
-    if (_loggedInRole == ConstantHelper.ROLE_PELATIH || _loggedInRole == ConstantHelper.ROLE_WASIT) {
+    if (_loggedInRole == ConstantHelper.ROLE_WASIT) {
       if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.licenseFile)) {
         _licensePhotoInput.text = 'Foto lisensi sudah di upload';
       }
     }
+
+    if (_loggedInRole == ConstantHelper.ROLE_PELATIH) {
+      if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.licenseFile)) {
+        _licensePhotoInput.text = 'Foto lisensi sudah di upload';
+      }
+      if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.ktp)) {
+        _ktpInput.text = 'Foto ktp sudah di upload';
+      }
+      if(_authCubit.loggedInUserData.typeId.id.toString() == ConstantHelper.LICENSE_ASISTEN_PELATIH ||
+          _authCubit.loggedInUserData.typeId.id.toString() == ConstantHelper.LICENSE_PELATIH_KEPALA){
+        _isLicense = true;
+      } else {
+        _isLicense = false;
+      }
+    }
+
 
     if (_loggedInRole == ConstantHelper.ROLE_PEMAIN) {
       if (!GlobalMethodHelper.isEmpty(_authCubit.loggedInUserData.ktp)) {
@@ -385,7 +474,7 @@ class _DocumentPageState extends State<DocumentPage> {
       _profileCubit.updateProfilePlayer(requestData);
     }
 
-    if (_loggedInRole == ConstantHelper.ROLE_PELATIH || _loggedInRole == ConstantHelper.ROLE_WASIT) {
+    if (_loggedInRole == ConstantHelper.ROLE_WASIT) {
       LoadingDialog(
         title: 'Loading',
         description: 'Silahkan tunggu...'
@@ -413,9 +502,57 @@ class _DocumentPageState extends State<DocumentPage> {
         licenceNumber: _authCubit.loggedInUserData.licenceNumber,
         licenceFrom: _authCubit.loggedInUserData.licenceFrom,
         licenceActiveDate: _authCubit.loggedInUserData.licenceActiveDate,
+        licence_active_at: _authCubit.loggedInUserData.licence_active_at,
         typeId: _authCubit.loggedInUserData?.typeId?.id?.toString(),
         gender: _authCubit.loggedInUserData.gender,
         licenceFile: resizedLicenseImage != null ? resizedLicenseImage : null,
+      );
+
+      _profileCubit.updateProfileCoach(requestData, _loggedInRole);
+    }
+
+    if (_loggedInRole == ConstantHelper.ROLE_PELATIH ) {
+      LoadingDialog(
+          title: 'Loading',
+          description: 'Silahkan tunggu...'
+      ).show(context);
+
+      File resizedLicenseImage;
+      if (_licensePhoto != null) {
+        resizedLicenseImage = await GlobalMethodHelper.resizeImage(
+            _licensePhoto, preferredWidth: 320,
+            fileName: _licensePhoto.path.split("/").last
+        );
+      }
+
+      File resizedKTPImage;
+      if (_ktp != null) {
+        resizedKTPImage = await GlobalMethodHelper.resizeImage(
+            _ktp, preferredWidth: 320,
+            fileName: _ktp.path.split("/").last
+        );
+      }
+
+
+      Navigator.pop(context);
+
+      ProfileCoachRequest requestData = ProfileCoachRequest(
+        nik: _authCubit.loggedInUserData.nik,
+        name: _authCubit.loggedInUserData.name,
+        birthPlace: _authCubit.loggedInUserData.birthPlace,
+        birthDate: _authCubit.loggedInUserData.birthDate,
+        email: _authCubit.loggedInUserData.email,
+        address: _authCubit.loggedInUserData.address,
+        phone: _authCubit.loggedInUserData.phone,
+        licence: _authCubit.loggedInUserData.licence,
+        licenceNumber: _authCubit.loggedInUserData.licenceNumber,
+        licenceFrom: _authCubit.loggedInUserData.licenceFrom,
+        licenceActiveDate: _authCubit.loggedInUserData.licenceActiveDate,
+        licence_active_at: _authCubit.loggedInUserData.licence_active_at,
+        typeId: _authCubit.loggedInUserData?.typeId?.id?.toString(),
+        gender: _authCubit.loggedInUserData.gender,
+        licenceFile: resizedLicenseImage != null ? resizedLicenseImage : null,
+        ktp: resizedKTPImage != null ? resizedKTPImage : null,
       );
 
       _profileCubit.updateProfileCoach(requestData, _loggedInRole);

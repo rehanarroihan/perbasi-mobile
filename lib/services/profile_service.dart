@@ -150,6 +150,15 @@ class ProfileService {
           )
         );
       }
+      if (data.ktp != null) {
+        request.files.add(
+            http.MultipartFile.fromBytes(
+                'ktp',
+                data.ktp.readAsBytesSync(),
+                filename: data.ktp.path.split("/").last
+            )
+        );
+      }
       request.headers['Authorization'] = 'Bearer ${App().prefs.getString(ConstantHelper.PREFS_TOKEN_KEY)}';
 
       var res = await request.send();

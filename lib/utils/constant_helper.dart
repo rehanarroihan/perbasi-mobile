@@ -11,4 +11,16 @@ class ConstantHelper {
   static const String PREFS_USER_NAME = 'PREFS_USER_NAME';
   static const String PREFS_USER_EMAIL = 'PREFS_USER_EMAIL';
   static const String PREFS_USER_ROLE = 'PREFS_USER_ROLE';
+
+  static const String LICENSE_PELATIH_KEPALA = '1';
+  static const String LICENSE_ASISTEN_PELATIH = '2';
+  static const String LICENSE_MANAGER = '3';
+  static const String LICENSE_MEDIS = '4';
+  static const String LICENSE_STATISTIK = '5';
+
+  static const String LICENSE_PELATIH_KEPALA_TEXT = 'Pelatih Kepala';
+  static const String LICENSE_ASISTEN_PELATIH_TEXT = 'Asisten Pelatih';
+  static const String LICENSE_MANAGER_TEXT = 'Manager';
+  static const String LICENSE_MEDIS_TEXT = 'Medis';
+  static const String LICENSE_STATISTIK_TEXT = 'Statistik';
 }

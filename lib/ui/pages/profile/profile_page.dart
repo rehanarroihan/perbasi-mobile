@@ -250,6 +250,23 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
   }
 
   Widget _profileHeader() {
+
+    String coachType(String status) {
+      if (status == ConstantHelper.LICENSE_PELATIH_KEPALA) {
+        return ConstantHelper.LICENSE_PELATIH_KEPALA_TEXT;
+      } else if (status == ConstantHelper.LICENSE_ASISTEN_PELATIH) {
+        return  ConstantHelper.LICENSE_ASISTEN_PELATIH_TEXT;
+      } else if (status == ConstantHelper.LICENSE_MANAGER) {
+        return ConstantHelper.LICENSE_MANAGER_TEXT;
+      } else if (status == ConstantHelper.LICENSE_MEDIS) {
+        return ConstantHelper.LICENSE_MEDIS_TEXT;
+      } else if (status == ConstantHelper.LICENSE_STATISTIK) {
+        return ConstantHelper.LICENSE_STATISTIK_TEXT;
+      } else {
+        return "-";
+      }
+    }
+
     return Container(
       padding: EdgeInsets.only(
         top: 24, left: 16, bottom: 24, right: 12
@@ -266,8 +283,8 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                 if (!GlobalMethodHelper.isEmpty(filePath)) {
                   _profilePict = File(filePath);
 
-                  if (_profilePict.lengthSync() > 5120000) {
-                    showFlutterToast('Maximum photo size is 5 MB');
+                  if (_profilePict.lengthSync() > 1024000) {
+                    showFlutterToast('Maximum photo size is 1 MB');
                     return;
                   }
 
@@ -310,7 +327,8 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                 Text(
                   _authCubit.loggedInUserData.role.name == ConstantHelper.ROLE_PEMAIN
                       ? _authCubit.loggedInUserData.verified ? 'Terverifikasi' : 'Belum Terverifikasi'
-                      : _authCubit.loggedInUserData.role.name,
+                      : _authCubit.loggedInUserData.role.name == ConstantHelper.ROLE_PELATIH ? coachType(_authCubit.loggedInUserData.typeId.id.toString()) :
+                  _authCubit.loggedInUserData.role.name,
                   style: TextStyle(
                     fontWeight: FontWeight.w300,
                     fontSize: ScreenUtil().setSp(13),
@@ -464,6 +482,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
         licenceNumber: _authCubit.loggedInUserData.licenceNumber,
         licenceFrom: _authCubit.loggedInUserData.licenceFrom,
         licenceActiveDate: _authCubit.loggedInUserData.licenceActiveDate,
+        licence_active_at: _authCubit.loggedInUserData.licence_active_at,
         typeId: _authCubit.loggedInUserData?.typeId?.id.toString(),
         gender: _authCubit.loggedInUserData.gender,
       );

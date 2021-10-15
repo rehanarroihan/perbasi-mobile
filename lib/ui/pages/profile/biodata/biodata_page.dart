@@ -70,6 +70,8 @@ class _BiodataPageState extends State<BiodataPage> {
   String _selectedLicenseName;
   String _selectedCoachTypeId;
 
+  bool _isLicense = true;
+
   void _updateProfile() async {
     // Checking _birthDateForServer value
     if (GlobalMethodHelper.isEmpty(_birthDateForServer)) {
@@ -157,28 +159,43 @@ class _BiodataPageState extends State<BiodataPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener(
-      cubit: _profileCubit,
-      listener: (context, state) {
-        if (state is UpdateProfileInit) {
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) => UploadProgressDialog(_profileCubit)
-          );
-        } else if (state is UpdateProfileSuccessful) {
-          Navigator.pop(context);
-          showFlutterToast('Berhasil menyimpan perubahan');
-          _authCubit.getUserDetail();
-        } else if (state is UpdateProfileFailed) {
-          Navigator.pop(context);
-          showFlutterToast('Berhasil menyimpan perubahan');
-          _authCubit.getUserDetail();
-        } else if (state is GetUserDataSuccessfulState) {
-          _updateFields();
-          setState(() {});
-        }
-      },
+    return MultiBlocListener(
+      listeners: [
+        BlocListener(
+          cubit: _profileCubit,
+          listener: (context, state) {
+            if (state is UpdateProfileInit) {
+              showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (context) => UploadProgressDialog(_profileCubit)
+              );
+            } else if (state is UpdateProfileSuccessful) {
+              Navigator.pop(context);
+              showFlutterToast('Berhasil menyimpan perubahan');
+              _authCubit.getUserDetail();
+            } else if (state is UpdateProfileFailed) {
+              Navigator.pop(context);
+              showFlutterToast('Berhasil menyimpan perubahan');
+              _authCubit.getUserDetail();
+            } else if (state is GetUserDataSuccessfulState) {
+              _updateFields();
+              showFlutterToast("tes");
+              setState(() {});
+            }
+          },
+        ),
+        BlocListener(
+          cubit: _authCubit,
+          listener: (context, state) {
+            if (state is GetUserDataSuccessfulState) {
+              setState(() {
+                _updateFields();
+              });
+            }
+          },
+        )
+      ],
       child: SingleChildScrollView(
         child: Column(
           children: [
@@ -475,11 +492,14 @@ class _BiodataPageState extends State<BiodataPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _loggedInRole == ConstantHelper.ROLE_PELATIH ? _coachTypeField() : Container(),
-          Text(
-            'Nama Lisensi',
-            style: TextStyle(
-                fontSize: 11.sp,
-                color: Colors.grey
+          Visibility(
+            visible: _isLicense,
+            child: Text(
+              'Nama Lisensi',
+              style: TextStyle(
+                  fontSize: 11.sp,
+                  color: Colors.grey
+              ),
             ),
           ),
           _loggedInRole == ConstantHelper.ROLE_WASIT ? DropdownInput(
@@ -496,115 +516,140 @@ class _BiodataPageState extends State<BiodataPage> {
             }).toList(),
             defaultValues: _selectedLicenseName,
           ) :
-          _loggedInRole == ConstantHelper.ROLE_PELATIH ? DropdownInput(
-            onChanged: (value) {
-              setState(() {
-                _licenseNameInput.text = value;
-              });
-            },
-            listItem: ['C', 'B', 'A'].map((bank) {
-              return DropdownData(
-                  value: bank,
-                  text: bank
-              );
-            }).toList(),
-            defaultValues: _selectedLicenseName,
+          _loggedInRole == ConstantHelper.ROLE_PELATIH  ? Visibility(
+            visible: _isLicense,
+            child: DropdownInput(
+              onChanged: (value) {
+                setState(() {
+                  _licenseNameInput.text = value;
+                });
+              },
+              listItem: ['C', 'B', 'A'].map((bank) {
+                return DropdownData(
+                    value: bank,
+                    text: bank
+                );
+              }).toList(),
+              defaultValues: _selectedLicenseName,
+            ),
           ) : Container(),
-          Space(height: 40),
-          BoxInput(
-            controller: _licenseNumberInput,
-            label: 'Nomer Lisensi',
-            validator: (String val) {
-              if (GlobalMethodHelper.isEmpty(val)) {
-                return 'nomor lisensi harus di isi';
-              }
-            },
+          Visibility(
+              visible: _isLicense,
+              child: Space(height: 40)),
+          Visibility(
+            visible: _isLicense,
+            child: BoxInput(
+              controller: _licenseNumberInput,
+              label: 'Nomer Lisensi',
+              validator: (String val) {
+                if (GlobalMethodHelper.isEmpty(val)) {
+                  return 'nomor lisensi harus di isi';
+                }
+              },
+            ),
           ),
-          Space(height: 40),
-          BoxInput(
-            controller: _licensePublisherInput,
-            label: 'Penerbit Lisensi',
-            validator: (String val) {
-              if (GlobalMethodHelper.isEmpty(val)) {
-                return 'penerbit lisensi harus di isi';
-              }
-            },
+          Visibility(
+              visible: _isLicense,
+              child: Space(height: 40)),
+          Visibility(
+            visible: _isLicense,
+            child: BoxInput(
+              controller: _licensePublisherInput,
+              label: 'Penerbit Lisensi',
+              validator: (String val) {
+                if (GlobalMethodHelper.isEmpty(val)) {
+                  return 'penerbit lisensi harus di isi';
+                }
+              },
+            ),
           ),
-          Space(height: 40),
-          BoxInput(
-            controller: _licenseDateInput,
-            label: 'Tanggal Lisensi Terbit',
-            validator: (String val) {
-              if (GlobalMethodHelper.isEmpty(val)) {
-                return 'tanggal lisensi terbit harus valid';
-              }
-            },
-            onClick: () async {
-              final DateTime pickedDate = await showDatePicker(
-                context: context,
-                initialDate: DateTime.now(),
-                firstDate: DateTime(1900),
-                lastDate: DateTime(DateTime.now().year, 12, 31),
-              );
-              if (pickedDate != null) {
-                final DateTime fullResult = DateTime(
-                  pickedDate.year,
-                  pickedDate.month,
-                  pickedDate.day,
-                  pickedDate.hour,
-                  pickedDate.minute,
+          Visibility(
+              visible: _isLicense,
+              child: Space(height: 40)),
+          Visibility(
+            visible: _isLicense,
+            child: BoxInput(
+              controller: _licenseDateInput,
+              label: 'Tanggal Lisensi Terbit',
+              validator: (String val) {
+                if (GlobalMethodHelper.isEmpty(val)) {
+                  return 'tanggal lisensi terbit harus valid';
+                }
+              },
+              onClick: () async {
+                final DateTime pickedDate = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime(1900),
+                  lastDate: DateTime(DateTime.now().year, 12, 31),
                 );
+                if (pickedDate != null) {
+                  final DateTime fullResult = DateTime(
+                    pickedDate.year,
+                    pickedDate.month,
+                    pickedDate.day,
+                    pickedDate.hour,
+                    pickedDate.minute,
+                  );
 
-                // formatting datetime for request data needs
-                _licenseDateForServer = DateFormat('yyyy-MM-dd').format(fullResult);
+                  // formatting datetime for request data needs
+                  _licenseDateForServer = DateFormat('yyyy-MM-dd').format(fullResult);
 
-                // formatting datetime to show to the screen
-                _licenseDateInput.text = DateFormat('dd MMMM yyyy').format(fullResult);
+                  // formatting datetime to show to the screen
+                  _licenseDateInput.text = DateFormat('dd MMMM yyyy').format(fullResult);
 
-                setState(() {});
-              } else {
-                return;
-              }
-            },
+                  setState(() {});
+                } else {
+                  return;
+                }
+              },
+            ),
           ),
-          Space(height: 40),
-          BoxInput(
-            controller: _licenseActiveAt,
-            label: 'Tanggal Lisensi Berakhir',
-            validator: (String val) {
-              if (GlobalMethodHelper.isEmpty(val)) {
-                return 'tanggal lisens berakhir harus valid';
-              }
-            },
-            onClick: () async {
-              final DateTime pickedDate = await showDatePicker(
-                context: context,
-                initialDate: DateTime.now(),
-                firstDate: DateTime(1900),
-                lastDate: DateTime(DateTime.now().year, 12, 31),
-              );
-              if (pickedDate != null) {
-                final DateTime fullResult = DateTime(
-                  pickedDate.year,
-                  pickedDate.month,
-                  pickedDate.day,
-                  pickedDate.hour,
-                  pickedDate.minute,
+          Visibility(
+              visible: _isLicense,
+              child: Space(height: 40)),
+          Visibility(
+            visible: _isLicense,
+            child: BoxInput(
+              controller: _licenseActiveAt,
+              label: 'Tanggal Lisensi Berakhir',
+              validator: (String val) {
+                if (GlobalMethodHelper.isEmpty(val)) {
+                  return 'tanggal lisens berakhir harus valid';
+                }
+              },
+              onClick: () async {
+                final DateTime pickedDate = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime(1900),
+                  lastDate: DateTime(DateTime.now().year, 12, 31),
                 );
+                if (pickedDate != null) {
+                  final DateTime fullResult = DateTime(
+                    pickedDate.year,
+                    pickedDate.month,
+                    pickedDate.day,
+                    pickedDate.hour,
+                    pickedDate.minute,
+                  );
 
-                // formatting datetime for request data needs
-                _licenseDateActiveAtForServer = DateFormat('yyyy-MM-dd').format(fullResult);
+                  // formatting datetime for request data needs
+                  _licenseDateActiveAtForServer = DateFormat('yyyy-MM-dd').format(fullResult);
 
-                // formatting datetime to show to the screen
-                _licenseActiveAt.text = DateFormat('dd MMMM yyyy').format(fullResult);
+                  // formatting datetime to show to the screen
+                  _licenseActiveAt.text = DateFormat('dd MMMM yyyy').format(fullResult);
 
-                setState(() {});
-              } else {
-                return;
-              }
-            },
+                  setState(() {});
+                } else {
+                  return;
+                }
+              },
+            ),
           ),
-          Space(height: 40),
+          Visibility(
+              visible: _isLicense,
+              child: Space(height: 40)),
           _loggedInRole == ConstantHelper.ROLE_PELATIH ? BoxInput(
             controller: _teamInput,
             label: 'Club',
@@ -676,6 +721,12 @@ class _BiodataPageState extends State<BiodataPage> {
           onChanged: (value) {
             setState(() {
               _selectedCoachTypeId = value;
+              if(value == ConstantHelper.LICENSE_ASISTEN_PELATIH ||
+                  value == ConstantHelper.LICENSE_PELATIH_KEPALA){
+                _isLicense = true;
+              } else {
+                _isLicense = false;
+              }
             });
           },
           listItem: _authCubit.coachTypeList.map((coachType) {
@@ -739,6 +790,13 @@ class _BiodataPageState extends State<BiodataPage> {
       } else {
         _teamInput.text = 'Belum memiliki club';
       }
+
+      if(_authCubit.loggedInUserData.typeId.id.toString() == ConstantHelper.LICENSE_ASISTEN_PELATIH ||
+          _authCubit.loggedInUserData.typeId.id.toString() == ConstantHelper.LICENSE_PELATIH_KEPALA){
+        _isLicense = true;
+      } else {
+        _isLicense = false;
+      }
     }
 
     if (_loggedInRole == ConstantHelper.ROLE_PEMAIN) {
@@ -781,6 +839,9 @@ class _BiodataPageState extends State<BiodataPage> {
       }
       _selectedLicenseName = _authCubit.loggedInUserData.licence;
     }
+
+
+
   }
 
   Widget _callToActionButtons() {

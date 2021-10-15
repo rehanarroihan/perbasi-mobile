@@ -64,7 +64,7 @@ class _UploadFormState extends State<UploadForm> {
         ),
         Space(height: 4),
         Text(
-          '*Upload file (PNG, JPG, JPEG) max. 5 MB',
+          '*Upload file (PNG, JPG, JPEG) max. 1 MB',
           style: TextStyle(
             fontSize: 12
           ),
