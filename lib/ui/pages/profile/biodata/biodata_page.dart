@@ -581,7 +581,8 @@ class _BiodataPageState extends State<BiodataPage> {
                   context: context,
                   initialDate: DateTime.now(),
                   firstDate: DateTime(1900),
-                  lastDate: DateTime(DateTime.now().year, 12, 31),
+                  // lastDate: DateTime(DateTime.now().year, 12, 31),
+                  lastDate: DateTime(2101),
                 );
                 if (pickedDate != null) {
                   final DateTime fullResult = DateTime(
@@ -623,7 +624,8 @@ class _BiodataPageState extends State<BiodataPage> {
                   context: context,
                   initialDate: DateTime.now(),
                   firstDate: DateTime(1900),
-                  lastDate: DateTime(DateTime.now().year, 12, 31),
+                  // lastDate: DateTime(DateTime.now().year, 12, 31),
+                  lastDate: DateTime(2101),
                 );
                 if (pickedDate != null) {
                   final DateTime fullResult = DateTime(
