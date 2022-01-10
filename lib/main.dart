@@ -6,7 +6,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   App.configure(
-    apiBaseURL: 'http://perbasitulungagung.com/endpoint/api/',
+    apiBaseURL: 'https://perbasitulungagung.com/endpoint/api/',
     appTitle: 'Perbasi Tulungagung'
   );
 

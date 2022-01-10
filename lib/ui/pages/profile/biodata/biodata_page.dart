@@ -176,7 +176,7 @@ class _BiodataPageState extends State<BiodataPage> {
               _authCubit.getUserDetail();
             } else if (state is UpdateProfileFailed) {
               Navigator.pop(context);
-              showFlutterToast('Berhasil menyimpan perubahan');
+              showFlutterToast('gagal menyimpan perubahan');
               _authCubit.getUserDetail();
             } else if (state is GetUserDataSuccessfulState) {
               _updateFields();

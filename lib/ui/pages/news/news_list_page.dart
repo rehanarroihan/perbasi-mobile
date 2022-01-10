@@ -25,9 +25,11 @@ class _NewsListPageState extends State<NewsListPage> {
   void initState() {
     _homeCubit = BlocProvider.of<HomeCubit>(context);
 
-    if (_homeCubit.newsList.isEmpty || _homeCubit.competitions.isEmpty) {
-      _homeCubit.getHomePageData();
-    }
+    _homeCubit.getHomePageData();
+
+    // if (_homeCubit.newsList.isEmpty || _homeCubit.competitions.isEmpty) {
+    //
+    // }
 
     super.initState();
   }

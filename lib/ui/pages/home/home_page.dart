@@ -27,9 +27,11 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     _homeCubit = BlocProvider.of<HomeCubit>(context);
 
-    if (_homeCubit.newsList.isEmpty || _homeCubit.competitions.isEmpty) {
-      _homeCubit.getHomePageData();
-    }
+    _homeCubit.getHomePageData();
+
+    // if (_homeCubit.newsList.isEmpty || _homeCubit.competitions.isEmpty) {
+    //   _homeCubit.getHomePageData();
+    // }
 
     super.initState();
   }
@@ -190,7 +192,7 @@ class _HomePageState extends State<HomePage> {
         scrollDirection: Axis.horizontal,
         itemBuilder: (context, index) {
           CompetitionModel item = _homeCubit.competitions[index];
-          if (index == 0) { return Space(height: 0); }
+          // if (index == 0) { return Space(height: 0); }
           return GestureDetector(
             onTap: () {
               Navigator.push(context, MaterialPageRoute(
